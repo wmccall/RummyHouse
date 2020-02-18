@@ -1,5 +1,8 @@
 import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import LoginSignup from "./LoginSignup";
+import Logout from "./Logout";
+
 import Navigation from "../Navigation";
 import LandingPage from "../Landing";
 import HomePage from "../Home";
@@ -12,6 +15,11 @@ const App = () => {
   return (
     <Router>
       <div>
+        <Link to={ROUTES.HOME}>Rummy House</Link>
+        <LoginSignup />
+        <LoginSignup isLogin={false} />
+        <Logout />
+        <hr />
         <Navigation />
         <hr />
         <Route exact path={ROUTES.LANDING} component={LandingPage} />
