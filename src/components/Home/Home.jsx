@@ -1,10 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
+import { withRouter } from "react-router-dom";
+import { compose } from "recompose";
+import { FirebaseContext } from "../../context";
 
-const Home = () => {
+const Home = props => {
+  const firebaseContext = useContext(FirebaseContext);
   useEffect(() => {
     document.title = "Home";
   });
-  return <div>Home</div>;
+  return <div className="Home"></div>;
 };
 
-export default Home;
+export default compose(withRouter)(Home);

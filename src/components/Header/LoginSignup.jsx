@@ -1,9 +1,6 @@
 import React, { useContext } from "react";
-import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
-import { compose } from "recompose";
 
-import * as ROUTES from "../../constants/routes";
 import { FirebaseContext } from "../../context";
 
 const LoginSignup = props => {
@@ -13,16 +10,14 @@ const LoginSignup = props => {
 
   const signInHandler = () => {
     signInPopup()
-      .then(_ => {
-        props.history.push(ROUTES.HOME);
-      })
+      .then(_ => {})
       .catch(message => {
         console.log(message);
       });
   };
 
   return (
-    <div className="LoginSignup">
+    <div className={isLogin ? "LoginButton" : "SignupButton"}>
       <button onClick={() => signInHandler()}>
         {isLogin ? "Login" : "Sign Up"}
       </button>
@@ -30,7 +25,7 @@ const LoginSignup = props => {
   );
 };
 
-export default compose(withRouter)(LoginSignup);
+export default LoginSignup;
 
 LoginSignup.propTypes = {
   isLogin: PropTypes.bool

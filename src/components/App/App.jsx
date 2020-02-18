@@ -1,11 +1,7 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import LoginSignup from "./LoginSignup";
-import Logout from "./Logout";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 
-import { FirebaseProvider } from "../../context";
-
-import Navigation from "../Navigation";
+import Header from "../Header";
 import LandingPage from "../Landing";
 import HomePage from "../Home";
 import AccountPage from "../Account";
@@ -14,28 +10,18 @@ import GamePage from "../Game";
 
 import * as ROUTES from "../../constants/routes";
 
-var rummyhousecredential = null;
-
 const App = () => {
   return (
-    <FirebaseProvider authCredential={rummyhousecredential}>
-      <Router>
-        <div>
-          <Link to={ROUTES.HOME}>Rummy House</Link>
-          <LoginSignup />
-          <LoginSignup isLogin={false} />
-          <Logout />
-          <hr />
-          <Navigation />
-          <hr />
-          <Route exact path={ROUTES.LANDING} component={LandingPage} />
-          <Route path={ROUTES.HOME} component={HomePage} />
-          <Route path={ROUTES.ACCOUNT} component={AccountPage} />
-          <Route path={ROUTES.ADMIN} component={AdminPage} />
-          <Route path={ROUTES.GAME} component={GamePage} />
-        </div>
-      </Router>
-    </FirebaseProvider>
+    <Router>
+      <div>
+        <Header />
+        <Route exact path={ROUTES.LANDING} component={LandingPage} />
+        <Route path={ROUTES.HOME} component={HomePage} />
+        <Route path={ROUTES.ACCOUNT} component={AccountPage} />
+        <Route path={ROUTES.ADMIN} component={AdminPage} />
+        <Route path={ROUTES.GAME} component={GamePage} />
+      </div>
+    </Router>
   );
 };
 export default App;

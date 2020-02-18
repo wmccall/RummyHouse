@@ -15,6 +15,7 @@ export const FirebaseProvider = props => {
   }, []);
 
   const [userCredential, setUserCredential] = useState(null);
+  const [waitingForLogin, setWaitingForLogin] = useState(true);
 
   const signInPopup = async () => {
     console.log("pop up signin");
@@ -36,6 +37,8 @@ export const FirebaseProvider = props => {
     await auth.signOut();
   };
 
+  const isLoggedIn = !!userCredential;
+
   const trySignInSilent = () => {
     auth.onAuthStateChanged(function(user) {
       if (user) {
@@ -44,7 +47,9 @@ export const FirebaseProvider = props => {
         setUserCredential(user);
       } else {
         console.log("NOT logged in");
+        setUserCredential(null);
       }
+      setWaitingForLogin(false);
     });
   };
 
@@ -52,7 +57,9 @@ export const FirebaseProvider = props => {
   const firebaseContext = {
     userCredential,
     signInPopup,
-    signOut
+    signOut,
+    waitingForLogin,
+    isLoggedIn
   };
 
   // pass the value in provider and return
