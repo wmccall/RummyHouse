@@ -1,19 +1,24 @@
-import React from "react";
+import React, { useContext } from "react";
 import { withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { compose } from "recompose";
 
 import * as ROUTES from "../../constants/routes";
-import { withFirebase } from "../Firebase";
+import { FirebaseContext } from "../../context";
 
 const LoginSignup = props => {
-  const { isLogin, firebase } = props;
+  const firebaseContext = useContext(FirebaseContext);
+  const { signInPopup } = firebaseContext;
+  const { isLogin } = props;
 
   const signInHandler = () => {
-    firebase.signIn().then(authUser => {
-      console.log(authUser);
-      props.history.push(ROUTES.HOME);
-    });
+    signInPopup()
+      .then(_ => {
+        props.history.push(ROUTES.HOME);
+      })
+      .catch(message => {
+        console.log(message);
+      });
   };
 
   return (
@@ -25,7 +30,7 @@ const LoginSignup = props => {
   );
 };
 
-export default compose(withRouter, withFirebase)(LoginSignup);
+export default compose(withRouter)(LoginSignup);
 
 LoginSignup.propTypes = {
   isLogin: PropTypes.bool

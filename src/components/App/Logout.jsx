@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useContext } from "react";
 import { withRouter } from "react-router-dom";
 import { compose } from "recompose";
 
 import * as ROUTES from "../../constants/routes";
-import { withFirebase } from "../Firebase";
+import { FirebaseContext } from "../../context";
 
 const Logout = props => {
-  const { firebase } = props;
+  const firebaseContext = useContext(FirebaseContext);
+  const { signOut } = firebaseContext;
 
   const handleSignOut = () => {
-    firebase.signOut().then(_ => {
+    signOut().then(_ => {
       props.history.push(ROUTES.LANDING);
     });
   };
@@ -21,4 +22,4 @@ const Logout = props => {
   );
 };
 
-export default compose(withRouter, withFirebase)(Logout);
+export default compose(withRouter)(Logout);
