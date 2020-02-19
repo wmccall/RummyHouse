@@ -6,7 +6,7 @@ import { FirebaseContext } from "../../context";
 const LoginSignup = props => {
   const firebaseContext = useContext(FirebaseContext);
   const { signInPopup } = firebaseContext;
-  const { isLogin } = props;
+  const { isLogin, message } = props;
 
   const signInHandler = () => {
     signInPopup()
@@ -19,7 +19,7 @@ const LoginSignup = props => {
   return (
     <div className={isLogin ? "LoginButton" : "SignupButton"}>
       <button onClick={() => signInHandler()}>
-        {isLogin ? "Login" : "Sign Up"}
+        {!!message ? message : isLogin ? "Login" : "Sign Up"}
       </button>
     </div>
   );
@@ -28,9 +28,11 @@ const LoginSignup = props => {
 export default LoginSignup;
 
 LoginSignup.propTypes = {
-  isLogin: PropTypes.bool
+  isLogin: PropTypes.bool,
+  message: PropTypes.string
 };
 
 LoginSignup.defaultProps = {
-  isLogin: true
+  isLogin: true,
+  message: null
 };

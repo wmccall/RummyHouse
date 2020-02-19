@@ -2,4 +2,40 @@
   background-color: #272727;
   overflow: hidden;
   height: calc(100vh - 100px);
+  display: flex;
+  .Landing-Left {
+    width: calc(50vw - 140px);
+    padding-left: 140px;
+    padding-top: 10vh;
+    .Text {
+      font-size: 70px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+    .SignupButton {
+      padding-top: 60px;
+      button {
+        color: #ffffff;
+        background-color: #f5b81b;
+        border: none;
+        outline: none;
+        display: inline-block;
+        font-size: 40px;
+        padding: 10px 50px 10px 50px;
+        border-radius: 40px;
+        &:hover {
+          cursor: pointer;
+          background-color: #c99613;
+        }
+      }
+    }
+  }
+  .Landing-Right {
+    width: calc(50vw - 100px);
+    padding-right: 140px;
+    height: fit-content;
+    div {
+      height: fit-content;
+    }
+  }
 }

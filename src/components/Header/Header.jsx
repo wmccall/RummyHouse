@@ -4,8 +4,8 @@ import { compose } from "recompose";
 import { FirebaseContext } from "../../context";
 import * as ROUTES from "../../constants/routes";
 
-import LoginSignup from "../Header/LoginSignup";
-import Logout from "./Logout";
+import LoginSignup from "../LoginSignup/LoginSignup";
+import Logout from "../Logout/Logout";
 
 const Header = props => {
   const [currentLocation, setCurrentLocation] = useState(
@@ -22,6 +22,8 @@ const Header = props => {
     if (currentLocation !== ROUTES.LANDING) {
       props.history.push(ROUTES.LANDING);
     }
+  } else if (isLoggedIn && currentLocation === ROUTES.LANDING) {
+    props.history.push(ROUTES.HOME);
   }
   var HeaderColor = "BG-Gray";
 
@@ -39,7 +41,7 @@ const Header = props => {
   return (
     <div className={`Header ${HeaderColor}`}>
       <Link className="Title" to={isLoggedIn ? ROUTES.HOME : ROUTES.LANDING}>
-        Rummy House
+        rummy house
       </Link>
       {!isLoggedIn && (
         <div className="Login">
