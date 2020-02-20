@@ -1,5 +1,24 @@
 .Home {
   background-color: #272727;
-  overflow: hidden;
+  overflow: auto;
   height: calc(100vh - 100px);
+  .Home-Body {
+    display: flex;
+    padding-top: 100px;
+    padding-left: 140px;
+    padding-right: 140px;
+    justify-content: flex-start;
+    .Create-Game-Button {
+      font-size: 24px;
+      border: 2px dashed #909090;
+      border-radius: 10px;
+      color: #909090;
+      width: 370px;
+      height: 280px;
+      &:hover {
+        background-color: #707070a6;
+        color: white;
+      }
+    }
+  }
 }

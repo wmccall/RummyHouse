@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import app from "firebase/app";
-import App from "./components/App";
+import App from "./App";
 import "./stylesheets/index.scss";
 import * as serviceWorker from "./serviceWorker";
 import { FirebaseProvider } from "./context";

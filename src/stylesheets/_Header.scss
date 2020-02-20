@@ -12,7 +12,7 @@
   align-items: center;
   .Title {
     padding-left: 140px;
-    font-size: 25px;
+    font-size: 45px;
     text-decoration: none;
     color: #ffffff;
   }
@@ -25,16 +25,11 @@
         padding-right: 70px;
       }
       button {
-        color: #ffffff;
-        background-color: transparent;
-        border: none;
-        outline: none;
         display: inline-block;
-        font-size: 20px;
+        font-size: 30px;
         padding: 10px 40px 10px 40px;
         border-radius: 40px;
         &:hover {
-          cursor: pointer;
           background-color: #707070;
         }
       }

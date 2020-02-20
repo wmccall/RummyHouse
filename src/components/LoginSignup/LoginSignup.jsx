@@ -19,7 +19,7 @@ const LoginSignup = props => {
   return (
     <div className={isLogin ? "LoginButton" : "SignupButton"}>
       <button onClick={() => signInHandler()}>
-        {!!message ? message : isLogin ? "Login" : "Sign Up"}
+        <div>{!!message ? message : isLogin ? "Login" : "Sign Up"}</div>
       </button>
     </div>
   );

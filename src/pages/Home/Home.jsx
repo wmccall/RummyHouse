@@ -8,7 +8,16 @@ const Home = props => {
   useEffect(() => {
     document.title = "Home";
   });
-  return <div className="Home"></div>;
+  return (
+    <div className="Home">
+      <div className="Home-Body">
+        <button className="Create-Game-Button">
+          <div>+</div>
+          <div>create game</div>
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default compose(withRouter)(Home);

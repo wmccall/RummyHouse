@@ -15,17 +15,16 @@
     .SignupButton {
       padding-top: 60px;
       button {
-        color: #ffffff;
         background-color: #f5b81b;
-        border: none;
-        outline: none;
         display: inline-block;
-        font-size: 40px;
-        padding: 10px 50px 10px 50px;
-        border-radius: 40px;
+        font-size: 60px;
+        padding: 0px 50px 10px 50px;
+        border-radius: 100px;
         &:hover {
-          cursor: pointer;
           background-color: #c99613;
+        }
+        div {
+          text-shadow: 0px 3px 6px #0000004d;
         }
       }
     }

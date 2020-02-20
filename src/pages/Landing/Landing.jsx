@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from "react";
 import { FirebaseContext } from "../../context";
 import { ReactSVG } from "react-svg";
 
-import LoginSignup from "../LoginSignup";
+import LoginSignup from "../../components/LoginSignup";
 import LandingSVG from "../../resources/RummyLandingImage.svg";
 
 const PLAYERS = [

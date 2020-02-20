@@ -7,3 +7,14 @@
 * {
   font-family: "Open Sans", sans-serif;
 }
+
+button {
+  background-color: transparent;
+  border: none;
+  outline: none;
+  color: white;
+}
+
+button:hover {
+  cursor: pointer;
+}

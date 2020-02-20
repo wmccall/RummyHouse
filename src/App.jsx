@@ -1,14 +1,14 @@
 import React from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
-import Header from "../Header";
-import LandingPage from "../Landing";
-import HomePage from "../Home";
-import AccountPage from "../Account";
-import AdminPage from "../Admin";
-import GamePage from "../Game";
+import Header from "./components/Header";
+import LandingPage from "./pages/Landing";
+import HomePage from "./pages/Home";
+import AccountPage from "./pages/Account";
+import AdminPage from "./pages/Admin";
+import GamePage from "./pages/Game";
 
-import * as ROUTES from "../../constants/routes";
+import * as ROUTES from "./constants/routes";
 
 const App = () => {
   return (
