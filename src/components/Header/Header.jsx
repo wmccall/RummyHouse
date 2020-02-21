@@ -18,7 +18,6 @@ const Header = props => {
   const firebaseContext = useContext(FirebaseContext);
   const { waitingForLogin, isLoggedIn } = firebaseContext;
   if (!isLoggedIn && !waitingForLogin) {
-    console.log("not log");
     if (currentLocation !== ROUTES.LANDING) {
       props.history.push(ROUTES.LANDING);
     }

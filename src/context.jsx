@@ -15,38 +15,61 @@ export const FirebaseProvider = props => {
   }, []);
 
   const [userCredential, setUserCredential] = useState(null);
+  const [IDToken, setIDToken] = useState(null);
   const [waitingForLogin, setWaitingForLogin] = useState(true);
 
+  const getIDToken = async () => {
+    try {
+      return await firebase
+        .auth()
+        .currentUser.getIdToken(true)
+        .then(idToken => idToken)
+        .catch(async _ => {
+          await signOut();
+          return null;
+        });
+    } catch {
+      return null;
+    }
+  };
+
   const signInPopup = async () => {
-    console.log("pop up signin");
-    const authUser = firebase
+    const data = await firebase
       .auth()
       .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       .then(async () => {
         var provider = new firebase.auth.GoogleAuthProvider();
         const authUser = await auth.signInWithPopup(provider);
-        setUserCredential(authUser);
-        console.log(authUser);
-        return authUser;
+        var tIDToken = await getIDToken();
+        if (tIDToken) {
+          setUserCredential(authUser);
+          setIDToken(tIDToken);
+          return [authUser, tIDToken];
+        } else {
+          return null;
+        }
       });
-    return authUser;
+    return data;
   };
 
   const signOut = async () => {
-    console.log("log out");
     await auth.signOut();
+    setUserCredential(null);
   };
 
   const isLoggedIn = !!userCredential;
 
   const trySignInSilent = () => {
-    auth.onAuthStateChanged(function(user) {
-      if (user) {
-        console.log("logged in");
-        console.log(user);
-        setUserCredential(user);
+    auth.onAuthStateChanged(async user => {
+      var tIDToken = await getIDToken();
+      if (tIDToken) {
+        if (user) {
+          setUserCredential(user);
+          setIDToken(tIDToken);
+        } else {
+          setUserCredential(null);
+        }
       } else {
-        console.log("NOT logged in");
         setUserCredential(null);
       }
       setWaitingForLogin(false);
@@ -59,7 +82,8 @@ export const FirebaseProvider = props => {
     signInPopup,
     signOut,
     waitingForLogin,
-    isLoggedIn
+    isLoggedIn,
+    IDToken
   };
 
   // pass the value in provider and return

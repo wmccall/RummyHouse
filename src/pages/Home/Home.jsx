@@ -4,11 +4,9 @@ import { compose } from "recompose";
 import { FirebaseContext } from "../../context";
 import * as URLS from "../../constants/urls";
 
-const createGameHandler = () => {
-  //TODO: do not hard code headers
+const createGameHandler = IDToken => {
   var headers = new Headers();
-  headers.append("user_id", "abcd1234");
-
+  headers.append("id_token", IDToken);
   var requestOptions = {
     method: "POST",
     headers: headers,
@@ -23,6 +21,7 @@ const createGameHandler = () => {
 
 const Home = props => {
   const firebaseContext = useContext(FirebaseContext);
+  const { IDToken } = firebaseContext;
   useEffect(() => {
     document.title = "Home";
   });
@@ -31,7 +30,7 @@ const Home = props => {
       <div className="Home-Body">
         <button
           className="Create-Game-Button"
-          onClick={() => createGameHandler()}
+          onClick={() => createGameHandler(IDToken)}
         >
           <div>+</div>
           <div>create game</div>
