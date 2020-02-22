@@ -11,6 +11,7 @@
     justify-content: flex-start;
     .Create-Game-Button {
       font-size: 24px;
+      margin-right: 40px;
       border: 2px dashed #909090;
       border-radius: 10px;
       color: #909090;
@@ -26,9 +27,35 @@
       width: 400px;
       height: 424px;
       border-radius: 10px;
+      margin-right: 40px;
       &:hover {
         background-color: #707070a6;
         color: white;
+      }
+      .Contents {
+        .Left {
+          width: 100%;
+          display: flex;
+          justify-content: flex-start;
+        }
+        .Right {
+          width: 100%;
+          display: flex;
+          justify-content: flex-end;
+        }
+        .Versus > button {
+          font-size: 30px;
+          padding-right: 20px;
+          padding-left: 20px;
+          padding-bottom: 3px;
+          border-radius: 40px;
+          &:hover {
+            background-color: #464545;
+          }
+        }
+        .Timing {
+          padding-left: 20px;
+        }
       }
     }
   }

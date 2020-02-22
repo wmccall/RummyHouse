@@ -7,6 +7,7 @@ import HomePage from "./pages/Home";
 import AccountPage from "./pages/Account";
 import AdminPage from "./pages/Admin";
 import GamePage from "./pages/Game";
+import JoinGamePage from "./pages/JoinGame";
 
 import * as ROUTES from "./constants/routes";
 
@@ -19,7 +20,8 @@ const App = () => {
         <Route path={ROUTES.HOME} component={HomePage} />
         <Route path={ROUTES.ACCOUNT} component={AccountPage} />
         <Route path={ROUTES.ADMIN} component={AdminPage} />
-        <Route path={ROUTES.GAME} component={GamePage} />
+        <Route path={`${ROUTES.GAME}/:gameID`} component={GamePage} />
+        <Route path={`${ROUTES.JOIN_GAME}/:gameID`} component={JoinGamePage} />
       </div>
     </Router>
   );

@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
-import { FirebaseContext } from "../../context";
+import React, { useState, useEffect, useRef } from "react";
 import { ReactSVG } from "react-svg";
 
 import LoginSignup from "../../components/LoginSignup";
@@ -46,8 +45,7 @@ const useInterval = (callback, delay) => {
   }, [delay]);
 };
 
-const Landing = props => {
-  const firebaseContext = useContext(FirebaseContext);
+const Landing = () => {
   const [currentPlayer, setCurrentPlayer] = useState(getRandomPlayer());
   useInterval(() => {
     setCurrentPlayer(getRandomPlayer());

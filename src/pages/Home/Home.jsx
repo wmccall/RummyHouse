@@ -3,8 +3,10 @@ import { withRouter } from "react-router-dom";
 import { compose } from "recompose";
 import { FirebaseContext } from "../../context";
 import * as URLS from "../../constants/urls";
+import * as ROUTES from "../../constants/routes";
 
 import peachPattern from "../../resources/peachpattern.png";
+import PopUp from "../../components/PopUp";
 
 const createGameHandler = IDToken => {
   var headers = new Headers();
@@ -21,11 +23,82 @@ const createGameHandler = IDToken => {
     .catch(error => console.log("error", error));
 };
 
+function getTimeAgo(secs) {
+  var nowSeconds = Date.now() / 1000;
+  console.log(secs);
+  console.log(nowSeconds);
+  var secondsDifference = nowSeconds - secs;
+  console.log(secondsDifference);
+  const minutes = Math.floor(secondsDifference / 60);
+  const hours = Math.floor(secondsDifference / 60 / 60);
+  const days = Math.floor(secondsDifference / 60 / 60 / 24);
+  const weeks = Math.floor(secondsDifference / 60 / 60 / 24 / 7);
+  const months = Math.floor(secondsDifference / 60 / 60 / 24 / 30);
+  const years = Math.floor(secondsDifference / 60 / 60 / 24 / 365);
+  if (minutes === 0) {
+    return "<1 minute ago";
+  }
+  if (hours === 0) {
+    return `${minutes} minute${minutes === 1 ? "s" : ""} ago`;
+  }
+  if (days === 0) {
+    return `${hours} hours${hours === 1 ? "s" : ""} ago`;
+  }
+  if (weeks === 0) {
+    return `${days} days${days === 1 ? "s" : ""} ago`;
+  }
+  if (months === 0) {
+    return `${weeks} weeks${weeks === 1 ? "s" : ""} ago`;
+  }
+  if (years === 0) {
+    return `${months} months${months === 1 ? "s" : ""} ago`;
+  }
+  return `${years} years${years === 1 ? "s" : ""} ago`;
+}
+
+const makeGameButton = (games, key, setIsPopUpVisible, setGameLink) => {
+  const gameData = games[key];
+  console.log("make game button");
+  console.log(gameData);
+  const versus = gameData.otherPlayer ? (
+    `vs ${gameData.otherPlayer}`
+  ) : (
+    <button
+      onClick={() => {
+        setGameLink(
+          `${URLS.FRONT_END_SERVER}${ROUTES.JOIN_GAME}?gameID=${key}`
+        );
+        setIsPopUpVisible(true);
+      }}
+    >
+      invite player
+    </button>
+  );
+  return (
+    <button className="Game-Button">
+      <div className="Contents">
+        <img src={peachPattern} alt="pattern" />
+        <div className="Left">
+          <div className="Versus">{versus}</div>
+        </div>
+        <div className="Left">
+          <div className="Timing">{getTimeAgo(gameData.timestamp.seconds)}</div>
+        </div>
+        <div className="Right">
+          <button>delete</button>
+        </div>
+      </div>
+    </button>
+  );
+};
+
 const Home = () => {
   const firebaseContext = useContext(FirebaseContext);
   const { IDToken, firebase, userCredential } = firebaseContext;
   const [p1Games, setP1Games] = useState({});
   const [p2Games, setP2Games] = useState({});
+  const [isPopUpVisible, setIsPopUpVisible] = useState(false);
+  const [gameLink, setGameLink] = useState("");
 
   useEffect(() => {
     document.title = "Home";
@@ -35,6 +108,7 @@ const Home = () => {
     if (userCredential) {
       loadGames();
     }
+    // eslint-disable-next-line
   }, [userCredential]);
 
   const loadGames = () => {
@@ -84,41 +158,31 @@ const Home = () => {
 
   const generateGames = (p1Games, p2Games) => {
     const p1GameKeys = Object.keys(p1Games);
-    const localP1Games = p1GameKeys.map(key => {
-      const gameData = p1Games[key];
-      console.log("local p1 game");
-      console.log(gameData);
-      const versus = gameData.otherPlayer
-        ? `vs ${gameData.otherPlayer}`
-        : "waiting for player";
-      return (
-        <button className="Game-Button">
-          <img src={peachPattern} alt="pattern" />
-          <div className="Versus">{versus}</div>
-          <button>delete</button>
-        </button>
-      );
-    });
+    const localP1Games = p1GameKeys.map(key =>
+      makeGameButton(p1Games, key, setIsPopUpVisible, setGameLink)
+    );
     const p2GameKeys = Object.keys(p2Games);
-    const localP2Games = p2GameKeys.map(key => {
-      const gameData = p2Games[key];
-      console.log("local p2 game");
-      console.log(gameData);
-      const versus = gameData.otherPlayer
-        ? `vs ${gameData.otherPlayer}`
-        : "waiting for player";
-      return (
-        <button className="Game-Button">
-          <img src={peachPattern} alt="pattern" />
-          <div className="Versus">{versus}</div>
-          <button>delete</button>
-        </button>
-      );
-    });
+    const localP2Games = p2GameKeys.map(key =>
+      makeGameButton(p2Games, key, setIsPopUpVisible, setGameLink)
+    );
     return [...localP1Games, ...localP2Games];
   };
   return (
     <div className="Home">
+      <PopUp
+        message="Invite a friend!"
+        isVisible={isPopUpVisible}
+        setVisible={setIsPopUpVisible}
+      >
+        {gameLink}
+        <button
+          onClick={() => {
+            setIsPopUpVisible(false);
+          }}
+        >
+          Close
+        </button>
+      </PopUp>
       <div className="Home-Body">
         <button
           className="Create-Game-Button"

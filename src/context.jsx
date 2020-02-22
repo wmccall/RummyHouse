@@ -12,6 +12,7 @@ export const FirebaseProvider = props => {
 
   useEffect(() => {
     trySignInSilent();
+    // eslint-disable-next-line
   }, []);
 
   const [userCredential, setUserCredential] = useState(null);

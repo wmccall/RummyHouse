@@ -1,10 +1,8 @@
-import React, { useEffect, useContext } from "react";
+import React, { useEffect } from "react";
 import { withRouter } from "react-router-dom";
 import { compose } from "recompose";
-import { FirebaseContext } from "../../context";
 
-const Admin = props => {
-  const firebaseContext = useContext(FirebaseContext);
+const Admin = () => {
   useEffect(() => {
     document.title = "Admin";
   });
