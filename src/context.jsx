@@ -83,7 +83,8 @@ export const FirebaseProvider = props => {
     signOut,
     waitingForLogin,
     isLoggedIn,
-    IDToken
+    IDToken,
+    firebase
   };
 
   // pass the value in provider and return

@@ -4,6 +4,7 @@
   height: calc(100vh - 100px);
   .Home-Body {
     display: flex;
+    flex-wrap: wrap;
     padding-top: 100px;
     padding-left: 140px;
     padding-right: 140px;
@@ -15,6 +16,16 @@
       color: #909090;
       width: 370px;
       height: 280px;
+      &:hover {
+        background-color: #707070a6;
+        color: white;
+      }
+    }
+    .Game-Button {
+      font-size: 24px;
+      width: 400px;
+      height: 424px;
+      border-radius: 10px;
       &:hover {
         background-color: #707070a6;
         color: white;
