@@ -137,7 +137,7 @@ const Home = () => {
           };
         });
         setP1Games(prevGames => {
-          return { ...prevGames, ...tempGames };
+          return { ...tempGames, ...prevGames };
         });
       });
 
@@ -151,7 +151,7 @@ const Home = () => {
           };
         });
         setP2Games(prevGames => {
-          return { ...prevGames, ...tempGames };
+          return { ...tempGames, ...prevGames };
         });
       });
     }
