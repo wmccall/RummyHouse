@@ -40,21 +40,21 @@ function getTimeAgo(secs) {
     return "<1 minute ago";
   }
   if (hours === 0) {
-    return `${minutes} minute${minutes === 1 ? "s" : ""} ago`;
+    return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
   }
   if (days === 0) {
-    return `${hours} hours${hours === 1 ? "s" : ""} ago`;
+    return `${hours} hour${hours === 1 ? "" : "s"} ago`;
   }
   if (weeks === 0) {
-    return `${days} days${days === 1 ? "s" : ""} ago`;
+    return `${days} day${days === 1 ? "" : "s"} ago`;
   }
   if (months === 0) {
-    return `${weeks} weeks${weeks === 1 ? "s" : ""} ago`;
+    return `${weeks} week${weeks === 1 ? "" : "s"} ago`;
   }
   if (years === 0) {
-    return `${months} months${months === 1 ? "s" : ""} ago`;
+    return `${months} month${months === 1 ? "" : "s"} ago`;
   }
-  return `${years} years${years === 1 ? "s" : ""} ago`;
+  return `${years} year${years === 1 ? "" : "s"} ago`;
 }
 
 const makeGameButton = (games, key, setIsPopUpVisible, setGameLink) => {
