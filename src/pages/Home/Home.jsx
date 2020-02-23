@@ -7,6 +7,7 @@ import * as ROUTES from "../../constants/routes";
 
 import peachPattern from "../../resources/peachpattern.png";
 import PopUp from "../../components/PopUp";
+import CopyTextButton from "../../components/CopyTextButton";
 
 const createGameHandler = IDToken => {
   var headers = new Headers();
@@ -66,9 +67,9 @@ const makeGameButton = (games, key, setIsPopUpVisible, setGameLink) => {
     <button
       onClick={() => {
         setGameLink(
-          `${URLS.FRONT_END_SERVER}${ROUTES.JOIN_GAME}?gameID=${key}`
+          `${URLS.FRONT_END_SERVER}${ROUTES.JOIN_GAME}?gameID=${key}`,
+          setIsPopUpVisible(true)
         );
-        setIsPopUpVisible(true);
       }}
     >
       invite player
@@ -174,14 +175,10 @@ const Home = () => {
         isVisible={isPopUpVisible}
         setVisible={setIsPopUpVisible}
       >
-        {gameLink}
-        <button
-          onClick={() => {
-            setIsPopUpVisible(false);
-          }}
-        >
-          Close
-        </button>
+        <div className="Game-Link">{gameLink}</div>
+        <CopyTextButton textToCopy={gameLink} id={gameLink}>
+          Copy Link
+        </CopyTextButton>
       </PopUp>
       <div className="Home-Body">
         <button

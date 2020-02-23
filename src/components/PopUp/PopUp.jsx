@@ -8,7 +8,10 @@ const PopUp = props => {
       onClick={() => setVisible(false)}
     >
       <div className="PopUp" onClick={e => e.stopPropagation()}>
-        <div className="Message">{message}</div>
+        <div className="Top-Bar">
+          <div className="Message">{message}</div>
+          <button onClick={() => setVisible(false)}>X</button>
+        </div>
         <div className="Content">{children}</div>
       </div>
     </div>

@@ -1,0 +1,21 @@
+.Copy-Text-Button {
+  float: right;
+  margin-top: 20px;
+  font-size: 23px;
+  padding: 10px 25px 13px 25px;
+  border-radius: 100px;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+  text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.5);
+  &.Unclicked {
+    background-color: #f5b81b;
+  }
+  &.Unclicked:hover {
+    background-color: #c99613;
+  }
+  &.Clicked {
+    background-color: #12ca3a;
+  }
+  &.Clicked:hover {
+    background-color: #10a730;
+  }
+}

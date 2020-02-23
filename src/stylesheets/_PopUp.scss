@@ -3,22 +3,35 @@
   height: 100vh;
   display: none;
   position: absolute;
-  background-color: rgba(30, 30, 30, 0.4);
+  background-color: rgba(0, 0, 0, 0.75);
   top: 0;
   &.visible {
     display: flex;
     justify-content: center;
   }
   .PopUp {
-    width: 500px;
+    width: 800px;
     height: fit-content;
     margin-top: 160px;
-    padding: 50px;
-    padding-top: 10px;
+    padding: 20px 50px 20px 50px;
     border-radius: 10px;
-    background-color: rgb(167, 167, 167);
-    .Message {
-      text-align: center;
+    background-color: #f3f3f3;
+    .Top-Bar {
+      display: flex;
+      justify-content: space-between;
+      .Message {
+        font-size: 24px;
+        color: #444444;
+      }
+      button {
+        margin-right: -35px;
+        margin-top: -20px;
+        font-size: 17px;
+        color: #444444;
+      }
+    }
+    .Content {
+      padding-top: 20px;
     }
   }
 }
