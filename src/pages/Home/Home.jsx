@@ -36,7 +36,7 @@ function getTimeAgo(secs) {
   const weeks = Math.floor(secondsDifference / 60 / 60 / 24 / 7);
   const months = Math.floor(secondsDifference / 60 / 60 / 24 / 30);
   const years = Math.floor(secondsDifference / 60 / 60 / 24 / 365);
-  if (minutes === 0) {
+  if (minutes <= 0) {
     return "<1 minute ago";
   }
   if (hours === 0) {
