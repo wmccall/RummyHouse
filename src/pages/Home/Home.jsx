@@ -57,7 +57,13 @@ function getTimeAgo(secs) {
   return `${years} year${years === 1 ? "" : "s"} ago`;
 }
 
-const makeGameButton = (games, key, setIsPopUpVisible, setGameLink) => {
+const makeGameButton = (
+  games,
+  key,
+  setIsPopUpVisible,
+  setGameLink,
+  history
+) => {
   const gameData = games[key];
   console.log("make game button");
   console.log(gameData);
@@ -76,7 +82,12 @@ const makeGameButton = (games, key, setIsPopUpVisible, setGameLink) => {
     </button>
   );
   return (
-    <button className="Game-Button">
+    <button
+      className="Game-Button"
+      onClick={() => {
+        history.push(`${ROUTES.GAME}?gameID=${key}`);
+      }}
+    >
       <div className="Contents">
         <img src={peachPattern} alt="pattern" />
         <div className="Left">
@@ -93,7 +104,7 @@ const makeGameButton = (games, key, setIsPopUpVisible, setGameLink) => {
   );
 };
 
-const Home = () => {
+const Home = props => {
   const firebaseContext = useContext(FirebaseContext);
   const { IDToken, firebase, userCredential } = firebaseContext;
   const [p1Games, setP1Games] = useState({});
@@ -136,6 +147,8 @@ const Home = () => {
             otherPlayer: game.player2Name
           };
         });
+        //TODO: fix when games are deleted, games dont disappear
+        //TODO: fix when game updates, time is not updated
         setP1Games(prevGames => {
           return { ...tempGames, ...prevGames };
         });
@@ -150,6 +163,8 @@ const Home = () => {
             otherPlayer: game.player1Name
           };
         });
+        //TODO: fix when games are deleted, games dont disappear
+        //TODO: fix when game updates, time is not updated
         setP2Games(prevGames => {
           return { ...tempGames, ...prevGames };
         });
@@ -160,11 +175,23 @@ const Home = () => {
   const generateGames = (p1Games, p2Games) => {
     const p1GameKeys = Object.keys(p1Games);
     const localP1Games = p1GameKeys.map(key =>
-      makeGameButton(p1Games, key, setIsPopUpVisible, setGameLink)
+      makeGameButton(
+        p1Games,
+        key,
+        setIsPopUpVisible,
+        setGameLink,
+        props.history
+      )
     );
     const p2GameKeys = Object.keys(p2Games);
     const localP2Games = p2GameKeys.map(key =>
-      makeGameButton(p2Games, key, setIsPopUpVisible, setGameLink)
+      makeGameButton(
+        p2Games,
+        key,
+        setIsPopUpVisible,
+        setGameLink,
+        props.history
+      )
     );
     return [...localP1Games, ...localP2Games];
   };
