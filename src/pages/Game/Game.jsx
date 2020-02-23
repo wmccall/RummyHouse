@@ -8,7 +8,7 @@ const Game = props => {
   useEffect(() => {
     document.title = "Game";
   });
-  return <div>Game</div>;
+  return <div className="Game"></div>;
 };
 
 export default compose(withRouter)(Game);

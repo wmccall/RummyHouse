@@ -71,11 +71,12 @@ const makeGameButton = (
     `vs ${gameData.otherPlayer}`
   ) : (
     <button
-      onClick={() => {
+      onClick={e => {
         setGameLink(
-          `${URLS.FRONT_END_SERVER}${ROUTES.JOIN_GAME}?gameID=${key}`,
+          `${URLS.FRONT_END_SERVER}${ROUTES.JOIN_GAME}/${key}`,
           setIsPopUpVisible(true)
         );
+        e.stopPropagation();
       }}
     >
       invite player
@@ -85,7 +86,7 @@ const makeGameButton = (
     <button
       className="Game-Button"
       onClick={() => {
-        history.push(`${ROUTES.GAME}?gameID=${key}`);
+        history.push(`${ROUTES.GAME}/${key}`);
       }}
     >
       <div className="Contents">
