@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { ReactSVG } from "react-svg";
 
 import LoginSignup from "../../components/LoginSignup";
 import LandingSVG from "../../resources/RummyLandingImage.svg";
@@ -62,7 +61,7 @@ const Landing = () => {
         <LoginSignup isLogin={false} message="Sign up free" />
       </div>
       <div className="Landing-Right">
-        <ReactSVG className="LandingSVG" src={LandingSVG} />
+        <img className="LandingSVG" src={LandingSVG} alt="people playing" />
       </div>
     </div>
   );

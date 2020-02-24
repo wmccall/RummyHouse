@@ -5,9 +5,22 @@ import { FirebaseContext } from "../../context";
 import * as URLS from "../../constants/urls";
 import * as ROUTES from "../../constants/routes";
 
-import peachPattern from "../../resources/peachpattern.png";
+import bluePattern from "../../resources/bluePattern.svg";
+import greenPattern from "../../resources/greenPattern.svg";
+import orangePattern from "../../resources/orangePattern.svg";
+import pinkPattern from "../../resources/pinkPattern.svg";
 import PopUp from "../../components/PopUp";
 import CopyTextButton from "../../components/CopyTextButton";
+import DeleteButton from "../../components/DeleteButton";
+
+const PATTERNS = [bluePattern, greenPattern, orangePattern, pinkPattern];
+
+const stringToNum = str => {
+  const stringSplit = str.split("");
+  var num = 0;
+  stringSplit.forEach(char => (num += char.charCodeAt(0)));
+  return num;
+};
 
 const createGameHandler = IDToken => {
   var headers = new Headers();
@@ -26,10 +39,7 @@ const createGameHandler = IDToken => {
 
 function getTimeAgo(secs) {
   var nowSeconds = Date.now() / 1000;
-  console.log(secs);
-  console.log(nowSeconds);
   var secondsDifference = nowSeconds - secs;
-  console.log(secondsDifference);
   const minutes = Math.floor(secondsDifference / 60);
   const hours = Math.floor(secondsDifference / 60 / 60);
   const days = Math.floor(secondsDifference / 60 / 60 / 24);
@@ -57,16 +67,8 @@ function getTimeAgo(secs) {
   return `${years} year${years === 1 ? "" : "s"} ago`;
 }
 
-const makeGameButton = (
-  games,
-  key,
-  setIsPopUpVisible,
-  setGameLink,
-  history
-) => {
-  const gameData = games[key];
-  console.log("make game button");
-  console.log(gameData);
+const makeGameButton = (game, key, setIsPopUpVisible, setGameLink, history) => {
+  const gameData = game;
   const versus = gameData.otherPlayer ? (
     `vs ${gameData.otherPlayer}`
   ) : (
@@ -90,7 +92,7 @@ const makeGameButton = (
       }}
     >
       <div className="Contents">
-        <img src={peachPattern} alt="pattern" />
+        <img src={PATTERNS[gameData.colorNumber]} alt="pattern" />
         <div className="Left">
           <div className="Versus">{versus}</div>
         </div>
@@ -98,7 +100,7 @@ const makeGameButton = (
           <div className="Timing">{getTimeAgo(gameData.timestamp.seconds)}</div>
         </div>
         <div className="Right">
-          <button>delete</button>
+          <DeleteButton onClick={() => console.log("delete")} />
         </div>
       </div>
     </button>
@@ -125,7 +127,6 @@ const Home = props => {
   }, [userCredential]);
 
   const loadGames = () => {
-    console.log(userCredential);
     if (userCredential && userCredential.uid) {
       var queryP1ID = firebase
         .firestore()
@@ -145,7 +146,8 @@ const Home = props => {
           var game = change.doc.data();
           tempGames[change.doc.id] = {
             timestamp: game.timestamp,
-            otherPlayer: game.player2Name
+            otherPlayer: game.player2Name,
+            colorNumber: stringToNum(change.doc.id) % 4
           };
         });
         //TODO: fix when games are deleted, games dont disappear
@@ -161,7 +163,8 @@ const Home = props => {
           var game = change.doc.data();
           tempGames[change.doc.id] = {
             timestamp: game.timestamp,
-            otherPlayer: game.player1Name
+            otherPlayer: game.player1Name,
+            colorNumber: stringToNum(change.doc.id) % 4
           };
         });
         //TODO: fix when games are deleted, games dont disappear
@@ -177,7 +180,7 @@ const Home = props => {
     const p1GameKeys = Object.keys(p1Games);
     const localP1Games = p1GameKeys.map(key =>
       makeGameButton(
-        p1Games,
+        p1Games[key],
         key,
         setIsPopUpVisible,
         setGameLink,
@@ -187,7 +190,7 @@ const Home = props => {
     const p2GameKeys = Object.keys(p2Games);
     const localP2Games = p2GameKeys.map(key =>
       makeGameButton(
-        p2Games,
+        p2Games[key],
         key,
         setIsPopUpVisible,
         setGameLink,

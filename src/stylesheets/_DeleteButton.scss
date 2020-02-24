@@ -1,0 +1,10 @@
+.Delete-Button {
+  padding: 10px 16px 10px 16px;
+  border-radius: 100%;
+  img {
+    width: 20px;
+  }
+  &:hover {
+    background-color: #313131;
+  }
+}
