@@ -30,11 +30,10 @@
     }
   }
   .Landing-Right {
-    width: calc(50vw - 100px);
     padding-right: 140px;
     height: fit-content;
-    div {
-      height: fit-content;
+    .LandingSVG {
+      width: calc(50vw - 100px);
     }
   }
 }

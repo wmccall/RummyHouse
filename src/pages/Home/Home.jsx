@@ -3,24 +3,11 @@ import { withRouter } from "react-router-dom";
 import { compose } from "recompose";
 import { FirebaseContext } from "../../context";
 import * as URLS from "../../constants/urls";
-import * as ROUTES from "../../constants/routes";
+import * as UTIL from "../../constants/util";
 
-import bluePattern from "../../resources/bluePattern.svg";
-import greenPattern from "../../resources/greenPattern.svg";
-import orangePattern from "../../resources/orangePattern.svg";
-import pinkPattern from "../../resources/pinkPattern.svg";
 import PopUp from "../../components/PopUp";
 import CopyTextButton from "../../components/CopyTextButton";
-import DeleteButton from "../../components/DeleteButton";
-
-const PATTERNS = [bluePattern, greenPattern, orangePattern, pinkPattern];
-
-const stringToNum = str => {
-  const stringSplit = str.split("");
-  var num = 0;
-  stringSplit.forEach(char => (num += char.charCodeAt(0)));
-  return num;
-};
+import GameButton from "../../components/GameButton";
 
 const createGameHandler = IDToken => {
   var headers = new Headers();
@@ -37,73 +24,15 @@ const createGameHandler = IDToken => {
     .catch(error => console.log("error", error));
 };
 
-function getTimeAgo(secs) {
-  var nowSeconds = Date.now() / 1000;
-  var secondsDifference = nowSeconds - secs;
-  const minutes = Math.floor(secondsDifference / 60);
-  const hours = Math.floor(secondsDifference / 60 / 60);
-  const days = Math.floor(secondsDifference / 60 / 60 / 24);
-  const weeks = Math.floor(secondsDifference / 60 / 60 / 24 / 7);
-  const months = Math.floor(secondsDifference / 60 / 60 / 24 / 30);
-  const years = Math.floor(secondsDifference / 60 / 60 / 24 / 365);
-  if (minutes <= 0) {
-    return "<1 minute ago";
-  }
-  if (hours === 0) {
-    return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
-  }
-  if (days === 0) {
-    return `${hours} hour${hours === 1 ? "" : "s"} ago`;
-  }
-  if (weeks === 0) {
-    return `${days} day${days === 1 ? "" : "s"} ago`;
-  }
-  if (months === 0) {
-    return `${weeks} week${weeks === 1 ? "" : "s"} ago`;
-  }
-  if (years === 0) {
-    return `${months} month${months === 1 ? "" : "s"} ago`;
-  }
-  return `${years} year${years === 1 ? "" : "s"} ago`;
-}
-
 const makeGameButton = (game, key, setIsPopUpVisible, setGameLink, history) => {
-  const gameData = game;
-  const versus = gameData.otherPlayer ? (
-    `vs ${gameData.otherPlayer}`
-  ) : (
-    <button
-      onClick={e => {
-        setGameLink(
-          `${URLS.FRONT_END_SERVER}${ROUTES.JOIN_GAME}/${key}`,
-          setIsPopUpVisible(true)
-        );
-        e.stopPropagation();
-      }}
-    >
-      invite player
-    </button>
-  );
   return (
-    <button
-      className="Game-Button"
-      onClick={() => {
-        history.push(`${ROUTES.GAME}/${key}`);
-      }}
-    >
-      <div className="Contents">
-        <img src={PATTERNS[gameData.colorNumber]} alt="pattern" />
-        <div className="Left">
-          <div className="Versus">{versus}</div>
-        </div>
-        <div className="Left">
-          <div className="Timing">{getTimeAgo(gameData.timestamp.seconds)}</div>
-        </div>
-        <div className="Right">
-          <DeleteButton onClick={() => console.log("delete")} />
-        </div>
-      </div>
-    </button>
+    <GameButton
+      gameData={game}
+      key={key}
+      history={history}
+      setGameLink={setGameLink}
+      setIsPopUpVisible={setIsPopUpVisible}
+    />
   );
 };
 
@@ -147,7 +76,7 @@ const Home = props => {
           tempGames[change.doc.id] = {
             timestamp: game.timestamp,
             otherPlayer: game.player2Name,
-            colorNumber: stringToNum(change.doc.id) % 4
+            colorNumber: UTIL.stringToNum(change.doc.id) % 4
           };
         });
         //TODO: fix when games are deleted, games dont disappear
@@ -164,7 +93,7 @@ const Home = props => {
           tempGames[change.doc.id] = {
             timestamp: game.timestamp,
             otherPlayer: game.player1Name,
-            colorNumber: stringToNum(change.doc.id) % 4
+            colorNumber: UTIL.stringToNum(change.doc.id) % 4
           };
         });
         //TODO: fix when games are deleted, games dont disappear
