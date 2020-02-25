@@ -11,22 +11,23 @@
     justify-content: flex-start;
     .Create-Game-Button {
       font-size: 24px;
-      margin-right: 40px;
+      padding: 0;
       border: 2px dashed #909090;
       border-radius: 10px;
       color: #909090;
-      margin: 20px 25px 15px 15px;
-      width: 348px;
-      height: 263px;
+      margin: 10px 20px 10px 10px;
+      width: 360px;
+      height: 272px;
       &:hover {
         background-color: #707070a6;
         color: white;
       }
     }
     .Game-Button {
+      padding: 0;
       font-size: 24px;
-      width: 390px;
-      height: 424px;
+      width: 380px;
+      height: 430px;
       border-radius: 10px;
       margin: 0 10px 25px 0;
       &:hover {
@@ -36,7 +37,7 @@
       .Contents {
         .pattern {
           border-radius: 10px;
-          margin: 15px;
+          margin: -5px 10px 10px 10px;
         }
         .Left {
           padding-left: 20px;
@@ -48,8 +49,13 @@
           width: 100%;
           display: flex;
           justify-content: flex-end;
+          .hide {
+            visibility: hidden;
+          }
+          button {
+            margin-right: 15px;
+          }
           .Link-Button {
-            margin-right: 10px;
             padding: 10px 14px 10px 14px;
             border-radius: 100%;
             img {
@@ -60,15 +66,9 @@
             }
           }
         }
-        .Versus > button {
+        .Versus {
           font-size: 30px;
-          padding-right: 20px;
-          padding-left: 20px;
-          padding-bottom: 3px;
-          border-radius: 40px;
-          &:hover {
-            background-color: #464545;
-          }
+          font-weight: 700;
         }
         .Timing {
           font-size: 17px;

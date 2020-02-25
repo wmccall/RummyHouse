@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import closedCan from "../../resources/closedCan.svg";
-import openCan from "../../resources/openCan.svg";
+import closedCan from "../../resources/svg/closedCan.svg";
+import openCan from "../../resources/svg/openCan.svg";
 
 const DeleteButton = props => {
   const { onClick } = props;

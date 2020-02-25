@@ -28,7 +28,7 @@ const makeGameButton = (game, key, setIsPopUpVisible, setGameLink, history) => {
   return (
     <GameButton
       gameData={game}
-      key={key}
+      gameKey={key}
       history={history}
       setGameLink={setGameLink}
       setIsPopUpVisible={setIsPopUpVisible}
@@ -107,15 +107,15 @@ const Home = props => {
 
   const generateGames = (p1Games, p2Games) => {
     const p1GameKeys = Object.keys(p1Games);
-    const localP1Games = p1GameKeys.map(key =>
-      makeGameButton(
+    const localP1Games = p1GameKeys.map(key => {
+      return makeGameButton(
         p1Games[key],
         key,
         setIsPopUpVisible,
         setGameLink,
         props.history
-      )
-    );
+      );
+    });
     const p2GameKeys = Object.keys(p2Games);
     const localP2Games = p2GameKeys.map(key =>
       makeGameButton(

@@ -13,6 +13,7 @@
   .Title {
     padding-left: 140px;
     font-size: 45px;
+    font-weight: 700;
     text-decoration: none;
     color: #ffffff;
   }
@@ -31,6 +32,9 @@
         border-radius: 40px;
         &:hover {
           background-color: #707070;
+        }
+        div {
+          font-weight: 400;
         }
       }
     }

@@ -4,7 +4,7 @@ import { ReactSVG } from "react-svg";
 import * as UTIL from "../../constants/util";
 
 import LoginSignup from "../../components/LoginSignup";
-import LandingSVG from "../../resources/RummyLandingImage.svg";
+import LandingSVG from "../../resources/svg/RummyLandingImage.svg";
 
 const PLAYERS = [
   "college friend.",
