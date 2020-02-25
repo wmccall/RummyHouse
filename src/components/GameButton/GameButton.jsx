@@ -12,6 +12,7 @@ import bluePattern from "../../resources/bluePattern.svg";
 import greenPattern from "../../resources/greenPattern.svg";
 import orangePattern from "../../resources/orangePattern.svg";
 import pinkPattern from "../../resources/pinkPattern.svg";
+import linkIcon from "../../resources/link.svg";
 
 const PATTERNS = [bluePattern, greenPattern, orangePattern, pinkPattern];
 
@@ -19,21 +20,9 @@ const GameButton = props => {
   var { history } = props;
   const { key, gameData, setGameLink, setIsPopUpVisible } = props;
 
-  const versus = gameData.otherPlayer ? (
-    `vs ${gameData.otherPlayer}`
-  ) : (
-    <button
-      onClick={e => {
-        setGameLink(
-          `${URLS.FRONT_END_SERVER}${ROUTES.JOIN_GAME}/${key}`,
-          setIsPopUpVisible(true)
-        );
-        e.stopPropagation();
-      }}
-    >
-      invite player
-    </button>
-  );
+  const versus = gameData.otherPlayer
+    ? `vs ${gameData.otherPlayer}`
+    : "invite player";
 
   return (
     <button
@@ -43,7 +32,11 @@ const GameButton = props => {
       }}
     >
       <div className="Contents">
-        <img src={PATTERNS[gameData.colorNumber]} alt="pattern" />
+        <img
+          className="pattern"
+          src={PATTERNS[gameData.colorNumber]}
+          alt="pattern"
+        />
         <div className="Left">
           <div className="Versus">{versus}</div>
         </div>
@@ -53,6 +46,18 @@ const GameButton = props => {
           </div>
         </div>
         <div className="Right">
+          <button
+            onClick={e => {
+              setGameLink(
+                `${URLS.FRONT_END_SERVER}${ROUTES.JOIN_GAME}/${key}`,
+                setIsPopUpVisible(true)
+              );
+              e.stopPropagation();
+            }}
+            className="Link-Button"
+          >
+            <img src={linkIcon} alt="link" />
+          </button>
           <DeleteButton onClick={() => console.log("delete")} />
         </div>
       </div>

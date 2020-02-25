@@ -10,7 +10,7 @@ export const getTimeAgo = secs => {
   const months = Math.floor(secondsDifference / 60 / 60 / 24 / 30);
   const years = Math.floor(secondsDifference / 60 / 60 / 24 / 365);
   if (minutes <= 0) {
-    return "<1 minute ago";
+    return "just now";
   }
   if (hours === 0) {
     return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
