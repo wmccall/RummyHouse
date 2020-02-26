@@ -18,8 +18,16 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "test": "react-scripts test --verboase -env=jsdom",
+    "test:cover": "npm test --coverage --watchAll",
+    "eject": "react-scripts eject",
+    "lint:js": "eslint src",
+    "lint:css": "stylelint './src/**/{styled.js,Styled.jsx,*.scss}'",
+    "lint:todo": "fixme './src/**/*.{js,jsx}'",
+    "lint": "npm-run-all lint:todo lint:css lint:js",
+    "lint:js:fix": "npm run lint:js -- --fix",
+    "lint:css:fix": "npm run lint:css -- --fix",
+    "lint:fix": "npm-run-all lint:css:fix lint:js:fix"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -35,5 +43,29 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-react-app": "^9.0.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^4.3.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.13.0",
+    "fixme": "^0.5.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^1.17.1",
+    "prop-types": "^15.7.2",
+    "stylelint": "^13.2.0",
+    "stylelint-config-recommended": "^3.0.0",
+    "stylelint-config-recommended-scss": "^4.2.0",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-order": "^4.0.0",
+    "stylelint-processor-styled-components": "^1.10.0",
+    "stylelint-scss": "^3.14.2"
   }
 }

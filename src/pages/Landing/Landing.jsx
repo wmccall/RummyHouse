@@ -1,28 +1,28 @@
-import React, { useState, useEffect } from "react";
-import { ReactSVG } from "react-svg";
+import React, { useState, useEffect } from 'react';
+import { ReactSVG } from 'react-svg';
 
-import * as UTIL from "../../constants/util";
+import * as UTIL from '../../constants/util';
 
-import LoginSignup from "../../components/LoginSignup";
-import LandingSVG from "../../resources/svg/RummyLandingImage.svg";
+import LoginSignup from '../../components/LoginSignup';
+import LandingSVG from '../../resources/svg/RummyLandingImage.svg';
 
 const PLAYERS = [
-  "college friend.",
-  "roommate.",
-  "sister.",
-  "brother.",
-  "mom.",
-  "dad.",
-  "grandma.",
-  "grandpa.",
-  "coworker.",
-  "best friend.",
-  "uncle.",
-  "aunt.",
-  "mail man.",
-  "waiter.",
-  "waitress.",
-  "uber driver."
+  'college friend.',
+  'roommate.',
+  'sister.',
+  'brother.',
+  'mom.',
+  'dad.',
+  'grandma.',
+  'grandpa.',
+  'coworker.',
+  'best friend.',
+  'uncle.',
+  'aunt.',
+  'mail man.',
+  'waiter.',
+  'waitress.',
+  'uber driver.',
 ];
 
 function getRandomPlayer() {
@@ -35,7 +35,7 @@ const Landing = () => {
     setCurrentPlayer(getRandomPlayer());
   }, 2000);
   useEffect(() => {
-    document.title = "Rummy House";
+    document.title = 'Rummy House';
   });
   return (
     <div className="Landing">
@@ -46,7 +46,7 @@ const Landing = () => {
         <LoginSignup isLogin={false} message="Sign up free" />
       </div>
       <div className="Landing-Right">
-        <ReactSVG className="LandingSVG" src={LandingSVG} />{" "}
+        <ReactSVG className="LandingSVG" src={LandingSVG} />{' '}
       </div>
     </div>
   );

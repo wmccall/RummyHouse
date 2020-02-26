@@ -1,3 +1,3 @@
-import GameButton from "./GameButton";
+import GameButton from './GameButton';
 
 export default GameButton;

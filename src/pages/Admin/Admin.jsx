@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
-import { withRouter } from "react-router-dom";
-import { compose } from "recompose";
+import React, { useEffect } from 'react';
+import { withRouter } from 'react-router-dom';
+import { compose } from 'recompose';
 
 const Admin = () => {
   useEffect(() => {
-    document.title = "Admin";
+    document.title = 'Admin';
   });
   return <div>Admin</div>;
 };

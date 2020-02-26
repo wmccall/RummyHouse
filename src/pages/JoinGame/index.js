@@ -1,3 +1,3 @@
-import JoinGame from "./JoinGame";
+import JoinGame from './JoinGame';
 
 export default JoinGame;

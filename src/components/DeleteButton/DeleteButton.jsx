@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import closedCan from "../../resources/svg/closedCan.svg";
-import openCan from "../../resources/svg/openCan.svg";
+import React, { useState } from 'react';
+import closedCan from '../../resources/svg/closedCan.svg';
+import openCan from '../../resources/svg/openCan.svg';
 
 const DeleteButton = props => {
   const { onClick } = props;
@@ -8,12 +8,15 @@ const DeleteButton = props => {
 
   return (
     <button
-      className={`Delete-Button ${hover ? "Hover" : ""}`}
+      className={`Delete-Button ${hover ? 'Hover' : ''}`}
       onClick={e => {
         onClick();
         e.stopPropagation();
       }}
+      type="button"
       onMouseEnter={() => setHover(true)}
+      onMouseOver={() => setHover(true)}
+      onFocus={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
       <div>

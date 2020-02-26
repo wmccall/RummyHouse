@@ -1,40 +1,50 @@
-import React, { useContext } from "react";
-import PropTypes from "prop-types";
+import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
 
-import { FirebaseContext } from "../../context";
-import * as URLS from "../../constants/urls";
+import { FirebaseContext } from '../../context';
+import * as URLS from '../../constants/urls';
 
 const LoginSignup = props => {
   const firebaseContext = useContext(FirebaseContext);
   const { signInPopup } = firebaseContext;
   const { isLogin, message } = props;
 
+  const getText = () => {
+    if (message) {
+      return message;
+    }
+    if (isLogin) {
+      return 'Login';
+    }
+    return 'Sign Up';
+  };
+
   const signInHandler = () => {
     signInPopup()
       .then(authData => {
-        var headers = new Headers();
-        headers.append("id_token", authData[1]);
-        headers.append("name", authData[0].user.displayName);
-        var requestOptions = {
-          method: "POST",
-          headers: headers,
-          redirect: "follow"
+        const headers = new Headers();
+        headers.append('id_token', authData[1]);
+        headers.append('name', authData[0].user.displayName);
+        const requestOptions = {
+          method: 'POST',
+          headers,
+          redirect: 'follow',
         };
 
         fetch(`${URLS.BACKEND_SERVER}/signUp`, requestOptions)
           .then(response => response.text())
           .then(result => console.log(result))
-          .catch(error => console.log("error", error));
+          .catch(error => console.log('error', error));
       })
-      .catch(message => {
-        console.log(message);
+      .catch(err => {
+        console.log(err);
       });
   };
 
   return (
-    <div className={isLogin ? "LoginButton" : "SignupButton"}>
-      <button onClick={() => signInHandler()}>
-        <div>{!!message ? message : isLogin ? "Login" : "Sign Up"}</div>
+    <div className={isLogin ? 'LoginButton' : 'SignupButton'}>
+      <button onClick={() => signInHandler()} type="button">
+        <div>{getText()}</div>
       </button>
     </div>
   );
@@ -44,10 +54,10 @@ export default LoginSignup;
 
 LoginSignup.propTypes = {
   isLogin: PropTypes.bool,
-  message: PropTypes.string
+  message: PropTypes.string,
 };
 
 LoginSignup.defaultProps = {
   isLogin: true,
-  message: null
+  message: null,
 };

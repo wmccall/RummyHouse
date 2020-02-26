@@ -1,8 +1,8 @@
-import React, { createContext, useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import app from "firebase/app";
-import firebase from "firebase";
-import "firebase/auth";
+import React, { createContext, useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import app from 'firebase/app';
+import firebase from 'firebase';
+import 'firebase/auth';
 
 export const FirebaseContext = createContext({});
 
@@ -25,7 +25,7 @@ export const FirebaseProvider = props => {
         .auth()
         .currentUser.getIdToken(true)
         .then(idToken => idToken)
-        .catch(async _ => {
+        .catch(async () => {
           await signOut();
           return null;
         });
@@ -85,7 +85,7 @@ export const FirebaseProvider = props => {
     waitingForLogin,
     isLoggedIn,
     IDToken,
-    firebase
+    firebase,
   };
 
   // pass the value in provider and return
@@ -99,9 +99,9 @@ export const FirebaseProvider = props => {
 export const { Consumer } = FirebaseContext;
 
 FirebaseContext.propTypes = {
-  authCredential: PropTypes.object
+  authCredential: PropTypes.object,
 };
 
 FirebaseContext.defaultProps = {
-  userLocs: null
+  userLocs: null,
 };

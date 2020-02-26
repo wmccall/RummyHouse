@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 const CopyTextButton = props => {
   const { textToCopy, children } = props;
@@ -10,22 +10,28 @@ const CopyTextButton = props => {
 
   const copyText = text => {
     navigator.clipboard.writeText(text).then(
-      function() {
+      () => {
         setClicked(true);
       },
-      function(err) {
-        console.error("Async: Could not copy text: ", err);
-      }
+      err => {
+        console.error('Async: Could not copy text: ', err);
+      },
     );
   };
 
   return (
-    <button
-      className={`Copy-Text-Button ${clicked ? "Clicked" : "Unclicked"}`}
-      onClick={() => copyText(textToCopy)}
-    >
-      {children}
-    </button>
+    <div className="Copy-Text">
+      <div className={`Copy-Message ${clicked ? 'visible' : 'hidden'}`}>
+        Link copied to clipboard!
+      </div>
+      <button
+        className="Copy-Text-Button"
+        onClick={() => copyText(textToCopy)}
+        type="button"
+      >
+        {children}
+      </button>
+    </div>
   );
 };
 

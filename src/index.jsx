@@ -1,10 +1,10 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import app from "firebase/app";
-import App from "./App";
-import "./stylesheets/index.scss";
-import * as serviceWorker from "./serviceWorker";
-import { FirebaseProvider } from "./context";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import app from 'firebase/app';
+import App from './App';
+import './stylesheets/index.scss';
+import * as serviceWorker from './serviceWorker';
+import { FirebaseProvider } from './context';
 
 // import "./resources/font/RedHatDisplay-Black.otf";
 // import "./resources/font/RedHatDisplay-BlackItalic.otf";
@@ -23,7 +23,7 @@ const firebaseConfig = {
   storageBucket: process.env.REACT_APP_STORAGE_BUCKET,
   messagingSenderId: process.env.REACT_APP_MESSAGING_SENDER_ID,
   appId: process.env.REACT_APP_APP_ID,
-  measurementId: process.env.REACT_APP_MEASUREMENT_ID
+  measurementId: process.env.REACT_APP_MEASUREMENT_ID,
 };
 
 app.initializeApp(firebaseConfig);
@@ -32,7 +32,7 @@ ReactDOM.render(
   <FirebaseProvider>
     <App />
   </FirebaseProvider>,
-  document.getElementById("root")
+  document.getElementById('root'),
 );
 
 // If you want your app to work offline and load faster, you can change

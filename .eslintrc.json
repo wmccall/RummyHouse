@@ -1,0 +1,38 @@
+{
+  "extends": [
+    "airbnb",
+    "plugin:prettier/recommended",
+    "prettier",
+    "prettier/react"
+  ],
+  "parser": "babel-eslint",
+  "env": {
+    "browser": true,
+    "jest": true,
+    "es6": true,
+    "node": true
+  },
+  "rules": {
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": true
+      }
+    ],
+    "no-param-reassign": [
+      "error",
+      {
+        "props": true,
+        "ignorePropertyModificationsFor": ["draftState"]
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["*.js", "*.jsx"],
+      "rules": {
+        "react/prop-types": "off"
+      }
+    }
+  ]
+}

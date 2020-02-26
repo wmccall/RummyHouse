@@ -1,0 +1,10 @@
+{
+  "presets": [
+    "react-app",
+    "@babel/env",
+    "@babel/react"
+  ],
+  "plugins": [
+    "babel-plugin-styled-components"
+  ]
+}

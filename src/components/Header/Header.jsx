@@ -1,19 +1,18 @@
-import React, { useContext, useEffect, useState } from "react";
-import { withRouter, Link } from "react-router-dom";
-import { compose } from "recompose";
-import { FirebaseContext } from "../../context";
-import * as ROUTES from "../../constants/routes";
+import React, { useContext, useEffect, useState } from 'react';
+import { withRouter, Link } from 'react-router-dom';
+import { compose } from 'recompose';
+import { FirebaseContext } from '../../context';
+import * as ROUTES from '../../constants/routes';
 
-import LoginSignup from "../LoginSignup/LoginSignup";
-import Logout from "../Logout/Logout";
+import LoginSignup from '../LoginSignup';
+import UserButton from '../UserButton';
 
 const Header = props => {
-  const [currentLocation, setCurrentLocation] = useState(
-    props.location.pathname
-  );
+  const { location } = props;
+  const [currentLocation, setCurrentLocation] = useState(location.pathname);
   useEffect(() => {
     setCurrentLocation(props.location.pathname);
-  }, [props.location.pathname]);
+  }, [location.pathname]);
 
   const firebaseContext = useContext(FirebaseContext);
   const { waitingForLogin, isLoggedIn } = firebaseContext;
@@ -24,17 +23,17 @@ const Header = props => {
   } else if (isLoggedIn && currentLocation === ROUTES.LANDING) {
     props.history.push(ROUTES.HOME);
   }
-  var HeaderColor = "BG-Gray";
+  let HeaderColor = 'BG-Gray';
 
   switch (props.location.pathname) {
     case ROUTES.LANDING:
-      HeaderColor = "BG-Gray";
+      HeaderColor = 'BG-Gray';
       break;
     case ROUTES.HOME:
-      HeaderColor = "BG-Gray";
+      HeaderColor = 'BG-Gray';
       break;
     default:
-      HeaderColor = "BG-Green";
+      HeaderColor = 'BG-Green';
   }
 
   return (
@@ -48,11 +47,7 @@ const Header = props => {
           <LoginSignup isLogin={false} />
         </div>
       )}
-      {isLoggedIn && (
-        <div className="Logout">
-          <Logout />
-        </div>
-      )}
+      {isLoggedIn && <UserButton />}
     </div>
   );
 };

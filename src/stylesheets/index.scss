@@ -1,35 +1,41 @@
 @charset 'UTF-8';
 
-@import "./Header.scss";
-@import "./Landing.scss";
-@import "./Home.scss";
-@import "./Game.scss";
-@import "./PopUp.scss";
-@import "./CopyTextButton.scss";
-@import "./DeleteButton.scss";
-@import "./red-hat-font.scss";
+@import './Header.scss';
+@import './Landing.scss';
+@import './Home.scss';
+@import './Game.scss';
+@import './PopUp.scss';
+@import './CopyTextButton.scss';
+@import './DeleteButton.scss';
+@import './UserButton.scss';
+@import './red-hat-font.scss';
 
-@include printRedHatFont(300, "Regular", $familyName: "RedHatDisplay");
+@include printRedHatFont(300, 'Regular', $familyName: 'RedHatDisplay');
 @include printRedHatFont(
   300,
-  "Italic",
-  $style: "italic",
-  $familyName: "RedHatDisplay"
+  'Italic',
+  $style: 'italic',
+  $familyName: 'RedHatDisplay'
 );
-@include printRedHatFont(400, "Medium", $familyName: "RedHatDisplay");
+@include printRedHatFont(400, 'Medium', $familyName: 'RedHatDisplay');
 @include printRedHatFont(
   400,
-  "MediumItalic",
-  $style: "italic",
-  $familyName: "RedHatDisplay"
+  'MediumItalic',
+  $style: 'italic',
+  $familyName: 'RedHatDisplay'
 );
-@include printRedHatFont(700, "Bold", $familyName: "RedHatDisplay");
+@include printRedHatFont(700, 'Bold', $familyName: 'RedHatDisplay');
 @include printRedHatFont(
   700,
-  "BoldItalic",
-  $style: "italic",
-  $familyName: "RedHatDisplay"
+  'BoldItalic',
+  $style: 'italic',
+  $familyName: 'RedHatDisplay'
 );
+
+* {
+  font-family: 'RedHatDisplay', sans-serif;
+  font-weight: 300;
+}
 
 *::-webkit-scrollbar-track {
   background-color: #272727;
@@ -47,11 +53,6 @@
 
 *::-webkit-scrollbar-corner {
   background: #272727;
-}
-
-* {
-  font-family: "RedHatDisplay";
-  font-weight: 300;
 }
 
 button {

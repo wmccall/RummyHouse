@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { FirebaseContext } from "../../context";
+import React, { useContext } from 'react';
+import { FirebaseContext } from '../../context';
 
 const Logout = () => {
   const firebaseContext = useContext(FirebaseContext);
@@ -11,7 +11,9 @@ const Logout = () => {
 
   return (
     <div className="LogoutLogout">
-      <button onClick={() => handleSignOut()}>Log out</button>
+      <button onClick={() => handleSignOut()} type="button">
+        Log out
+      </button>
     </div>
   );
 };
