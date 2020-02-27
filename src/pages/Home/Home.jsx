@@ -61,38 +61,55 @@ const Home = props => {
         .where('player2ID', '==', userCredential.uid);
       const queryP2ID2 = queryP2ID.orderBy('timestamp', 'desc');
 
-      // Start listening to the query.
       queryP1ID2.onSnapshot(snapshot => {
-        const tempGames = {};
+        const addUpdateGames = {};
+        const removeKeys = [];
         snapshot.docChanges().forEach(change => {
-          const game = change.doc.data();
-          tempGames[change.doc.id] = {
-            timestamp: game.timestamp,
-            otherPlayer: game.player2Name,
-            colorNumber: UTIL.stringToNum(change.doc.id) % 4,
-          };
+          if (change.type === 'removed') {
+            removeKeys.push(change.doc.id);
+          } else {
+            const game = change.doc.data();
+            addUpdateGames[change.doc.id] = {
+              timestamp: game.timestamp,
+              otherPlayer: game.player2Name,
+              colorNumber: UTIL.stringToNum(change.doc.id) % 4,
+            };
+          }
         });
-        // TODO: fix when games are deleted, games dont disappear
-        // TODO: fix when game updates, time is not updated
         setP1Games(prevGames => {
-          return { ...tempGames, ...prevGames };
+          const updatedPrevGames = { ...prevGames };
+          removeKeys.forEach(key => {
+            if (updatedPrevGames[key]) {
+              delete updatedPrevGames[key];
+            }
+          });
+          return { ...addUpdateGames, ...updatedPrevGames };
         });
       });
 
       queryP2ID2.onSnapshot(snapshot => {
-        const tempGames = {};
+        const addUpdateGames = {};
+        const removeKeys = [];
         snapshot.docChanges().forEach(change => {
-          const game = change.doc.data();
-          tempGames[change.doc.id] = {
-            timestamp: game.timestamp,
-            otherPlayer: game.player1Name,
-            colorNumber: UTIL.stringToNum(change.doc.id) % 4,
-          };
+          if (change.type === 'removed') {
+            removeKeys.push(change.doc.id);
+          } else {
+            const game = change.doc.data();
+            addUpdateGames[change.doc.id] = {
+              timestamp: game.timestamp,
+              otherPlayer: game.player1Name,
+              colorNumber: UTIL.stringToNum(change.doc.id) % 4,
+            };
+          }
         });
-        // TODO: fix when games are deleted, games dont disappear
-        // TODO: fix when game updates, time is not updated
         setP2Games(prevGames => {
-          return { ...tempGames, ...prevGames };
+          const updatedPrevGames = { ...prevGames };
+          removeKeys.forEach(key => {
+            if (updatedPrevGames[key]) {
+              delete updatedPrevGames[key];
+            }
+          });
+          return { ...addUpdateGames, ...updatedPrevGames };
         });
       });
     }
