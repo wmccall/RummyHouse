@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 
@@ -24,6 +24,10 @@ const GameButton = props => {
     UTIL.getTimeAgo(gameData.timestamp.seconds),
   );
 
+  useEffect(() => {
+    setTimeAgo(UTIL.getTimeAgo(gameData.timestamp.seconds));
+  }, [gameKey]);
+
   UTIL.useInterval(() => {
     setTimeAgo(UTIL.getTimeAgo(gameData.timestamp.seconds));
   }, 30000);
@@ -43,6 +47,7 @@ const GameButton = props => {
       onFocus={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       type="button"
+      id={gameKey}
     >
       <div className="Contents">
         <img
