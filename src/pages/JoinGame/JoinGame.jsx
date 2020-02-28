@@ -33,9 +33,14 @@ const joinGameHandler = (gameKey, IDToken, history) => {
     });
 };
 
-// TODO: handle when someone already joined or you're trying to join your game
-const getInviteBox = (otherPlayer, gameID, IDToken, history) => {
-  if (otherPlayer) {
+const getInviteBox = (
+  otherPlayer,
+  cantJoinMessage,
+  gameID,
+  IDToken,
+  history,
+) => {
+  if (otherPlayer && !cantJoinMessage) {
     return (
       <div className="Invite-Box">
         <div className="Message">{otherPlayer} invited you to join a game</div>
@@ -60,13 +65,32 @@ const getInviteBox = (otherPlayer, gameID, IDToken, history) => {
       </div>
     );
   }
-  return <div> </div>;
+  if (cantJoinMessage) {
+    return (
+      <div className="Invite-Box">
+        <div className="Message">
+          Unable to join game because {cantJoinMessage}
+        </div>
+        <button
+          className="Decline-Game-Button"
+          type="button"
+          onClick={() => {
+            history.push(ROUTES.HOME);
+          }}
+        >
+          Go Home
+        </button>
+      </div>
+    );
+  }
+  return <div></div>;
 };
 
 const JoinGame = props => {
   const firebaseContext = useContext(FirebaseContext);
   const { IDToken, firebase, userCredential } = firebaseContext;
   const [otherPlayer, setOtherPlayer] = useState(undefined);
+  const [cantJoinMessage, setCantJoinMessage] = useState(undefined);
   const { gameID } = useParams();
   const { history } = props;
   useEffect(() => {
@@ -75,10 +99,18 @@ const JoinGame = props => {
 
   const loadGame = () => {
     if (userCredential && userCredential.uid) {
-      UTIL.getGameDoc(firebase.firestore(), gameID).then(gameDoc => {
-        console.log(gameDoc.data());
-        setOtherPlayer(gameDoc.data().player1Name);
-      });
+      UTIL.getGameDoc(firebase.firestore(), gameID)
+        .then(gameDoc => {
+          setOtherPlayer(gameDoc.data().player1Name);
+          if (gameDoc.data().player2) {
+            setCantJoinMessage('the game is already full.');
+          } else if (gameDoc.data().player1.id === userCredential.uid) {
+            history.push(`${ROUTES.GAME}/${gameID}`);
+          }
+        })
+        .catch(() => {
+          setCantJoinMessage('the game doesnt exist.');
+        });
     }
   };
 
@@ -91,7 +123,7 @@ const JoinGame = props => {
 
   return (
     <div className="JoinGame">
-      {getInviteBox(otherPlayer, gameID, IDToken, history)}
+      {getInviteBox(otherPlayer, cantJoinMessage, gameID, IDToken, history)}
     </div>
   );
 };
