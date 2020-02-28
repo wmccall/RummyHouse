@@ -20,7 +20,7 @@ const joinGameHandler = (gameKey, IDToken, history) => {
   fetch(`${URLS.BACKEND_SERVER}/joinGame`, requestOptions)
     .then(response => response.text())
     .then(result => {
-      if (result === 'success') {
+      if (result === 'Success') {
         history.push(`${ROUTES.GAME}/${gameKey}`);
       } else {
         console.log(result);
