@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
+import { FirebaseContext } from '../../context';
 
 import * as ROUTES from '../../constants/routes';
 import * as UTIL from '../../constants/util';
@@ -16,7 +17,25 @@ import linkIcon from '../../resources/svg/link.svg';
 
 const PATTERNS = [bluePattern, greenPattern, orangePattern, pinkPattern];
 
+const deleteGameHandler = (gameKey, IDToken) => {
+  const headers = new Headers();
+  headers.append('id_token', IDToken);
+  headers.append('game_id', gameKey);
+  const requestOptions = {
+    method: 'POST',
+    headers,
+    redirect: 'follow',
+  };
+
+  fetch(`${URLS.BACKEND_SERVER}/deleteGame`, requestOptions)
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+};
+
 const GameButton = props => {
+  const firebaseContext = useContext(FirebaseContext);
+  const { IDToken } = firebaseContext;
   const { history } = props;
   const { gameKey, gameData, setGameLink, setIsPopUpVisible } = props;
   const [hover, setHover] = useState(false);
@@ -76,7 +95,7 @@ const GameButton = props => {
             <img src={linkIcon} alt="link" />
           </button>
           <div className={`${hover ? 'visible' : 'hide'}`}>
-            <DeleteButton onClick={() => console.log('delete')} />
+            <DeleteButton onClick={() => deleteGameHandler(gameKey, IDToken)} />
           </div>
         </div>
       </div>

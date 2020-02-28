@@ -57,3 +57,10 @@ export const useInterval = (callback, delay) => {
     }
   }, [delay]);
 };
+
+export const getGameDoc = (firestore, gameID) => {
+  return firestore
+    .collection('games')
+    .doc(gameID)
+    .get();
+};

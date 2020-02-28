@@ -69,11 +69,16 @@ const Home = props => {
             removeKeys.push(change.doc.id);
           } else {
             const game = change.doc.data();
-            addUpdateGames[change.doc.id] = {
-              timestamp: game.timestamp,
-              otherPlayer: game.player2Name,
-              colorNumber: UTIL.stringToNum(change.doc.id) % 4,
-            };
+            if (game.game_state === 'forfeit') {
+              removeKeys.push(change.doc.id);
+              // TODO: Add to ended games list, also capture "done" games
+            } else {
+              addUpdateGames[change.doc.id] = {
+                timestamp: game.timestamp,
+                otherPlayer: game.player2Name,
+                colorNumber: UTIL.stringToNum(change.doc.id) % 4,
+              };
+            }
           }
         });
         setP1Games(prevGames => {
@@ -95,11 +100,16 @@ const Home = props => {
             removeKeys.push(change.doc.id);
           } else {
             const game = change.doc.data();
-            addUpdateGames[change.doc.id] = {
-              timestamp: game.timestamp,
-              otherPlayer: game.player1Name,
-              colorNumber: UTIL.stringToNum(change.doc.id) % 4,
-            };
+            if (game.game_state === 'forfeit') {
+              removeKeys.push(change.doc.id);
+              // TODO: Add to ended games list, also capture "done" games
+            } else {
+              addUpdateGames[change.doc.id] = {
+                timestamp: game.timestamp,
+                otherPlayer: game.player1Name,
+                colorNumber: UTIL.stringToNum(change.doc.id) % 4,
+              };
+            }
           }
         });
         setP2Games(prevGames => {
