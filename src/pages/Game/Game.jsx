@@ -3,6 +3,8 @@ import { withRouter, useParams } from 'react-router-dom';
 import { compose } from 'recompose';
 import { FirebaseContext } from '../../context';
 
+import Card from '../../components/Card';
+
 import * as ROUTES from '../../constants/routes';
 import * as UTIL from '../../constants/util';
 import * as URLS from '../../constants/urls';
@@ -12,6 +14,11 @@ const isUserIDPlayer1 = async (gameDoc, userID) => {
   const player1Doc = await player1Ref.get();
   return userID === player1Doc.data().user_id;
 };
+
+const generateCards = cardNames =>
+  cardNames.map(cardName => {
+    return <Card cardName={cardName} />;
+  });
 
 const Game = props => {
   const firebaseContext = useContext(FirebaseContext);
@@ -69,6 +76,9 @@ const Game = props => {
     return 'placeholder';
   };
   const getDicardCards = () => {
+    if (gameDoc && gameDoc.data().game_state !== 'setup') {
+      return generateCards(gameDoc.data().discard);
+    }
     return 'placeholder';
   };
   const getPlayerCards = () => {
