@@ -24,7 +24,14 @@ const Game = props => {
   const firebaseContext = useContext(FirebaseContext);
   const { IDToken, firebase, userCredential } = firebaseContext;
   const [gameDoc, setGameDoc] = useState(undefined);
+  const [yourHandDoc, setYourHandDoc] = useState(undefined);
   const [isPlayer1, setIsPlayer1] = useState(undefined);
+  const [gameState, setGameState] = useState(undefined);
+  const [yourTurn, setYourTurn] = useState(undefined);
+  const [discardCards, setDiscardCards] = useState([]);
+  const [playedCards, setPlayedCards] = useState({});
+  const [cardsInHand, setCardsInHand] = useState([]);
+  const [numCardsInOtherHand, setNumCardsInOtherHand] = useState(0);
   const { gameID } = useParams();
   const { history } = props;
   useEffect(() => {
@@ -35,40 +42,70 @@ const Game = props => {
   const loadGame = () => {
     if (userCredential && userCredential.uid) {
       UTIL.getGameDoc(firebase.firestore(), gameID)
-        .then(localGameDoc => {
+        .then(async localGameDoc => {
           if (localGameDoc.data().player1.id === userCredential.uid) {
             setGameDoc(localGameDoc);
-            isUserIDPlayer1(localGameDoc, userCredential.uid).then(response => {
-              setIsPlayer1(response);
+            setIsPlayer1(true);
+            localGameDoc.ref.onSnapshot(async snapshot => {
+              const snapshotGame = snapshot.data();
+              setDiscardCards(snapshotGame.discard);
+              setGameState(snapshotGame.game_state);
+              setYourTurn(snapshotGame.turn.id === userCredential.uid);
+              setNumCardsInOtherHand(snapshotGame.player2NumCards);
             });
-          } else if (localGameDoc.data().player2) {
-            if (localGameDoc.data().player2.id === userCredential.uid) {
-              setGameDoc(localGameDoc);
-              isUserIDPlayer1(localGameDoc, userCredential.uid).then(
-                response => {
-                  setIsPlayer1(response);
-                },
-              );
-            } else {
-              history.push(ROUTES.HOME);
-            }
+            const locYourHandDoc = (
+              await localGameDoc.ref
+                .collection('hands')
+                .where('playerID', '==', userCredential.uid)
+                .get()
+            ).docs[0];
+            setYourHandDoc(locYourHandDoc);
+            locYourHandDoc.ref.onSnapshot(async snapshot => {
+              const snapshotHand = snapshot.data();
+              setCardsInHand(snapshotHand.cards);
+            });
+          } else if (
+            localGameDoc.data().player2 &&
+            localGameDoc.data().player2.id === userCredential.uid
+          ) {
+            setGameDoc(localGameDoc);
+            setIsPlayer1(false);
+            localGameDoc.ref.onSnapshot(async snapshot => {
+              const snapshotGame = snapshot.data();
+              setDiscardCards(snapshotGame.discard);
+              setGameState(snapshotGame.game_state);
+              setYourTurn(snapshotGame.turn.id === userCredential.uid);
+              setNumCardsInOtherHand(snapshotGame.player1NumCards);
+            });
+            const locYourHandDoc = (
+              await localGameDoc.ref
+                .collection('hands')
+                .where('playerID', '==', userCredential.uid)
+                .get()
+            ).docs[0];
+            setYourHandDoc(locYourHandDoc);
+            locYourHandDoc.ref.onSnapshot(async snapshot => {
+              const snapshotHand = snapshot.data();
+              setCardsInHand(snapshotHand.cards);
+            });
           } else {
             history.push(ROUTES.HOME);
           }
         })
-        .catch(() => {
+        .catch(err => {
+          console.log(err);
           history.push(ROUTES.HOME);
         });
     }
   };
 
   const getOpponentCards = () => {
-    if (gameDoc && isPlayer1 !== undefined) {
-      if (isPlayer1) {
-        return gameDoc.data().player1NumCards;
-      } else {
-        return gameDoc.data().player2NumCards;
-      }
+    if (
+      gameDoc &&
+      isPlayer1 !== undefined &&
+      gameDoc.data().game_state !== 'setup'
+    ) {
+      return numCardsInOtherHand;
     }
     return 'placeholder';
   };
@@ -77,11 +114,19 @@ const Game = props => {
   };
   const getDicardCards = () => {
     if (gameDoc && gameDoc.data().game_state !== 'setup') {
-      return generateCards(gameDoc.data().discard);
+      return (
+        <>
+          <div className="Deck">{generateCards([undefined])}</div>
+          <div className="Discard">{generateCards(discardCards)}</div>
+        </>
+      );
     }
     return 'placeholder';
   };
   const getPlayerCards = () => {
+    if (gameDoc && gameDoc.data().game_state !== 'setup') {
+      return generateCards(cardsInHand);
+    }
     return 'placeholder';
   };
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import * as CardImages from '../../resources/png/Cards';
+import cardBack from '../../resources/png/CardBack.png';
 
 const DIGIT_TO_STRING = {
   '2': 'Two',
@@ -18,6 +19,9 @@ const DIGIT_TO_STRING = {
 };
 
 const convertNameToImage = cardName => {
+  if (cardName === 'back') {
+    return cardBack;
+  }
   const nameParts = cardName.split(' ');
   const convertedCardName = DIGIT_TO_STRING[nameParts[0]];
   const suitName = nameParts[2];
@@ -26,11 +30,10 @@ const convertNameToImage = cardName => {
 
 const Card = props => {
   const { cardName } = props;
-  console.log('cardProps');
-  console.log(cardName);
+  const fixedCardName = cardName || 'back';
   return (
     <div className="Card">
-      <img src={convertNameToImage(cardName)} alt={cardName} />
+      <img src={convertNameToImage(fixedCardName)} alt={fixedCardName} />
     </div>
   );
 };
