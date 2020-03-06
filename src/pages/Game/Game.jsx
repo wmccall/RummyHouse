@@ -20,6 +20,22 @@ const generateCards = cardNames =>
     return <Card cardName={cardName} />;
   });
 
+const buildPlayedCards = (playedCardsSets, playerID) => {
+  return playedCardsSets.map(playedCardsSet => {
+    const innerCards = playedCardsSet.cards.map(subSet => {
+      return (
+        <div
+          className={`subset ${subSet.player_id === playerID ? 'yours' : ''}`}
+        >
+          {generateCards(subSet.cards)}
+        </div>
+      );
+    });
+
+    return <div className="set">{innerCards}</div>;
+  });
+};
+
 const Game = props => {
   const firebaseContext = useContext(FirebaseContext);
   const { IDToken, firebase, userCredential } = firebaseContext;
@@ -29,7 +45,8 @@ const Game = props => {
   const [gameState, setGameState] = useState(undefined);
   const [yourTurn, setYourTurn] = useState(undefined);
   const [discardCards, setDiscardCards] = useState([]);
-  const [playedCards, setPlayedCards] = useState({});
+  const [rawPlayedCards, setRawPlayedCards] = useState({});
+  const [playedCards, setPlayedCards] = useState([]);
   const [cardsInHand, setCardsInHand] = useState([]);
   const [numCardsInOtherHand, setNumCardsInOtherHand] = useState(0);
   const { gameID } = useParams();
@@ -37,6 +54,130 @@ const Game = props => {
   useEffect(() => {
     document.title = 'Game';
   });
+
+  const organizePlayedCards = played => {
+    const arranged = [];
+    const playedIDs = Object.keys(played);
+    for (let keyInt = 0; keyInt < playedIDs.length; keyInt += 1) {
+      const setData = played[playedIDs[keyInt]];
+      let foundSet = false;
+      if (setData.same_suit_continued_set_id) {
+        for (let i = 0; i < arranged.length; i += 1) {
+          if (
+            arranged[i].id === setData.same_suit_continued_set_id &&
+            playedIDs[keyInt] === arranged[i].same_suit_continued_set_id
+          ) {
+            arranged[i].cards.push({
+              player_id: setData.player_id,
+              cards: setData.cards,
+            });
+            arranged[i].same_suit_continued_set_id = null;
+            foundSet = true;
+            break;
+          }
+        }
+      } else if (
+        setData.straight_continued_set_below_id ||
+        setData.straight_continued_set_above_id
+      ) {
+        if (
+          setData.straight_continued_set_below_id &&
+          setData.straight_continued_set_above_id
+        ) {
+          let foundBoth = false;
+          for (let i = 0; i < arranged.length; i += 1) {
+            if (
+              arranged[i].id === setData.straight_continued_set_below_id &&
+              playedIDs[keyInt] === arranged[i].straight_continued_set_above_id
+            ) {
+              arranged[i].cards.push({
+                player_id: setData.player_id,
+                cards: setData.cards,
+              });
+              arranged[i].straight_continued_set_above_id =
+                setData.straight_continued_set_above_id;
+              foundSet = true;
+              for (let j = 0; j < arranged.length; j += 1) {
+                if (
+                  arranged[j].id ===
+                    arranged[i].straight_continued_set_above_id &&
+                  arranged[i].id === arranged[j].straight_continued_set_below_id
+                ) {
+                  arranged[j].cards = [
+                    ...arranged[i].cards,
+                    ...arranged[j].cards,
+                  ];
+                  arranged[j].straight_continued_set_below_id =
+                    arranged[i].straight_continued_set_below_id;
+                  foundSet = true;
+                  foundBoth = true;
+                  break;
+                }
+              }
+              break;
+            }
+          }
+          if (!foundBoth && !foundSet) {
+            for (let i = 0; i < arranged.length; i += 1) {
+              if (
+                arranged[i].id === setData.straight_continued_set_above_id &&
+                playedIDs[keyInt] ===
+                  arranged[i].straight_continued_set_below_id
+              ) {
+                arranged[i].cards.push({
+                  player_id: setData.player_id,
+                  cards: setData.cards,
+                });
+                arranged[i].straight_continued_set_below_id = null;
+                foundSet = true;
+                break;
+              }
+            }
+          }
+        } else if (setData.straight_continued_set_below_id) {
+          for (let i = 0; i < arranged.length; i += 1) {
+            if (
+              arranged[i].id === setData.straight_continued_set_below_id &&
+              playedIDs[keyInt] === arranged[i].straight_continued_set_above_id
+            ) {
+              arranged[i].cards.push({
+                player_id: setData.player_id,
+                cards: setData.cards,
+              });
+              arranged[i].straight_continued_set_above_id = null;
+              foundSet = true;
+              break;
+            }
+          }
+        } else {
+          for (let i = 0; i < arranged.length; i += 1) {
+            if (
+              arranged[i].id === setData.straight_continued_set_above_id &&
+              playedIDs[keyInt] === arranged[i].straight_continued_set_below_id
+            ) {
+              arranged[i].cards.push({
+                player_id: setData.player_id,
+                cards: setData.cards,
+              });
+              arranged[i].straight_continued_set_below_id = null;
+              foundSet = true;
+              break;
+            }
+          }
+        }
+      }
+
+      if (!foundSet) {
+        arranged.push({
+          ...setData,
+          cards: [{ player_id: setData.player_id, cards: setData.cards }],
+          id: playedIDs[keyInt],
+        });
+      }
+    }
+    console.log(arranged);
+    setPlayedCards(arranged);
+  };
 
   // TODO: update to query so it gets data on update
   const loadGame = () => {
@@ -63,6 +204,18 @@ const Game = props => {
             locYourHandDoc.ref.onSnapshot(async snapshot => {
               const snapshotHand = snapshot.data();
               setCardsInHand(snapshotHand.cards);
+            });
+            localGameDoc.ref.collection('sets').onSnapshot(async snapshot => {
+              let allChangeData = {};
+              snapshot.docChanges().forEach(change => {
+                allChangeData[change.doc.id] = change.doc.data();
+              });
+              setRawPlayedCards(prevData => {
+                const updatedData = { ...prevData, ...allChangeData };
+                allChangeData = updatedData;
+                return updatedData;
+              });
+              organizePlayedCards(allChangeData);
             });
           } else if (
             localGameDoc.data().player2 &&
@@ -110,6 +263,14 @@ const Game = props => {
     return 'placeholder';
   };
   const getPlayedCards = () => {
+    if (
+      gameDoc &&
+      gameDoc.data().game_state !== 'setup' &&
+      playedCards.length !== 0
+    ) {
+      console.log(playedCards);
+      return buildPlayedCards(playedCards, userCredential.uid);
+    }
     return 'placeholder';
   };
   const getDicardCards = () => {
