@@ -29,10 +29,10 @@ const convertNameToImage = cardName => {
 };
 
 const Card = props => {
-  const { cardName } = props;
+  const { cardName, isClicked, onClick } = props;
   const fixedCardName = cardName || 'back';
   return (
-    <div className="Card">
+    <div className={`Card ${isClicked ? 'clicked' : ''}`} onClick={onClick}>
       <img src={convertNameToImage(fixedCardName)} alt={fixedCardName} />
     </div>
   );

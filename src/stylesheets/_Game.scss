@@ -29,6 +29,7 @@
       position: relative;
       height: 100%;
       width: 100px;
+      z-index: 100;
       &.up {
         margin-left: -50px;
       }
@@ -54,6 +55,11 @@
 
   .Pickup-And-Discard {
     display: flex;
+    height: 160px;
+    position: fixed;
+    padding-left: 120px;
+    bottom: 220px;
+    width: 100%;
     .Deck {
       margin-right: 40px;
     }
@@ -61,5 +67,23 @@
 
   .Player-Cards {
     display: flex;
+    height: 220px;
+    position: fixed;
+    bottom: 0%;
+    width: 100%;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    background-color: #183b21;
+    .Card {
+      transition: margin-bottom 0.2s ease-in-out;
+      margin-bottom: 0;
+      &:hover {
+        cursor: pointer;
+      }
+      &.clicked {
+        margin-bottom: 20px;
+      }
+    }
   }
 }

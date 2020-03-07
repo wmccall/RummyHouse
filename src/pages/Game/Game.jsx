@@ -20,6 +20,35 @@ const generateCards = cardNames =>
     return <Card cardName={cardName} />;
   });
 
+const generatePlayerCards = (cardNames, setClickedCards, clickedCards) => {
+  const clickHandler = cardName => {
+    setClickedCards(prevClicked => {
+      let newClicked = [];
+      const cardIndex = prevClicked.indexOf(cardName);
+      if (cardIndex === -1) {
+        newClicked = [...prevClicked, cardName];
+      } else {
+        newClicked = [...prevClicked];
+        delete newClicked[cardIndex];
+      }
+      console.log(newClicked);
+      return newClicked;
+    });
+  };
+  return cardNames.map(cardName => {
+    const isClicked = () => {
+      return clickedCards.indexOf(cardName) !== -1;
+    };
+    return (
+      <Card
+        cardName={cardName}
+        isClicked={isClicked()}
+        onClick={() => clickHandler(cardName)}
+      />
+    );
+  });
+};
+
 const buildPlayedCards = (playedCardsSets, playerID) => {
   return playedCardsSets.map(playedCardsSet => {
     const { toContinueDown, toContinueUp, cards } = playedCardsSet;
@@ -58,6 +87,7 @@ const Game = props => {
   const [playedCards, setPlayedCards] = useState([]);
   const [cardsInHand, setCardsInHand] = useState([]);
   const [numCardsInOtherHand, setNumCardsInOtherHand] = useState(0);
+  const [clickedCards, setClickedCards] = useState([]);
   const { gameID } = useParams();
   const { history } = props;
   useEffect(() => {
@@ -308,7 +338,7 @@ const Game = props => {
   };
   const getPlayerCards = () => {
     if (gameDoc && gameDoc.data().game_state !== 'setup') {
-      return generateCards(cardsInHand);
+      return generatePlayerCards(cardsInHand, setClickedCards, clickedCards);
     }
     return 'placeholder';
   };
