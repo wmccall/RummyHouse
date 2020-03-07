@@ -49,6 +49,51 @@ const generatePlayerCards = (cardNames, setClickedCards, clickedCards) => {
   });
 };
 
+const pickupDeck = (IDToken, gameKey) => {
+  const headers = new Headers();
+  headers.append('id_token', IDToken);
+  headers.append('game_id', gameKey);
+  const requestOptions = {
+    method: 'POST',
+    headers,
+    redirect: 'follow',
+  };
+
+  fetch(`${URLS.BACKEND_SERVER}/pickupDeck`, requestOptions)
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+};
+
+// const generateDiscardCards = (cardNames, setClickedCards, clickedCards) => {
+//   const clickHandler = cardName => {
+//     setClickedCards(prevClicked => {
+//       let newClicked = [];
+//       const cardIndex = prevClicked.indexOf(cardName);
+//       if (cardIndex === -1) {
+//         newClicked = [...prevClicked, cardName];
+//       } else {
+//         newClicked = [...prevClicked];
+//         delete newClicked[cardIndex];
+//       }
+//       console.log(newClicked);
+//       return newClicked;
+//     });
+//   };
+//   return cardNames.map(cardName => {
+//     const isClicked = () => {
+//       return clickedCards.indexOf(cardName) !== -1;
+//     };
+//     return (
+//       <Card
+//         cardName={cardName}
+//         isClicked={isClicked()}
+//         onClick={() => clickHandler(cardName)}
+//       />
+//     );
+//   });
+// };
+
 const buildPlayedCards = (playedCardsSets, playerID) => {
   return playedCardsSets.map(playedCardsSet => {
     const { toContinueDown, toContinueUp, cards } = playedCardsSet;
@@ -329,7 +374,12 @@ const Game = props => {
     if (gameDoc && gameDoc.data().game_state !== 'setup') {
       return (
         <>
-          <div className="Deck">{generateCards([undefined])}</div>
+          <div className="Deck">
+            <Card
+              cardName={undefined}
+              onClick={() => pickupDeck(IDToken, gameID)}
+            />
+          </div>
           <div className="Discard">{generateCards(discardCards)}</div>
         </>
       );

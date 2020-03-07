@@ -58,16 +58,21 @@
     height: 160px;
     position: fixed;
     padding-left: 120px;
-    bottom: 220px;
+    bottom: 190px;
     width: 100%;
     .Deck {
       margin-right: 40px;
+    }
+    .Card {
+      &:hover {
+        cursor: pointer;
+      }
     }
   }
 
   .Player-Cards {
     display: flex;
-    height: 220px;
+    height: 190px;
     position: fixed;
     bottom: 0%;
     width: 100%;
