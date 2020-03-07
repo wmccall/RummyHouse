@@ -22,17 +22,26 @@ const generateCards = cardNames =>
 
 const buildPlayedCards = (playedCardsSets, playerID) => {
   return playedCardsSets.map(playedCardsSet => {
-    const innerCards = playedCardsSet.cards.map(subSet => {
+    const { toContinueDown, toContinueUp, cards } = playedCardsSet;
+    const innerCards = cards.map(subSet => {
       return (
         <div
-          className={`subset ${subSet.player_id === playerID ? 'yours' : ''}`}
+          className={`subset ${
+            subSet.player_id === playerID ? 'yours' : 'theirs'
+          }`}
         >
           {generateCards(subSet.cards)}
         </div>
       );
     });
 
-    return <div className="set">{innerCards}</div>;
+    return (
+      <div className="set">
+        <div className="place down"></div>
+        {innerCards}
+        <div className="place up"></div>
+      </div>
+    );
   });
 };
 
@@ -70,6 +79,7 @@ const Game = props => {
             arranged[i].cards.push({
               player_id: setData.player_id,
               cards: setData.cards,
+              toContinueUp: playedIDs[keyInt],
             });
             arranged[i].same_suit_continued_set_id = null;
             foundSet = true;
@@ -84,6 +94,7 @@ const Game = props => {
           setData.straight_continued_set_below_id &&
           setData.straight_continued_set_above_id
         ) {
+          console.log('BOTH: looking for a set below');
           let foundBoth = false;
           for (let i = 0; i < arranged.length; i += 1) {
             if (
@@ -96,7 +107,9 @@ const Game = props => {
               });
               arranged[i].straight_continued_set_above_id =
                 setData.straight_continued_set_above_id;
+              arranged[i].toContinueUp = playedIDs[keyInt];
               foundSet = true;
+              console.log('THEN: looking for a set above');
               for (let j = 0; j < arranged.length; j += 1) {
                 if (
                   arranged[j].id ===
@@ -109,6 +122,7 @@ const Game = props => {
                   ];
                   arranged[j].straight_continued_set_below_id =
                     arranged[i].straight_continued_set_below_id;
+                  arranged[j].toContinueDown = arranged[i].toContinueDown;
                   foundSet = true;
                   foundBoth = true;
                   break;
@@ -118,6 +132,7 @@ const Game = props => {
             }
           }
           if (!foundBoth && !foundSet) {
+            console.log('POST BOTH: looking for a set above');
             for (let i = 0; i < arranged.length; i += 1) {
               if (
                 arranged[i].id === setData.straight_continued_set_above_id &&
@@ -129,12 +144,14 @@ const Game = props => {
                   cards: setData.cards,
                 });
                 arranged[i].straight_continued_set_below_id = null;
+                arranged[i].toContinueDown = playedIDs[keyInt];
                 foundSet = true;
                 break;
               }
             }
           }
         } else if (setData.straight_continued_set_below_id) {
+          console.log('ONLY: looking for a set below');
           for (let i = 0; i < arranged.length; i += 1) {
             if (
               arranged[i].id === setData.straight_continued_set_below_id &&
@@ -145,12 +162,14 @@ const Game = props => {
                 cards: setData.cards,
               });
               arranged[i].straight_continued_set_above_id = null;
+              arranged[i].toContinueUp = playedIDs[keyInt];
               foundSet = true;
               break;
             }
           }
         } else {
           for (let i = 0; i < arranged.length; i += 1) {
+            console.log('ONLY: looking for a set above');
             if (
               arranged[i].id === setData.straight_continued_set_above_id &&
               playedIDs[keyInt] === arranged[i].straight_continued_set_below_id
@@ -160,6 +179,7 @@ const Game = props => {
                 cards: setData.cards,
               });
               arranged[i].straight_continued_set_below_id = null;
+              arranged[i].toContinueDown = playedIDs[keyInt];
               foundSet = true;
               break;
             }
@@ -171,6 +191,8 @@ const Game = props => {
         arranged.push({
           ...setData,
           cards: [{ player_id: setData.player_id, cards: setData.cards }],
+          toContinueUp: playedIDs[keyInt],
+          toContinueDown: playedIDs[keyInt],
           id: playedIDs[keyInt],
         });
       }
