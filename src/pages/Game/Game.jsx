@@ -476,7 +476,9 @@ const Game = props => {
     if (
       gameDoc &&
       isPlayer1 !== undefined &&
-      gameDoc.data().game_state !== 'setup'
+      gameDoc.data().game_state !== 'setup' &&
+      userCredential &&
+      userCredential.uid
     ) {
       return numCardsInOtherHand;
     }
@@ -486,7 +488,9 @@ const Game = props => {
     if (
       gameDoc &&
       gameDoc.data().game_state !== 'setup' &&
-      playedCards.length !== 0
+      playedCards.length !== 0 &&
+      userCredential &&
+      userCredential.uid
     ) {
       console.log(playedCards);
       return buildPlayedCards(playedCards, userCredential.uid);
