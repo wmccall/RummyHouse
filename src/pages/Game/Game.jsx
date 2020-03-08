@@ -21,7 +21,8 @@ const generateCards = cardNames =>
   });
 
 const generatePlayerCards = (cardNames, setClickedCards, clickedCards) => {
-  const clickHandler = cardName => {
+  const clickHandler = (e, cardName) => {
+    e.stopPropagation();
     setClickedCards(prevClicked => {
       let newClicked = [];
       const cardIndex = prevClicked.indexOf(cardName);
@@ -43,7 +44,36 @@ const generatePlayerCards = (cardNames, setClickedCards, clickedCards) => {
       <Card
         cardName={cardName}
         isClicked={isClicked()}
-        onClick={() => clickHandler(cardName)}
+        onClick={e => clickHandler(e, cardName)}
+      />
+    );
+  });
+};
+
+const generateDiscardCards = (
+  cardNames,
+  clickedDiscardIndex,
+  setClickedDiscardIndex,
+) => {
+  const clickHandler = cardIndex => {
+    console.log(cardIndex);
+    console.log(clickedDiscardIndex);
+    setClickedDiscardIndex(prevIndex => {
+      if (cardIndex === prevIndex) {
+        return undefined;
+      }
+      return cardIndex;
+    });
+  };
+  return cardNames.map((cardName, index) => {
+    const isClicked = locIndex => {
+      return locIndex >= clickedDiscardIndex;
+    };
+    return (
+      <Card
+        cardName={cardName}
+        isClicked={isClicked(index)}
+        onClick={() => clickHandler(index)}
       />
     );
   });
@@ -63,6 +93,53 @@ const pickupDeck = (e, IDToken, gameKey) => {
   fetch(`${URLS.BACKEND_SERVER}/pickupDeck`, requestOptions)
     .then(response => response.text())
     .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+};
+
+const pickupDiscard = (
+  e,
+  IDToken,
+  gameKey,
+  discardIndex,
+  setClickedDiscardIndex,
+) => {
+  e.stopPropagation();
+  const headers = new Headers();
+  headers.append('id_token', IDToken);
+  headers.append('game_id', gameKey);
+  headers.append('discard_pickup_index', discardIndex);
+  const requestOptions = {
+    method: 'POST',
+    headers,
+    redirect: 'follow',
+  };
+
+  fetch(`${URLS.BACKEND_SERVER}/pickupDiscard`, requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log(result);
+      setClickedDiscardIndex(undefined);
+    })
+    .catch(error => console.log('error', error));
+};
+const discardCardFromHand = (e, IDToken, gameKey, card, setClickedCards) => {
+  e.stopPropagation();
+  const headers = new Headers();
+  headers.append('id_token', IDToken);
+  headers.append('game_id', gameKey);
+  headers.append('discard_card', card);
+  const requestOptions = {
+    method: 'POST',
+    headers,
+    redirect: 'follow',
+  };
+
+  fetch(`${URLS.BACKEND_SERVER}/discard`, requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log(result);
+      setClickedCards([]);
+    })
     .catch(error => console.log('error', error));
 };
 
@@ -99,35 +176,6 @@ const playCards = (
   }
 };
 
-// const generateDiscardCards = (cardNames, setClickedCards, clickedCards) => {
-//   const clickHandler = cardName => {
-//     setClickedCards(prevClicked => {
-//       let newClicked = [];
-//       const cardIndex = prevClicked.indexOf(cardName);
-//       if (cardIndex === -1) {
-//         newClicked = [...prevClicked, cardName];
-//       } else {
-//         newClicked = [...prevClicked];
-//         delete newClicked[cardIndex];
-//       }
-//       console.log(newClicked);
-//       return newClicked;
-//     });
-//   };
-//   return cardNames.map(cardName => {
-//     const isClicked = () => {
-//       return clickedCards.indexOf(cardName) !== -1;
-//     };
-//     return (
-//       <Card
-//         cardName={cardName}
-//         isClicked={isClicked()}
-//         onClick={() => clickHandler(cardName)}
-//       />
-//     );
-//   });
-// };
-
 const Game = props => {
   const firebaseContext = useContext(FirebaseContext);
   const { IDToken, firebase, userCredential } = firebaseContext;
@@ -142,6 +190,7 @@ const Game = props => {
   const [cardsInHand, setCardsInHand] = useState([]);
   const [numCardsInOtherHand, setNumCardsInOtherHand] = useState(0);
   const [clickedCards, setClickedCards] = useState([]);
+  const [clickedDiscardIndex, setClickedDiscardIndex] = useState(undefined);
   const { gameID } = useParams();
   const { history } = props;
   useEffect(() => {
@@ -454,7 +503,25 @@ const Game = props => {
               onClick={e => pickupDeck(e, IDToken, gameID)}
             />
           </div>
-          <div className="Discard">{generateCards(discardCards)}</div>
+          <div className="Discard">
+            {generateDiscardCards(
+              discardCards,
+              clickedDiscardIndex,
+              setClickedDiscardIndex,
+            )}
+            <div
+              className="place"
+              onClick={e => {
+                discardCardFromHand(
+                  e,
+                  IDToken,
+                  gameID,
+                  clickedCards[0],
+                  setClickedCards,
+                );
+              }}
+            ></div>
+          </div>
         </>
       );
     }
@@ -494,7 +561,20 @@ const Game = props => {
         {getPlayedCards()}
       </div>
       <div className="Pickup-And-Discard">{getDicardCards()}</div>
-      <div className="Player-Cards">{getPlayerCards()}</div>
+      <div
+        className="Player-Cards"
+        onClick={e =>
+          pickupDiscard(
+            e,
+            IDToken,
+            gameID,
+            clickedDiscardIndex,
+            setClickedDiscardIndex,
+          )
+        }
+      >
+        {getPlayerCards()}
+      </div>
     </div>
   );
 };

@@ -14,11 +14,11 @@
   .Played-Cards {
     display: flex;
     flex-wrap: wrap;
-    padding-top: 100px;
     padding-left: 120px;
     padding-right: 110px;
     justify-content: center;
     align-content: center;
+    height: calc(100vh - 460px);
 
     &:hover {
       background-color: rgba(255, 255, 255, 0.527);
@@ -67,12 +67,35 @@
     padding-left: 120px;
     bottom: 190px;
     width: 100%;
+    align-content: center;
+    align-items: center;
     .Deck {
       margin-right: 40px;
     }
-    .Card {
-      &:hover {
-        cursor: pointer;
+    .Discard {
+      display: flex;
+      align-content: center;
+      align-items: center;
+      .Card {
+        transition: margin-bottom 0.2s ease-in-out;
+        &:hover {
+          cursor: pointer;
+        }
+        &.clicked {
+          margin-bottom: 20px;
+        }
+      }
+      .place {
+        position: relative;
+        height: 140px;
+        width: 100px;
+        z-index: 100;
+        border-radius: 10px;
+        margin-left: -50px;
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.527);
+          cursor: pointer;
+        }
       }
     }
   }
@@ -96,6 +119,10 @@
       &.clicked {
         margin-bottom: 20px;
       }
+    }
+    &:hover {
+      cursor: pointer;
+      background-color: #2b5837;
     }
   }
 }
