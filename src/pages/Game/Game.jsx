@@ -49,7 +49,8 @@ const generatePlayerCards = (cardNames, setClickedCards, clickedCards) => {
   });
 };
 
-const pickupDeck = (IDToken, gameKey) => {
+const pickupDeck = (e, IDToken, gameKey) => {
+  e.stopPropagation();
   const headers = new Headers();
   headers.append('id_token', IDToken);
   headers.append('game_id', gameKey);
@@ -63,6 +64,39 @@ const pickupDeck = (IDToken, gameKey) => {
     .then(response => response.text())
     .then(result => console.log(result))
     .catch(error => console.log('error', error));
+};
+
+const playCards = (
+  e,
+  IDToken,
+  gameKey,
+  cards,
+  setClickedCards,
+  continuedSetID,
+) => {
+  e.stopPropagation();
+  if (cards.length > 0) {
+    const headers = new Headers();
+    headers.append('id_token', IDToken);
+    headers.append('game_id', gameKey);
+    headers.append('cards', JSON.stringify(cards));
+    if (continuedSetID) {
+      headers.append('continued_set_id', continuedSetID);
+    }
+    const requestOptions = {
+      method: 'POST',
+      headers,
+      redirect: 'follow',
+    };
+
+    fetch(`${URLS.BACKEND_SERVER}/playCards`, requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        console.log(result);
+        setClickedCards([]);
+      })
+      .catch(error => console.log('error', error));
+  }
 };
 
 // const generateDiscardCards = (cardNames, setClickedCards, clickedCards) => {
@@ -94,31 +128,6 @@ const pickupDeck = (IDToken, gameKey) => {
 //   });
 // };
 
-const buildPlayedCards = (playedCardsSets, playerID) => {
-  return playedCardsSets.map(playedCardsSet => {
-    const { toContinueDown, toContinueUp, cards } = playedCardsSet;
-    const innerCards = cards.map(subSet => {
-      return (
-        <div
-          className={`subset ${
-            subSet.player_id === playerID ? 'yours' : 'theirs'
-          }`}
-        >
-          {generateCards(subSet.cards)}
-        </div>
-      );
-    });
-
-    return (
-      <div className="set">
-        <div className="place down"></div>
-        {innerCards}
-        <div className="place up"></div>
-      </div>
-    );
-  });
-};
-
 const Game = props => {
   const firebaseContext = useContext(FirebaseContext);
   const { IDToken, firebase, userCredential } = firebaseContext;
@@ -139,24 +148,73 @@ const Game = props => {
     document.title = 'Game';
   });
 
+  const buildPlayedCards = (playedCardsSets, playerID) => {
+    return playedCardsSets.map(playedCardsSet => {
+      const { toContinueDown, toContinueUp, cards } = playedCardsSet;
+      const innerCards = cards.map(subSet => {
+        return (
+          <div
+            className={`subset ${
+              subSet.player_id === playerID ? 'yours' : 'theirs'
+            }`}
+          >
+            {generateCards(subSet.cards)}
+          </div>
+        );
+      });
+
+      return (
+        <div className="set">
+          <div
+            className="place down"
+            onClick={e =>
+              playCards(
+                e,
+                IDToken,
+                gameID,
+                clickedCards,
+                setClickedCards,
+                toContinueDown,
+              )
+            }
+          ></div>
+          {innerCards}
+          <div
+            className="place up"
+            onClick={e =>
+              playCards(
+                e,
+                IDToken,
+                gameID,
+                clickedCards,
+                setClickedCards,
+                toContinueUp,
+              )
+            }
+          ></div>
+        </div>
+      );
+    });
+  };
+
   const organizePlayedCards = played => {
     const arranged = [];
     const playedIDs = Object.keys(played);
     for (let keyInt = 0; keyInt < playedIDs.length; keyInt += 1) {
       const setData = played[playedIDs[keyInt]];
       let foundSet = false;
-      if (setData.same_suit_continued_set_id) {
+      if (setData.same_value_continued_set_id) {
         for (let i = 0; i < arranged.length; i += 1) {
           if (
-            arranged[i].id === setData.same_suit_continued_set_id &&
-            playedIDs[keyInt] === arranged[i].same_suit_continued_set_id
+            arranged[i].id === setData.same_value_continued_set_id &&
+            playedIDs[keyInt] === arranged[i].same_value_continued_set_id
           ) {
             arranged[i].cards.push({
               player_id: setData.player_id,
               cards: setData.cards,
               toContinueUp: playedIDs[keyInt],
             });
-            arranged[i].same_suit_continued_set_id = null;
+            arranged[i].same_value_continued_set_id = null;
             foundSet = true;
             break;
           }
@@ -305,7 +363,9 @@ const Game = props => {
             localGameDoc.ref.collection('sets').onSnapshot(async snapshot => {
               let allChangeData = {};
               snapshot.docChanges().forEach(change => {
-                allChangeData[change.doc.id] = change.doc.data();
+                if (change.type !== 'removed') {
+                  allChangeData[change.doc.id] = change.doc.data();
+                }
               });
               setRawPlayedCards(prevData => {
                 const updatedData = { ...prevData, ...allChangeData };
@@ -337,6 +397,20 @@ const Game = props => {
             locYourHandDoc.ref.onSnapshot(async snapshot => {
               const snapshotHand = snapshot.data();
               setCardsInHand(snapshotHand.cards);
+            });
+            localGameDoc.ref.collection('sets').onSnapshot(async snapshot => {
+              let allChangeData = {};
+              snapshot.docChanges().forEach(change => {
+                if (change.type !== 'removed') {
+                  allChangeData[change.doc.id] = change.doc.data();
+                }
+              });
+              setRawPlayedCards(prevData => {
+                const updatedData = { ...prevData, ...allChangeData };
+                allChangeData = updatedData;
+                return updatedData;
+              });
+              organizePlayedCards(allChangeData);
             });
           } else {
             history.push(ROUTES.HOME);
@@ -377,7 +451,7 @@ const Game = props => {
           <div className="Deck">
             <Card
               cardName={undefined}
-              onClick={() => pickupDeck(IDToken, gameID)}
+              onClick={e => pickupDeck(e, IDToken, gameID)}
             />
           </div>
           <div className="Discard">{generateCards(discardCards)}</div>
@@ -404,7 +478,21 @@ const Game = props => {
   return (
     <div className="Game">
       <div className="Opponents-Cards">{getOpponentCards()}</div>
-      <div className="Played-Cards">{getPlayedCards()}</div>
+      <div
+        className="Played-Cards"
+        onClick={e =>
+          playCards(
+            e,
+            IDToken,
+            gameID,
+            clickedCards,
+            setClickedCards,
+            undefined,
+          )
+        }
+      >
+        {getPlayedCards()}
+      </div>
       <div className="Pickup-And-Discard">{getDicardCards()}</div>
       <div className="Player-Cards">{getPlayerCards()}</div>
     </div>

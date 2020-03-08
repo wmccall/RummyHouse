@@ -19,6 +19,11 @@
     padding-right: 110px;
     justify-content: center;
     align-content: center;
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.527);
+      cursor: pointer;
+    }
     .Card {
       margin-left: -20px;
       img {
@@ -27,9 +32,10 @@
     }
     .place {
       position: relative;
-      height: 100%;
+      height: 140px;
       width: 100px;
       z-index: 100;
+      border-radius: 10px;
       &.up {
         margin-left: -50px;
       }
@@ -38,6 +44,7 @@
       }
       &:hover {
         background-color: rgba(255, 255, 255, 0.527);
+        cursor: pointer;
       }
     }
     .set,
