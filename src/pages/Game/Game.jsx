@@ -528,7 +528,12 @@ const Game = props => {
     return 'placeholder';
   };
   const getPlayerCards = () => {
-    if (gameDoc && gameDoc.data().game_state !== 'setup') {
+    if (
+      gameDoc &&
+      gameDoc.data().game_state !== 'setup' &&
+      userCredential &&
+      userCredential.uid
+    ) {
       return generatePlayerCards(cardsInHand, setClickedCards, clickedCards);
     }
     return 'placeholder';

@@ -51,7 +51,7 @@
     .subset {
       display: flex;
       width: fit-content;
-      &.theirs > .Card > img {
+      &.theirs {
         opacity: 0.7;
       }
     }
@@ -71,6 +71,9 @@
     align-items: center;
     .Deck {
       margin-right: 40px;
+      &:hover {
+        cursor: pointer;
+      }
     }
     .Discard {
       display: flex;
