@@ -25,12 +25,14 @@ const generatePlayerCards = (cardNames, setClickedCards, clickedCards) => {
     e.stopPropagation();
     setClickedCards(prevClicked => {
       let newClicked = [];
+      console.log(cardName);
       const cardIndex = prevClicked.indexOf(cardName);
+      console.log(cardIndex);
       if (cardIndex === -1) {
         newClicked = [...prevClicked, cardName];
       } else {
+        prevClicked.splice(cardIndex, 1);
         newClicked = [...prevClicked];
-        delete newClicked[cardIndex];
       }
       console.log(newClicked);
       return newClicked;
@@ -103,6 +105,7 @@ const pickupDiscard = (
   discardIndex,
   setClickedDiscardIndex,
 ) => {
+  console.log(discardIndex);
   e.stopPropagation();
   const headers = new Headers();
   headers.append('id_token', IDToken);
