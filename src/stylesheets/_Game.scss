@@ -2,4 +2,248 @@
   background-color: #236b36;
   overflow: auto;
   height: calc(100vh - 100px);
+  .Card > img {
+    box-shadow: -5px 0px 10px rgba(68, 68, 68, 0.39);
+  }
+
+  .tip {
+    font-size: 30px;
+    color: white;
+    font-weight: bold;
+  }
+
+  .Opponents-Cards-Container {
+    position: absolute;
+    margin: -150px auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    .Opponents-Cards {
+      display: flex;
+      margin-left: 60px;
+      .Card {
+        margin-left: -60px;
+      }
+    }
+  }
+  .Rummy-Container {
+    position: absolute;
+    margin: -100px auto;
+    width: 100%;
+    height: 100vh;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.288);
+    .Rummy-Popup {
+      background-color: #f3f3f3;
+      margin-top: 130px;
+      padding: 20px;
+      border-radius: 10px;
+      height: fit-content;
+      .Header {
+        font-size: 70px;
+        color: #444444;
+        font-weight: bold;
+      }
+      .Put-Back {
+        font-size: 50px;
+        background-color: rgba(68, 68, 68, 0.39);
+        color: white;
+        border-radius: 10px;
+      }
+      .Message {
+        font-size: 50px;
+        color: #444444;
+        margin-top: 10px;
+      }
+      .Sub-Message {
+        font-size: 30px;
+      }
+      .Card {
+        margin-left: -10px;
+        img {
+          width: 60px;
+        }
+      }
+      .cards {
+        display: flex;
+      }
+      .Possible-Rummy-Button {
+        background-color: rgba(68, 68, 68, 0.39);
+        padding: 10px 10px 5px 20px;
+        border-radius: 10px;
+        .top,
+        .bottom {
+          display: flex;
+        }
+        .text {
+          font-size: 30px;
+          padding-right: 15px;
+          padding-left: 5px;
+          line-height: 80px;
+        }
+      }
+    }
+  }
+
+  .Played-Cards-Background {
+    height: calc(100vh - 470px);
+    position: absolute;
+    margin-left: 120px;
+    margin-right: 120px;
+    width: calc(100vw - 240px);
+    border-radius: 10px;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.212);
+      cursor: pointer;
+    }
+  }
+
+  .Played-Cards {
+    display: flex;
+    flex-wrap: wrap;
+    margin-left: 120px;
+    margin-right: 120px;
+    justify-content: center;
+    align-content: center;
+    height: calc(100vh - 470px);
+    .Card {
+      z-index: 10;
+      margin-left: -20px;
+      height: 140px;
+      img {
+        box-shadow: -5px 0px 10px rgba(68, 68, 68, 0.39);
+      }
+    }
+    .place {
+      position: relative;
+      height: 140px;
+      width: 100px;
+      padding: 10px;
+      margin-top: -10px;
+      margin-right: 10px;
+      border-radius: 10px;
+      &.up {
+        margin-left: -70px;
+      }
+      &.down {
+        margin-right: -90px;
+      }
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.329);
+        cursor: pointer;
+      }
+    }
+    .set,
+    .subset-inner {
+      display: flex;
+      width: fit-content;
+    }
+    .set {
+      margin: 7px 0;
+    }
+    .subset-inner {
+      margin-left: 20px;
+    }
+    .subset {
+      z-index: 30;
+      background-color: #236b36;
+      border-radius: 10px;
+      margin-left: 20px;
+      height: 140px;
+      .subset-inner {
+        &.theirs {
+          opacity: 0.7;
+        }
+      }
+    }
+  }
+
+  .Pickup-And-Discard {
+    display: flex;
+    height: 160px;
+    position: fixed;
+    padding-left: 120px;
+    bottom: 200px;
+    width: 100%;
+    align-content: center;
+    align-items: center;
+    .Deck {
+      padding: 15px;
+      padding-bottom: 10px;
+      margin-right: 40px;
+      border-radius: 10px;
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.329);
+        cursor: pointer;
+      }
+    }
+    .Discard {
+      display: flex;
+      align-content: center;
+      align-items: center;
+      .Card {
+        transition: margin-bottom 0.2s ease-in-out;
+        z-index: 10;
+        &:hover {
+          cursor: pointer;
+        }
+        &.clicked {
+          margin-bottom: 20px;
+        }
+      }
+      .place {
+        position: relative;
+        height: 140px;
+        width: 100px;
+        padding: 10px;
+        border-radius: 10px;
+        margin-left: -10px;
+        margin-bottom: 5px;
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.329);
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .Player-Cards-Background {
+    height: 170px;
+    position: absolute;
+    margin-left: 120px;
+    margin-right: 120px;
+    width: calc(100vw - 240px);
+    bottom: 10px;
+    border-radius: 10px;
+    z-index: 5;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.212);
+      cursor: pointer;
+    }
+  }
+
+  .Player-Cards {
+    display: flex;
+    height: 190px;
+    position: absolute;
+    bottom: 0%;
+    width: 100%;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    background-color: #183b21;
+    .Card {
+      transition: margin-bottom 0.2s ease-in-out;
+      margin-bottom: 0;
+      z-index: 50;
+      &:hover {
+        cursor: pointer;
+      }
+      &.clicked {
+        margin-bottom: 20px;
+      }
+    }
+  }
 }

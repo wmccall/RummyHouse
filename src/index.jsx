@@ -6,15 +6,6 @@ import './stylesheets/index.scss';
 import * as serviceWorker from './serviceWorker';
 import { FirebaseProvider } from './context';
 
-// import "./resources/font/RedHatDisplay-Black.otf";
-// import "./resources/font/RedHatDisplay-BlackItalic.otf";
-// import "./resources/font/RedHatDisplay-Bold.otf";
-// import "./resources/font/RedHatDisplay-BoldItalic.otf";
-// import "./resources/font/RedHatDisplay-Italic.otf";
-// import "./resources/font/RedHatDisplay-Medium.otf";
-// import "./resources/font/RedHatDisplay-MediumItalic.otf";
-// import "./resources/font/RedHatDisplay-Regular.otf";
-
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_API_KEY,
   authDomain: process.env.REACT_APP_AUTH_DOMAIN,

@@ -41,7 +41,7 @@ const Landing = () => {
     <div className="Landing">
       <div className="Landing-Left">
         <div className="Text">
-          Play a friendly game of Rummy with your {currentPlayer}
+          Play a friendly game of Rummy with your <br /> {currentPlayer}
         </div>
         <LoginSignup isLogin={false} message="Sign up free" />
       </div>

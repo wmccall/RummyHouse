@@ -102,10 +102,14 @@ const JoinGame = props => {
       UTIL.getGameDoc(firebase.firestore(), gameID)
         .then(gameDoc => {
           setOtherPlayer(gameDoc.data().player1Name);
-          if (gameDoc.data().player2) {
-            setCantJoinMessage('the game is already full.');
-          } else if (gameDoc.data().player1.id === userCredential.uid) {
+          if (gameDoc.data().player1.id === userCredential.uid) {
             history.push(`${ROUTES.GAME}/${gameID}`);
+          } else if (gameDoc.data().player2) {
+            if (gameDoc.data().player2.id === userCredential.uid) {
+              history.push(`${ROUTES.GAME}/${gameID}`);
+            } else {
+              setCantJoinMessage('the game is already full.');
+            }
           }
         })
         .catch(() => {
