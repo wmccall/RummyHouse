@@ -16,18 +16,18 @@
     z-index: 200;
   }
   .Title {
-    padding-left: 140px;
+    margin-left: 140px;
     font-size: 45px;
     font-weight: 700;
     text-decoration: none;
     color: #ffffff;
   }
   .Login {
-    padding-right: 140px;
+    margin-right: 140px;
     div {
       display: inline-block;
       &.LoginButton {
-        padding-right: 70px;
+        margin-right: 70px;
       }
       button {
         display: inline-block;

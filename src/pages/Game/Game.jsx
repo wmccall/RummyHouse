@@ -755,7 +755,7 @@ const Game = props => {
   return (
     <div className="Game">
       <div className="Opponents-Cards-Container">{getOpponentCards()}</div>
-      {gameDoc && gameDoc.data().game_state === 'rummy' && (
+      {gameState === 'rummy' && (
         <div className="Rummy-Container">{getRummyPopup()}</div>
       )}
       <div
