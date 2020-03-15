@@ -81,6 +81,139 @@ const generateDiscardCards = (
   });
 };
 
+const triggerRummy = (e, IDToken, gameKey, possibleRummyID) => {
+  e.stopPropagation();
+  const headers = new Headers();
+  headers.append('id_token', IDToken);
+  headers.append('game_id', gameKey);
+  if (possibleRummyID) {
+    headers.append('possible_rummy_id', possibleRummyID);
+  }
+  const requestOptions = {
+    method: 'POST',
+    headers,
+    redirect: 'follow',
+  };
+
+  fetch(`${URLS.BACKEND_SERVER}/rummy`, requestOptions)
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+};
+
+const generatePossibleRummies = (
+  IDToken,
+  gameKey,
+  possibleRummies,
+  discardPickup,
+  yourTurn,
+  canPickupDiscard,
+) => {
+  const clickHandler = (e, possibleRummyID) => {
+    console.log(possibleRummyID);
+    triggerRummy(e, IDToken, gameKey, possibleRummyID);
+  };
+  console.log(possibleRummies);
+  const possibleRummyIDS = Object.keys(possibleRummies);
+  let body;
+  console.log(possibleRummyIDS);
+  if (possibleRummyIDS.length > 0) {
+    const rummyButtons = possibleRummyIDS.map(possibleRummyID => {
+      const possibleRummy = possibleRummies[possibleRummyID];
+      const on = (
+        <>
+          <div className="text">on</div>
+          <div className="cards setCards">
+            {generateCards(possibleRummy.setcards)}
+          </div>
+        </>
+      );
+      const keep = (
+        <div className="cards keepCards">
+          {generateCards(possibleRummy.discards_keep)}
+        </div>
+      );
+      return (
+        <button
+          className="Possible-Rummy-Button"
+          type="button"
+          onClick={e => clickHandler(e, possibleRummyID)}
+        >
+          <div className="top">
+            <div className="text">Play</div>
+            <div className="cards playCards">
+              {generateCards(possibleRummy.discards_play)}
+            </div>
+            {possibleRummy.setcards.length > 0 && on}
+          </div>
+          <div className="bottom">
+            <div className="text">and keep</div>
+            {possibleRummy.discards_keep.length > 0 && keep}
+            {possibleRummy.discards_keep.length < 1 && 'none.'}
+          </div>
+        </button>
+      );
+    });
+    const pickupCards = (
+      <button
+        className="Pickup-Cards"
+        type="button"
+        onClick={e => clickHandler(e, undefined)}
+      >
+        <div className="cards">{generateCards(discardPickup)}</div>
+      </button>
+    );
+
+    const playNormal = (
+      <>
+        <div className="Message">
+          Or you can choose to pick up the cards as normal.
+        </div>
+        {pickupCards}
+      </>
+    );
+
+    const notRummy = (
+      <>
+        <div className="Message">
+          Or you can{' '}
+          <button
+            className="Put-Back"
+            type="button"
+            onClick={e => clickHandler(e, undefined)}
+          >
+            put the cards back
+          </button>
+          .
+        </div>
+      </>
+    );
+    body = (
+      <div className="Rummy-Popup">
+        <div className="Header">Rummy!</div>
+        <div className="Message">
+          Choose one of the possible rummies below to play!
+        </div>
+        {rummyButtons}
+        {yourTurn && canPickupDiscard && playNormal}
+        {(!yourTurn || !canPickupDiscard) && notRummy}
+      </div>
+    );
+  } else {
+    body = (
+      <div className="Rummy-Popup">
+        <div className="Header">Rummy!</div>
+        <div className="Message">Other player found a rummy!</div>
+        <div className="Sub-Message">
+          Hang tight while they decide what to do.
+        </div>
+      </div>
+    );
+  }
+
+  return body;
+};
+
 const pickupDeck = (e, IDToken, gameKey) => {
   e.stopPropagation();
   const headers = new Headers();
@@ -194,6 +327,7 @@ const Game = props => {
   const [numCardsInOtherHand, setNumCardsInOtherHand] = useState(0);
   const [clickedCards, setClickedCards] = useState([]);
   const [clickedDiscardIndex, setClickedDiscardIndex] = useState(undefined);
+  const [possibleRummies, setPossibleRummies] = useState({});
   const { gameID } = useParams();
   const { history } = props;
   useEffect(() => {
@@ -386,7 +520,6 @@ const Game = props => {
     setPlayedCards(arranged);
   };
 
-  // TODO: update to query so it gets data on update
   const loadGame = () => {
     if (userCredential && userCredential.uid) {
       UTIL.getGameDoc(firebase.firestore(), gameID)
@@ -426,6 +559,25 @@ const Game = props => {
               });
               organizePlayedCards(allChangeData);
             });
+            localGameDoc.ref
+              .collection('possible_rummies')
+              .onSnapshot(async snapshot => {
+                console.log(snapshot);
+                let allChangeData = {};
+                snapshot.docChanges().forEach(change => {
+                  if (
+                    change.type !== 'removed' &&
+                    change.doc.data().playerID === userCredential.uid
+                  ) {
+                    allChangeData[change.doc.id] = change.doc.data();
+                  }
+                });
+                setPossibleRummies(prevData => {
+                  const updatedData = { ...prevData, ...allChangeData };
+                  allChangeData = updatedData;
+                  return updatedData;
+                });
+              });
           } else if (
             localGameDoc.data().player2 &&
             localGameDoc.data().player2.id === userCredential.uid
@@ -464,6 +616,24 @@ const Game = props => {
               });
               organizePlayedCards(allChangeData);
             });
+            localGameDoc.ref
+              .collection('possible_rummies')
+              .onSnapshot(async snapshot => {
+                let allChangeData = {};
+                snapshot.docChanges().forEach(change => {
+                  if (
+                    change.type !== 'removed' &&
+                    change.doc.data().playerID === userCredential.uid
+                  ) {
+                    allChangeData[change.doc.id] = change.doc.data();
+                  }
+                });
+                setPossibleRummies(prevData => {
+                  const updatedData = { ...prevData, ...allChangeData };
+                  allChangeData = updatedData;
+                  return updatedData;
+                });
+              });
           } else {
             history.push(ROUTES.HOME);
           }
@@ -487,6 +657,30 @@ const Game = props => {
     }
     return 'placeholder';
   };
+  const getRummyPopup = () => {
+    if (
+      gameDoc &&
+      isPlayer1 !== undefined &&
+      gameDoc.data().game_state === 'rummy' &&
+      userCredential &&
+      userCredential.uid
+    ) {
+      const discardPickup = gameDoc
+        .data()
+        .discard.slice(gameDoc.data().rummy_index);
+      console.log(possibleRummies);
+      const canPickup = gameDoc.data().discard_pickup_card !== null;
+      return generatePossibleRummies(
+        IDToken,
+        gameID,
+        possibleRummies,
+        discardPickup,
+        yourTurn,
+        canPickup,
+      );
+    }
+    return '';
+  };
   const getPlayedCards = () => {
     if (
       gameDoc &&
@@ -500,7 +694,7 @@ const Game = props => {
     }
     return 'placeholder';
   };
-  const getDicardCards = () => {
+  const getDiscardCards = () => {
     if (gameDoc && gameDoc.data().game_state !== 'setup') {
       return (
         <>
@@ -557,6 +751,9 @@ const Game = props => {
   return (
     <div className="Game">
       <div className="Opponents-Cards">{getOpponentCards()}</div>
+      {gameDoc && gameDoc.data().game_state === 'rummy' && (
+        <div className="Rummy-Container">{getRummyPopup()}</div>
+      )}
       <div
         className="Played-Cards"
         onClick={e =>
@@ -572,7 +769,7 @@ const Game = props => {
       >
         {getPlayedCards()}
       </div>
-      <div className="Pickup-And-Discard">{getDicardCards()}</div>
+      <div className="Pickup-And-Discard">{getDiscardCards()}</div>
       <div
         className="Player-Cards"
         onClick={e =>

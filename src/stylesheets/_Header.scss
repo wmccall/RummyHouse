@@ -10,6 +10,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  a,
+  button,
+  .UserButton-Pane {
+    z-index: 200;
+  }
   .Title {
     padding-left: 140px;
     font-size: 45px;
