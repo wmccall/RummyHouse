@@ -6,10 +6,18 @@
     box-shadow: -5px 0px 10px rgba(68, 68, 68, 0.39);
   }
 
-  .Opponents-Cards {
+  .Opponents-Cards-Container {
     position: absolute;
-    left: 50%;
-    margin-top: -50px;
+    margin: -150px auto;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    .Opponents-Cards {
+      display: flex;
+      .Card {
+        margin-left: -60px;
+      }
+    }
   }
   .Rummy-Container {
     position: absolute;

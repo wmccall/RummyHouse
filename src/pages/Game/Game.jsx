@@ -653,7 +653,11 @@ const Game = props => {
       userCredential &&
       userCredential.uid
     ) {
-      return numCardsInOtherHand;
+      const blankCards = [];
+      for (let i = 0; i < numCardsInOtherHand; i += 1) {
+        blankCards.push(undefined);
+      }
+      return <div className="Opponents-Cards">{generateCards(blankCards)}</div>;
     }
     return 'placeholder';
   };
@@ -750,7 +754,7 @@ const Game = props => {
 
   return (
     <div className="Game">
-      <div className="Opponents-Cards">{getOpponentCards()}</div>
+      <div className="Opponents-Cards-Container">{getOpponentCards()}</div>
       {gameDoc && gameDoc.data().game_state === 'rummy' && (
         <div className="Rummy-Container">{getRummyPopup()}</div>
       )}
