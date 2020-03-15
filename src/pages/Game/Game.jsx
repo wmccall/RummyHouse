@@ -760,8 +760,8 @@ const Game = props => {
       {gameState === 'rummy' && (
         <div className="Rummy-Container">{getRummyPopup()}</div>
       )}
-      <div
-        className="Played-Cards"
+      <button
+        className="Played-Cards-Background"
         onClick={e =>
           playCards(
             e,
@@ -772,12 +772,12 @@ const Game = props => {
             undefined,
           )
         }
-      >
-        {getPlayedCards()}
-      </div>
+        type="button"
+      />
+      <div className="Played-Cards">{getPlayedCards()}</div>
       <div className="Pickup-And-Discard">{getDiscardCards()}</div>
-      <div
-        className="Player-Cards"
+      <button
+        className="Player-Cards-Background"
         onClick={e =>
           pickupDiscard(
             e,
@@ -787,9 +787,9 @@ const Game = props => {
             setClickedDiscardIndex,
           )
         }
-      >
-        {getPlayerCards()}
-      </div>
+        type="button"
+      />
+      <div className="Player-Cards">{getPlayerCards()}</div>
     </div>
   );
 };

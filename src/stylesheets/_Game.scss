@@ -87,6 +87,19 @@
     }
   }
 
+  .Played-Cards-Background {
+    height: calc(100vh - 470px);
+    position: absolute;
+    margin-left: 120px;
+    margin-right: 120px;
+    width: calc(100vw - 240px);
+    border-radius: 10px;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.212);
+      cursor: pointer;
+    }
+  }
+
   .Played-Cards {
     display: flex;
     flex-wrap: wrap;
@@ -94,13 +107,7 @@
     margin-right: 120px;
     justify-content: center;
     align-content: center;
-    height: calc(100vh - 460px);
-    border-radius: 10px;
-
-    &:hover {
-      background-color: rgba(255, 255, 255, 0.527);
-      cursor: pointer;
-    }
+    height: calc(100vh - 470px);
     .Card {
       z-index: 10;
       margin-left: -20px;
@@ -124,7 +131,7 @@
         margin-right: -90px;
       }
       &:hover {
-        background-color: rgba(255, 255, 255, 0.527);
+        background-color: rgba(255, 255, 255, 0.329);
         cursor: pointer;
       }
     }
@@ -168,7 +175,7 @@
       margin-right: 40px;
       border-radius: 10px;
       &:hover {
-        background-color: rgba(255, 255, 255, 0.527);
+        background-color: rgba(255, 255, 255, 0.329);
         cursor: pointer;
       }
     }
@@ -195,38 +202,48 @@
         margin-left: -10px;
         margin-bottom: 5px;
         &:hover {
-          background-color: rgba(255, 255, 255, 0.527);
+          background-color: rgba(255, 255, 255, 0.329);
           cursor: pointer;
         }
       }
     }
   }
 
+  .Player-Cards-Background {
+    height: 170px;
+    position: absolute;
+    margin-left: 120px;
+    margin-right: 120px;
+    width: calc(100vw - 240px);
+    bottom: 10px;
+    border-radius: 10px;
+    z-index: 5;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.212);
+      cursor: pointer;
+    }
+  }
+
   .Player-Cards {
     display: flex;
     height: 190px;
-    position: fixed;
+    position: absolute;
     bottom: 0%;
     width: 100%;
     justify-content: center;
     align-content: center;
     align-items: center;
     background-color: #183b21;
-    z-index: 5;
     .Card {
       transition: margin-bottom 0.2s ease-in-out;
       margin-bottom: 0;
-      z-index: 10;
+      z-index: 50;
       &:hover {
         cursor: pointer;
       }
       &.clicked {
         margin-bottom: 20px;
       }
-    }
-    &:hover {
-      cursor: pointer;
-      background-color: #2b5837;
     }
   }
 }
