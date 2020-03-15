@@ -6,6 +6,12 @@
     box-shadow: -5px 0px 10px rgba(68, 68, 68, 0.39);
   }
 
+  .tip {
+    font-size: 30px;
+    color: white;
+    font-weight: bold;
+  }
+
   .Opponents-Cards-Container {
     position: absolute;
     margin: -150px auto;
@@ -14,6 +20,7 @@
     justify-content: center;
     .Opponents-Cards {
       display: flex;
+      margin-left: 60px;
       .Card {
         margin-left: -60px;
       }

@@ -659,7 +659,7 @@ const Game = props => {
       }
       return <div className="Opponents-Cards">{generateCards(blankCards)}</div>;
     }
-    return 'placeholder';
+    return '';
   };
   const getRummyPopup = () => {
     if (
@@ -696,7 +696,7 @@ const Game = props => {
       console.log(playedCards);
       return buildPlayedCards(playedCards, userCredential.uid);
     }
-    return 'placeholder';
+    return <div className="tip">Play cards here</div>;
   };
   const getDiscardCards = () => {
     if (gameDoc && gameDoc.data().game_state !== 'setup') {
@@ -730,7 +730,7 @@ const Game = props => {
         </>
       );
     }
-    return 'placeholder';
+    return '';
   };
   const getPlayerCards = () => {
     if (
@@ -741,7 +741,7 @@ const Game = props => {
     ) {
       return generatePlayerCards(cardsInHand, setClickedCards, clickedCards);
     }
-    return 'placeholder';
+    return '';
   };
 
   useEffect(() => {
