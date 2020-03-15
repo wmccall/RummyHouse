@@ -90,18 +90,21 @@
   .Played-Cards {
     display: flex;
     flex-wrap: wrap;
-    padding-left: 120px;
-    padding-right: 110px;
+    margin-left: 120px;
+    margin-right: 120px;
     justify-content: center;
     align-content: center;
     height: calc(100vh - 460px);
+    border-radius: 10px;
 
     &:hover {
       background-color: rgba(255, 255, 255, 0.527);
       cursor: pointer;
     }
     .Card {
+      z-index: 10;
       margin-left: -20px;
+      height: 140px;
       img {
         box-shadow: -5px 0px 10px rgba(68, 68, 68, 0.39);
       }
@@ -110,13 +113,15 @@
       position: relative;
       height: 140px;
       width: 100px;
-      z-index: 50;
+      padding: 10px;
+      margin-top: -10px;
+      margin-right: 10px;
       border-radius: 10px;
       &.up {
-        margin-left: -50px;
+        margin-left: -70px;
       }
       &.down {
-        margin-right: -70px;
+        margin-right: -90px;
       }
       &:hover {
         background-color: rgba(255, 255, 255, 0.527);
@@ -124,15 +129,27 @@
       }
     }
     .set,
-    .subset {
+    .subset-inner {
       display: flex;
       width: fit-content;
-      &.theirs {
-        opacity: 0.7;
-      }
+    }
+    .set {
+      margin: 7px 0;
+    }
+    .subset-inner {
+      margin-left: 20px;
     }
     .subset {
-      margin-left: 40px;
+      z-index: 30;
+      background-color: #236b36;
+      border-radius: 10px;
+      margin-left: 20px;
+      height: 140px;
+      .subset-inner {
+        &.theirs {
+          opacity: 0.7;
+        }
+      }
     }
   }
 
@@ -141,13 +158,17 @@
     height: 160px;
     position: fixed;
     padding-left: 120px;
-    bottom: 190px;
+    bottom: 200px;
     width: 100%;
     align-content: center;
     align-items: center;
     .Deck {
+      padding: 15px;
+      padding-bottom: 10px;
       margin-right: 40px;
+      border-radius: 10px;
       &:hover {
+        background-color: rgba(255, 255, 255, 0.527);
         cursor: pointer;
       }
     }
@@ -157,6 +178,7 @@
       align-items: center;
       .Card {
         transition: margin-bottom 0.2s ease-in-out;
+        z-index: 10;
         &:hover {
           cursor: pointer;
         }
@@ -168,9 +190,10 @@
         position: relative;
         height: 140px;
         width: 100px;
-        z-index: 1;
+        padding: 10px;
         border-radius: 10px;
-        margin-left: -50px;
+        margin-left: -10px;
+        margin-bottom: 5px;
         &:hover {
           background-color: rgba(255, 255, 255, 0.527);
           cursor: pointer;

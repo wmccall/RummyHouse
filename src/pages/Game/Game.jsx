@@ -339,12 +339,14 @@ const Game = props => {
       const { toContinueDown, toContinueUp, cards } = playedCardsSet;
       const innerCards = cards.map(subSet => {
         return (
-          <div
-            className={`subset ${
-              subSet.player_id === playerID ? 'yours' : 'theirs'
-            }`}
-          >
-            {generateCards(subSet.cards)}
+          <div className="subset">
+            <div
+              className={`subset-inner ${
+                subSet.player_id === playerID ? 'yours' : 'theirs'
+              }`}
+            >
+              {generateCards(subSet.cards)}
+            </div>
           </div>
         );
       });
