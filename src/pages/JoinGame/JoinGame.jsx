@@ -43,7 +43,7 @@ const getInviteBox = (
   if (otherPlayer && !cantJoinMessage) {
     return (
       <div className="Invite-Box">
-        <div className="Message">{otherPlayer} invited you to join a game</div>
+        <div className="Message">{otherPlayer} invited you to join a game!</div>
         <button
           className="Join-Game-Button"
           type="button"
