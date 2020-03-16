@@ -6,9 +6,9 @@
   .Landing-Left {
     width: calc(50vw - 140px);
     padding-left: 140px;
-    padding-top: 10vh;
+    padding-top: 20vh;
     .Text {
-      font-size: 70px;
+      font-size: 60px;
       font-weight: bold;
       color: #ffffff;
     }
@@ -17,7 +17,7 @@
       button {
         background-color: #f5b81b;
         display: inline-block;
-        font-size: 60px;
+        font-size: 45px;
         padding: 0px 50px 10px 50px;
         border-radius: 100px;
         &:hover {
