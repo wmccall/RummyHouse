@@ -10,7 +10,7 @@
     padding-right: 110px;
     justify-content: flex-start;
     .Create-Game-Button {
-      font-size: 24px;
+      font-size: 26px;
       padding: 0;
       border: 2px dashed #909090;
       border-radius: 10px;
@@ -21,6 +21,11 @@
       &:hover {
         background-color: #707070a6;
         color: white;
+      }
+      .plus {
+        font-size: 45px;
+        font-weight: bolder;
+        line-height: 30px;
       }
     }
     .Game-Button {

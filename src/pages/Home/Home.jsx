@@ -174,7 +174,7 @@ const Home = props => {
           onClick={() => createGameHandler(IDToken)}
           type="button"
         >
-          <div>+</div>
+          <div className="plus">+</div>
           <div>create game</div>
         </button>
         {generateGames(p1Games, p2Games)}
