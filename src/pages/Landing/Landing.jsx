@@ -35,7 +35,7 @@ const Landing = () => {
     setCurrentPlayer(getRandomPlayer());
   }, 2000);
   useEffect(() => {
-    document.title = 'Rummy House';
+    document.title = 'rummy house';
   });
   return (
     <div className="Landing">
