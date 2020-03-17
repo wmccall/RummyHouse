@@ -710,15 +710,7 @@ const Game = props => {
               onClick={e => pickupDeck(e, IDToken, gameID)}
             />
           </div>
-          <div className="Discard">
-            {generateDiscardCards(
-              discardCards,
-              clickedDiscardIndex,
-              setClickedDiscardIndex,
-            )}
-            <div
-              className="place"
-              onClick={e => {
+          <div className="Discard" onClick={e => {
                 discardCardFromHand(
                   e,
                   IDToken,
@@ -726,8 +718,13 @@ const Game = props => {
                   clickedCards[0],
                   setClickedCards,
                 );
-              }}
-            ></div>
+              }}>
+
+            {generateDiscardCards(
+              discardCards,
+              clickedDiscardIndex,
+              setClickedDiscardIndex,
+            )}
           </div>
         </>
       );
