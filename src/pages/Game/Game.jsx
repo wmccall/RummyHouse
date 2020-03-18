@@ -773,20 +773,21 @@ const Game = props => {
       />
       <div className="Played-Cards">{getPlayedCards()}</div>
       <div className="Pickup-And-Discard">{getDiscardCards()}</div>
-      <button
-        className="Player-Cards-Background"
-        onClick={e =>
-          pickupDiscard(
-            e,
-            IDToken,
-            gameID,
-            clickedDiscardIndex,
-            setClickedDiscardIndex,
-          )
-        }
-        type="button"
-      />
-      <div className="Player-Cards">{getPlayerCards()}</div>
+      <div className="Player-Cards">
+        <div className="Player-Hand"
+          onClick={e =>
+            pickupDiscard(
+              e,
+              IDToken,
+              gameID,
+              clickedDiscardIndex,
+              setClickedDiscardIndex,
+            )
+          } 
+        >
+          {getPlayerCards()}
+        </div>
+      </div>
     </div>
   );
 };
