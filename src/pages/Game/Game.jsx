@@ -352,34 +352,36 @@ const Game = props => {
       });
 
       return (
-        <div className="set">
-          <div
-            className="place down"
-            onClick={e =>
-              playCards(
-                e,
-                IDToken,
-                gameID,
-                clickedCards,
-                setClickedCards,
-                toContinueDown,
-              )
-            }
-          ></div>
-          {innerCards}
-          <div
-            className="place up"
-            onClick={e =>
-              playCards(
-                e,
-                IDToken,
-                gameID,
-                clickedCards,
-                setClickedCards,
-                toContinueUp,
-              )
-            }
-          ></div>
+        <div className="container">
+          <div className="set">
+            <div
+              className="place down"
+              onClick={e =>
+                playCards(
+                  e,
+                  IDToken,
+                  gameID,
+                  clickedCards,
+                  setClickedCards,
+                  toContinueDown,
+                )
+              }
+            ></div>
+            {innerCards}
+            <div
+              className="place up"
+              onClick={e =>
+                playCards(
+                  e,
+                  IDToken,
+                  gameID,
+                  clickedCards,
+                  setClickedCards,
+                  toContinueUp,
+                )
+              }
+            ></div>
+          </div>
         </div>
       );
     });
@@ -710,24 +712,23 @@ const Game = props => {
               onClick={e => pickupDeck(e, IDToken, gameID)}
             />
           </div>
-          <div className="Discard">
+          <div
+            className="Discard"
+            onClick={e => {
+              discardCardFromHand(
+                e,
+                IDToken,
+                gameID,
+                clickedCards[0],
+                setClickedCards,
+              );
+            }}
+          >
             {generateDiscardCards(
               discardCards,
               clickedDiscardIndex,
               setClickedDiscardIndex,
             )}
-            <div
-              className="place"
-              onClick={e => {
-                discardCardFromHand(
-                  e,
-                  IDToken,
-                  gameID,
-                  clickedCards[0],
-                  setClickedCards,
-                );
-              }}
-            ></div>
           </div>
         </>
       );
@@ -776,20 +777,22 @@ const Game = props => {
       />
       <div className="Played-Cards">{getPlayedCards()}</div>
       <div className="Pickup-And-Discard">{getDiscardCards()}</div>
-      <button
-        className="Player-Cards-Background"
-        onClick={e =>
-          pickupDiscard(
-            e,
-            IDToken,
-            gameID,
-            clickedDiscardIndex,
-            setClickedDiscardIndex,
-          )
-        }
-        type="button"
-      />
-      <div className="Player-Cards">{getPlayerCards()}</div>
+      <div className="Player-Cards">
+        <div
+          className="Player-Hand"
+          onClick={e =>
+            pickupDiscard(
+              e,
+              IDToken,
+              gameID,
+              clickedDiscardIndex,
+              setClickedDiscardIndex,
+            )
+          }
+        >
+          {getPlayerCards()}
+        </div>
+      </div>
     </div>
   );
 };
