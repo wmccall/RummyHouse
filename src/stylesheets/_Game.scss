@@ -14,7 +14,7 @@
 
   .Opponents-Cards-Container {
     position: absolute;
-    margin: -150px auto;
+    margin: -160px auto;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -122,16 +122,14 @@
       width: 100px;
       padding: 10px;
       margin-top: -10px;
-      margin-right: 10px;
       border-radius: 10px;
       &.up {
-        margin-left: -70px;
+        margin-left: -40px;
       }
       &.down {
-        margin-right: -90px;
+        margin-right: -60px;
       }
       &:hover {
-        background-color: rgba(255, 255, 255, 0.329);
         cursor: pointer;
       }
     }
@@ -145,6 +143,18 @@
     }
     .subset-inner {
       margin-left: 20px;
+    }
+    .container {
+      display: flex;
+      height: 140px;
+      align-content: center;
+      align-items: center;
+      padding: 15px 0px 5px 0px;
+      border-radius: 10px;
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.329);
+        cursor: pointer;
+      }
     }
     .subset {
       z-index: 30;
@@ -186,7 +196,7 @@
       border-radius: 10px;
       height: 140px;
       &:hover {
-        background-color:  rgba(255, 255, 255, 0.329);
+        background-color: rgba(255, 255, 255, 0.329);
         cursor: pointer;
       }
       :first-child {
@@ -240,7 +250,7 @@
       border-radius: 10px;
       height: 140px;
       &:hover {
-        background-color:  rgba(255, 255, 255, 0.329);
+        background-color: rgba(255, 255, 255, 0.329);
         cursor: pointer;
       }
     }
