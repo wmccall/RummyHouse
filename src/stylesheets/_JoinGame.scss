@@ -4,8 +4,8 @@
   height: calc(100vh - 100px);
 
   .Invite-Box {
-    width: 800px;
-    height: 120px;
+    width: 700px;
+    height: 160px;
     margin: 0 auto;
     margin-top: 160px;
     padding: 20px 50px 20px 50px;
@@ -15,10 +15,12 @@
     .Join-Game-Button,
     .Decline-Game-Button {
       float: right;
+      font-weight: bold;
+      letter-spacing: 1px;
       font-size: 25px;
       line-height: 25px;
       border-radius: 100px;
-      padding: 10px 20px 10px 20px;
+      padding: 15px 25px 15px 25px;
       box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
       text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.5);
       background-color: #f5b81b;
@@ -34,6 +36,7 @@
       color: #444444;
       font-weight: bold;
       font-size: 30px;
+      padding-top: 15px;
       padding-bottom: 30px;
     }
   }
