@@ -4,26 +4,32 @@
   height: calc(100vh - 100px);
 
   .Invite-Box {
-    width: 700px;
-    height: 160px;
+    width: 500px;
+    height: 140px;
     margin: 0 auto;
     margin-top: 160px;
-    padding: 20px 50px 20px 50px;
+    padding: 20px 40px 20px 40px;
     border-radius: 10px;
     background-color: #f3f3f3;
+    box-shadow: 0px 3px 8px #404040;
 
     .Join-Game-Button,
     .Decline-Game-Button {
       float: right;
-      font-weight: bold;
-      letter-spacing: 1px;
-      font-size: 25px;
+      font-weight: 700;
+      font-size: 18px;
       line-height: 25px;
       border-radius: 100px;
       padding: 15px 25px 15px 25px;
-      box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
-      text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.5);
+      color: #404040;
+      &:hover {
+        background-color: #c4c4c4;
+      }
+    }
+    .Join-Game-Button {
       background-color: #f5b81b;
+      text-shadow: 0px 3px 6px #0000004d;
+      color: white;
       &:hover {
         background-color: #c99613;
       }
@@ -35,7 +41,7 @@
     .Message {
       color: #444444;
       font-weight: bold;
-      font-size: 30px;
+      font-size: 24px;
       padding-top: 15px;
       padding-bottom: 30px;
     }
