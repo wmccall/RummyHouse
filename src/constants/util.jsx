@@ -65,3 +65,9 @@ export const getGameReference = (firestore, gameID) => {
 export const getGameDoc = (firestore, gameID) => {
   return getGameReference(firestore, gameID).get();
 };
+
+export const asyncForEach = async (array, callback) => {
+  for (let index = 0; index < array.length; index += 1) {
+    await callback(array[index], index, array);
+  }
+};
