@@ -342,6 +342,7 @@ const Game = props => {
       userCredential &&
       userCredential.uid
     ) {
+      // TODO: don't show anything when subsets.length = 0; annoying edge case
       return setIDs.map(setID => {
         const { subsets } = playedSets[setID];
         const innerCards = subsets.map(subset => {
