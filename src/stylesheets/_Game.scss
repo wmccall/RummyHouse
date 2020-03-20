@@ -39,11 +39,14 @@
     .Rummy-Popup {
       background-color: #f3f3f3;
       margin-top: 130px;
-      padding: 20px;
+      padding-left: 40px;
+      padding-right: 40px;
+      padding-bottom: 35px;
       border-radius: 10px;
       height: fit-content;
+      width: fit-content;
       .Header {
-        font-size: 70px;
+        font-size: 30px;
         color: #444444;
         font-weight: bold;
       }
@@ -54,35 +57,47 @@
         border-radius: 10px;
       }
       .Message {
-        font-size: 50px;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
         color: #444444;
-        margin-top: 10px;
+        margin-top: 25px;
+        padding-bottom: 10px;
       }
       .Sub-Message {
         font-size: 30px;
       }
       .Card {
         margin-left: -10px;
+        border-radius: 5px;
         img {
           width: 60px;
+          border-radius: 5px;
         }
       }
       .cards {
         display: flex;
       }
       .Possible-Rummy-Button {
-        background-color: rgba(68, 68, 68, 0.39);
-        padding: 10px 10px 5px 20px;
+        background-color: #236b36;
+        padding: 10px 10px 10px 20px;
         border-radius: 10px;
         .top,
         .bottom {
           display: flex;
         }
+        .text-keep,
         .text {
-          font-size: 30px;
+          font-size: 20px;
+          font-weight: 500;
+          letter-spacing: 0.5px;
           padding-right: 15px;
           padding-left: 5px;
           line-height: 80px;
+        }
+
+        .text-keep {
+          padding-left: 20px;
         }
       }
     }
