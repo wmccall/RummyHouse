@@ -700,7 +700,7 @@ const Game = props => {
       console.log(playedCards);
       return buildPlayedCards(playedCards, userCredential.uid);
     }
-    return <div className="tip">Play cards here</div>;
+    return <div className="tip">play cards here</div>;
   };
   const getDiscardCards = () => {
     if (gameDoc && gameDoc.data().game_state !== 'setup') {
