@@ -52,7 +52,7 @@ const GameButton = props => {
   }, 30000);
 
   const versus = gameData.otherPlayer
-    ? `vs ${gameData.otherPlayer}`
+    ? `${gameData.otherPlayer}`
     : 'invite player';
 
   return (

@@ -5,6 +5,7 @@
   position: absolute;
   background-color: rgba(0, 0, 0, 0.75);
   top: 0;
+  z-index: 20;
   &.visible {
     display: flex;
     justify-content: center;
@@ -13,14 +14,16 @@
     width: 800px;
     height: fit-content;
     margin-top: 160px;
-    padding: 20px 50px 20px 50px;
+    padding: 20px 50px 35px 50px;
     border-radius: 10px;
     background-color: #f3f3f3;
     .Top-Bar {
       display: flex;
       justify-content: space-between;
       .Message {
+        padding-top: 15px;
         font-size: 24px;
+        font-weight: 700;
         color: #444444;
       }
       button {
