@@ -441,7 +441,7 @@ const Game = props => {
             unsubscribeRummyUpdater = localGameDoc.ref
               .collection('possible_rummies')
               .onSnapshot(async snapshot => {
-                let allChangeData = {};
+                const allChangeData = {};
                 snapshot.docChanges().forEach(change => {
                   if (
                     change.type !== 'removed' &&
@@ -450,11 +450,7 @@ const Game = props => {
                     allChangeData[change.doc.id] = change.doc.data();
                   }
                 });
-                setPossibleRummies(prevData => {
-                  const updatedData = { ...prevData, ...allChangeData };
-                  allChangeData = updatedData;
-                  return updatedData;
-                });
+                setPossibleRummies(allChangeData);
               });
           } else if (
             localGameDoc.data().player2 &&
@@ -509,7 +505,7 @@ const Game = props => {
             unsubscribeRummyUpdater = localGameDoc.ref
               .collection('possible_rummies')
               .onSnapshot(async snapshot => {
-                let allChangeData = {};
+                const allChangeData = {};
                 snapshot.docChanges().forEach(change => {
                   if (
                     change.type !== 'removed' &&
@@ -518,11 +514,7 @@ const Game = props => {
                     allChangeData[change.doc.id] = change.doc.data();
                   }
                 });
-                setPossibleRummies(prevData => {
-                  const updatedData = { ...prevData, ...allChangeData };
-                  allChangeData = updatedData;
-                  return updatedData;
-                });
+                setPossibleRummies(allChangeData);
               });
           } else {
             history.push(ROUTES.HOME);
