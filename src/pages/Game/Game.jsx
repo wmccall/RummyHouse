@@ -139,9 +139,10 @@ const generatePossibleRummies = (
               {generateCards(possibleRummy.discards_play)}
             </div>
             {possibleRummy.setcards.length > 0 && on}
-            <div className="text-keep">and keep</div>
+            <div className="text-keep">
+              and keep {possibleRummy.discards_keep.length < 1 && 'none.'}
+            </div>
             {possibleRummy.discards_keep.length > 0 && keep}
-            {possibleRummy.discards_keep.length < 1 && 'none.'}
           </div>
         </button>
       );
