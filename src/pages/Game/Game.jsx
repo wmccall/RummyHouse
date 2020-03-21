@@ -9,12 +9,6 @@ import * as ROUTES from '../../constants/routes';
 import * as UTIL from '../../constants/util';
 import * as URLS from '../../constants/urls';
 
-const isUserIDPlayer1 = async (gameDoc, userID) => {
-  const player1Ref = gameDoc.data().player1;
-  const player1Doc = await player1Ref.get();
-  return userID === player1Doc.data().user_id;
-};
-
 const generateCards = cardNames =>
   cardNames.map(cardName => {
     return <Card cardName={cardName} />;
