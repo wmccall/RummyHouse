@@ -39,6 +39,10 @@ const makeGameButton = (game, key, setIsPopUpVisible, setGameLink, history) => {
 const Home = props => {
   const firebaseContext = useContext(FirebaseContext);
   const { IDToken, firebase, userCredential } = firebaseContext;
+
+  let unsubscribeListenP1Games = () => {};
+  let unsubscribeListenP2Games = () => {};
+
   const [p1Games, setP1Games] = useState({});
   const [p2Games, setP2Games] = useState({});
   const [isPopUpVisible, setIsPopUpVisible] = useState(false);
@@ -61,7 +65,7 @@ const Home = props => {
         .where('player2ID', '==', userCredential.uid);
       const queryP2ID2 = queryP2ID.orderBy('timestamp', 'desc');
 
-      queryP1ID2.onSnapshot(snapshot => {
+      unsubscribeListenP1Games = queryP1ID2.onSnapshot(snapshot => {
         const addUpdateGames = {};
         const removeKeys = [];
         snapshot.docChanges().forEach(change => {
@@ -88,11 +92,11 @@ const Home = props => {
               delete updatedPrevGames[key];
             }
           });
-          return { ...updatedPrevGames, ...addUpdateGames };
+          return { ...addUpdateGames, ...updatedPrevGames };
         });
       });
 
-      queryP2ID2.onSnapshot(snapshot => {
+      unsubscribeListenP2Games = queryP2ID2.onSnapshot(snapshot => {
         const addUpdateGames = {};
         const removeKeys = [];
         snapshot.docChanges().forEach(change => {
@@ -119,7 +123,7 @@ const Home = props => {
               delete updatedPrevGames[key];
             }
           });
-          return { ...updatedPrevGames, ...addUpdateGames };
+          return { ...addUpdateGames, ...updatedPrevGames };
         });
       });
     }
@@ -129,6 +133,11 @@ const Home = props => {
     if (userCredential) {
       loadGames();
     }
+    return () => {
+      console.log('leaving home screen');
+      unsubscribeListenP1Games();
+      unsubscribeListenP2Games();
+    };
     // eslint-disable-next-line
   }, [userCredential]);
 

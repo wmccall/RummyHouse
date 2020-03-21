@@ -315,6 +315,12 @@ const playCards = (
 const Game = props => {
   const firebaseContext = useContext(FirebaseContext);
   const { IDToken, firebase, userCredential } = firebaseContext;
+
+  let unsubscribeDocUpdater = () => {};
+  let unsubscribeHandUpdater = () => {};
+  let unsubscribeSetUpdater = () => {};
+  let unsubscribeRummyUpdater = () => {};
+
   const [gameDoc, setGameDoc] = useState(undefined);
   const [yourHandDoc, setYourHandDoc] = useState(undefined);
   const [isPlayer1, setIsPlayer1] = useState(undefined);
@@ -388,13 +394,15 @@ const Game = props => {
           if (localGameDoc.data().player1.id === userCredential.uid) {
             setGameDoc(localGameDoc);
             setIsPlayer1(true);
-            localGameDoc.ref.onSnapshot(async snapshot => {
-              const snapshotGame = snapshot.data();
-              setDiscardCards(snapshotGame.discard);
-              setGameState(snapshotGame.game_state);
-              setYourTurn(snapshotGame.turn.id === userCredential.uid);
-              setNumCardsInOtherHand(snapshotGame.player2NumCards);
-            });
+            unsubscribeDocUpdater = localGameDoc.ref.onSnapshot(
+              async snapshot => {
+                const snapshotGame = snapshot.data();
+                setDiscardCards(snapshotGame.discard);
+                setGameState(snapshotGame.game_state);
+                setYourTurn(snapshotGame.turn.id === userCredential.uid);
+                setNumCardsInOtherHand(snapshotGame.player2NumCards);
+              },
+            );
             const locYourHandDoc = (
               await localGameDoc.ref
                 .collection('hands')
@@ -402,31 +410,35 @@ const Game = props => {
                 .get()
             ).docs[0];
             setYourHandDoc(locYourHandDoc);
-            locYourHandDoc.ref.onSnapshot(async snapshot => {
-              const snapshotHand = snapshot.data();
-              setCardsInHand(snapshotHand.cards);
-            });
-            localGameDoc.ref.collection('sets').onSnapshot(async snapshot => {
-              const allChangeData = {};
-              await UTIL.asyncForEach(snapshot.docChanges(), async change => {
-                if (change.type !== 'removed') {
-                  const { setType } = change.doc.data();
-                  allChangeData[change.doc.id] = { setType };
-                  const subsets = (
-                    await change.doc.ref.collection('subsets').get()
-                  ).docs.map(subsetDoc => {
-                    const { cards, player } = subsetDoc.data();
-                    return { cards, playerID: player.id };
-                  });
-                  allChangeData[change.doc.id].subsets = subsets;
-                }
+            unsubscribeHandUpdater = locYourHandDoc.ref.onSnapshot(
+              async snapshot => {
+                const snapshotHand = snapshot.data();
+                setCardsInHand(snapshotHand.cards);
+              },
+            );
+            unsubscribeSetUpdater = localGameDoc.ref
+              .collection('sets')
+              .onSnapshot(async snapshot => {
+                const allChangeData = {};
+                await UTIL.asyncForEach(snapshot.docChanges(), async change => {
+                  if (change.type !== 'removed') {
+                    const { setType } = change.doc.data();
+                    allChangeData[change.doc.id] = { setType };
+                    const subsets = (
+                      await change.doc.ref.collection('subsets').get()
+                    ).docs.map(subsetDoc => {
+                      const { cards, player } = subsetDoc.data();
+                      return { cards, playerID: player.id };
+                    });
+                    allChangeData[change.doc.id].subsets = subsets;
+                  }
+                });
+                setPlayedSets(prevSets => {
+                  const updatedSets = { ...prevSets, ...allChangeData };
+                  return updatedSets;
+                });
               });
-              setPlayedSets(prevSets => {
-                const updatedSets = { ...prevSets, ...allChangeData };
-                return updatedSets;
-              });
-            });
-            localGameDoc.ref
+            unsubscribeRummyUpdater = localGameDoc.ref
               .collection('possible_rummies')
               .onSnapshot(async snapshot => {
                 let allChangeData = {};
@@ -450,13 +462,15 @@ const Game = props => {
           ) {
             setGameDoc(localGameDoc);
             setIsPlayer1(false);
-            localGameDoc.ref.onSnapshot(async snapshot => {
-              const snapshotGame = snapshot.data();
-              setDiscardCards(snapshotGame.discard);
-              setGameState(snapshotGame.game_state);
-              setYourTurn(snapshotGame.turn.id === userCredential.uid);
-              setNumCardsInOtherHand(snapshotGame.player1NumCards);
-            });
+            unsubscribeDocUpdater = localGameDoc.ref.onSnapshot(
+              async snapshot => {
+                const snapshotGame = snapshot.data();
+                setDiscardCards(snapshotGame.discard);
+                setGameState(snapshotGame.game_state);
+                setYourTurn(snapshotGame.turn.id === userCredential.uid);
+                setNumCardsInOtherHand(snapshotGame.player1NumCards);
+              },
+            );
             const locYourHandDoc = (
               await localGameDoc.ref
                 .collection('hands')
@@ -464,31 +478,35 @@ const Game = props => {
                 .get()
             ).docs[0];
             setYourHandDoc(locYourHandDoc);
-            locYourHandDoc.ref.onSnapshot(async snapshot => {
-              const snapshotHand = snapshot.data();
-              setCardsInHand(snapshotHand.cards);
-            });
-            localGameDoc.ref.collection('sets').onSnapshot(async snapshot => {
-              const allChangeData = {};
-              await UTIL.asyncForEach(snapshot.docChanges(), async change => {
-                if (change.type !== 'removed') {
-                  const { setType } = change.doc.data();
-                  allChangeData[change.doc.id] = { setType };
-                  const subsets = (
-                    await change.doc.ref.collection('subsets').get()
-                  ).docs.map(subsetDoc => {
-                    const { cards, player } = subsetDoc.data();
-                    return { cards, playerID: player.id };
-                  });
-                  allChangeData[change.doc.id].subsets = subsets;
-                }
+            unsubscribeHandUpdater = locYourHandDoc.ref.onSnapshot(
+              async snapshot => {
+                const snapshotHand = snapshot.data();
+                setCardsInHand(snapshotHand.cards);
+              },
+            );
+            unsubscribeSetUpdater = localGameDoc.ref
+              .collection('sets')
+              .onSnapshot(async snapshot => {
+                const allChangeData = {};
+                await UTIL.asyncForEach(snapshot.docChanges(), async change => {
+                  if (change.type !== 'removed') {
+                    const { setType } = change.doc.data();
+                    allChangeData[change.doc.id] = { setType };
+                    const subsets = (
+                      await change.doc.ref.collection('subsets').get()
+                    ).docs.map(subsetDoc => {
+                      const { cards, player } = subsetDoc.data();
+                      return { cards, playerID: player.id };
+                    });
+                    allChangeData[change.doc.id].subsets = subsets;
+                  }
+                });
+                setPlayedSets(prevSets => {
+                  const updatedSets = { ...prevSets, ...allChangeData };
+                  return updatedSets;
+                });
               });
-              setPlayedSets(prevSets => {
-                const updatedSets = { ...prevSets, ...allChangeData };
-                return updatedSets;
-              });
-            });
-            localGameDoc.ref
+            unsubscribeRummyUpdater = localGameDoc.ref
               .collection('possible_rummies')
               .onSnapshot(async snapshot => {
                 let allChangeData = {};
@@ -518,13 +536,7 @@ const Game = props => {
   };
 
   const getOpponentCards = () => {
-    if (
-      gameDoc &&
-      isPlayer1 !== undefined &&
-      gameDoc.data().game_state !== 'setup' &&
-      userCredential &&
-      userCredential.uid
-    ) {
+    if (gameState && gameState !== 'setup') {
       const blankCards = [];
       for (let i = 0; i < numCardsInOtherHand; i += 1) {
         blankCards.push(undefined);
@@ -534,13 +546,7 @@ const Game = props => {
     return '';
   };
   const getRummyPopup = () => {
-    if (
-      gameDoc &&
-      isPlayer1 !== undefined &&
-      gameDoc.data().game_state === 'rummy' &&
-      userCredential &&
-      userCredential.uid
-    ) {
+    if (gameState && gameState === 'rummy') {
       const discardPickup = gameDoc
         .data()
         .discard.slice(gameDoc.data().rummy_index);
@@ -558,7 +564,7 @@ const Game = props => {
     return '';
   };
   const getDiscardCards = () => {
-    if (gameDoc && gameDoc.data().game_state !== 'setup') {
+    if (gameState && gameState !== 'setup') {
       return (
         <>
           <div className="Deck">
@@ -591,12 +597,7 @@ const Game = props => {
     return '';
   };
   const getPlayerCards = () => {
-    if (
-      gameDoc &&
-      gameDoc.data().game_state !== 'setup' &&
-      userCredential &&
-      userCredential.uid
-    ) {
+    if (gameState && gameState !== 'setup') {
       return generatePlayerCards(cardsInHand, setClickedCards, clickedCards);
     }
     return '';
@@ -607,6 +608,24 @@ const Game = props => {
       loadGame();
       // loadIsPlayer1();
     }
+    return () => {
+      console.log('leaving game screen');
+      setGameDoc(undefined);
+      setYourHandDoc(undefined);
+      setIsPlayer1(undefined);
+      setYourTurn(undefined);
+      setDiscardCards([]);
+      setPlayedSets({});
+      setCardsInHand([]);
+      setNumCardsInOtherHand(0);
+      setClickedCards([]);
+      setClickedDiscardIndex(undefined);
+      setPossibleRummies({});
+      unsubscribeDocUpdater();
+      unsubscribeHandUpdater();
+      unsubscribeSetUpdater();
+      unsubscribeRummyUpdater();
+    };
     // eslint-disable-next-line
   }, [userCredential]);
 
