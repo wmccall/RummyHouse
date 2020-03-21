@@ -51,7 +51,7 @@ const getInviteBox = (
             joinGameHandler(gameID, IDToken, history);
           }}
         >
-          Join Game
+          Join
         </button>
         <button
           className="Decline-Game-Button"
@@ -60,7 +60,7 @@ const getInviteBox = (
             history.push(ROUTES.HOME);
           }}
         >
-          Decline Game
+          Decline
         </button>
       </div>
     );

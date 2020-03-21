@@ -2,22 +2,24 @@
   .Copy-Message {
     display: inline-block;
     margin-top: 32px;
-    font-size: 23px;
-    font-weight: 400;
-    color: #3c8ec6;
+    font-size: 18px;
+    font-weight: 700;
+    // color: #3c8ec6;
+    color: #9b9b9b;
+    transition: opacity 0.2s ease-in-out;
 
     &.hidden {
-      display: none;
+      opacity: 0;
     }
   }
   .Copy-Text-Button {
     float: right;
-    margin-top: 20px;
-    font-size: 23px;
-    font-weight: 400;
-    padding: 10px 25px 13px 25px;
+    margin-top: 25px;
+    font-size: 20px;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    padding: 15px 25px 18px 25px;
     border-radius: 100px;
-    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
     text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.5);
     background-color: #f5b81b;
     &:hover {

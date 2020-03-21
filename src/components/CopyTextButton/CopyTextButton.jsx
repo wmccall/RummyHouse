@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import * as UTIL from '../../constants/util';
 
 const CopyTextButton = props => {
   const { textToCopy, children } = props;
@@ -7,6 +8,13 @@ const CopyTextButton = props => {
   useEffect(() => {
     setClicked(false);
   }, [textToCopy]);
+
+  UTIL.useInterval(
+    () => {
+      setClicked(false);
+    },
+    clicked ? 1000 : null,
+  );
 
   const copyText = text => {
     navigator.clipboard.writeText(text).then(

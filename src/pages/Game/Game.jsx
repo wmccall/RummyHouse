@@ -145,9 +145,7 @@ const generatePossibleRummies = (
               {generateCards(possibleRummy.discards_play)}
             </div>
             {possibleRummy.setcards.length > 0 && on}
-          </div>
-          <div className="bottom">
-            <div className="text">and keep</div>
+            <div className="text-keep">and keep</div>
             {possibleRummy.discards_keep.length > 0 && keep}
             {possibleRummy.discards_keep.length < 1 && 'none.'}
           </div>
@@ -192,7 +190,7 @@ const generatePossibleRummies = (
       <div className="Rummy-Popup">
         <div className="Header">Rummy!</div>
         <div className="Message">
-          Choose one of the possible rummies below to play!
+          Choose one of the possible rummies below to play:
         </div>
         {rummyButtons}
         {yourTurn && canPickupDiscard && playNormal}
@@ -700,7 +698,7 @@ const Game = props => {
       console.log(playedCards);
       return buildPlayedCards(playedCards, userCredential.uid);
     }
-    return <div className="tip">Play cards here</div>;
+    return <div className="tip">play cards here</div>;
   };
   const getDiscardCards = () => {
     if (gameDoc && gameDoc.data().game_state !== 'setup') {

@@ -158,7 +158,7 @@ const Home = props => {
   return (
     <div className="Home">
       <PopUp
-        message="Invite a friend!"
+        message="Invite a friend"
         isVisible={isPopUpVisible}
         setVisible={setIsPopUpVisible}
         setGameLink={setGameLink}
@@ -175,7 +175,7 @@ const Home = props => {
           type="button"
         >
           <div className="plus">+</div>
-          <div>create game</div>
+          <div className="Create-Game-Text">create game</div>
         </button>
         {generateGames(p1Games, p2Games)}
       </div>
