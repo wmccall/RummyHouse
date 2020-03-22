@@ -27,13 +27,13 @@ const UserButton = props => {
   const [userChar, setUserChar] = useState('');
   const [open, setOpen] = useState(false);
   const firebaseContext = useContext(FirebaseContext);
-  const { userCredential, signOut } = firebaseContext;
+  const { displayName, signOut } = firebaseContext;
 
   useEffect(() => {
-    if (userCredential && userCredential.displayName) {
-      setUserChar(userCredential.displayName[0]);
+    if (displayName) {
+      setUserChar(displayName[0]);
     }
-  }, [userCredential]);
+  }, [displayName]);
 
   useEffect(() => {
     setInGameView(isLocationGame(location));

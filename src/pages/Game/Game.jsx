@@ -1,4 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
+import firebase from 'firebase';
 import { withRouter, useParams } from 'react-router-dom';
 import { compose } from 'recompose';
 import { FirebaseContext } from '../../context';
@@ -307,7 +308,7 @@ const playCards = (
 
 const Game = props => {
   const firebaseContext = useContext(FirebaseContext);
-  const { IDToken, firebase, userCredential } = firebaseContext;
+  const { IDToken, uid } = firebaseContext;
 
   let unsubscribeDocUpdater = () => {};
   let unsubscribeHandUpdater = () => {};
@@ -338,8 +339,7 @@ const Game = props => {
       gameDoc &&
       gameDoc.data().game_state !== 'setup' &&
       setIDs.length > 0 &&
-      userCredential &&
-      userCredential.uid
+      uid
     ) {
       // TODO: don't show anything when subsets.length = 0; annoying edge case
       return setIDs.map(setID => {
@@ -349,7 +349,7 @@ const Game = props => {
             <div className="subset">
               <div
                 className={`subset-inner ${
-                  subset.playerID === userCredential.uid ? 'yours' : 'theirs'
+                  subset.playerID === uid ? 'yours' : 'theirs'
                 }`}
               >
                 {generateCards(subset.cards)}
@@ -382,10 +382,10 @@ const Game = props => {
 
   const loadGame = () => {
     console.log(gameID);
-    if (userCredential && userCredential.uid) {
+    if (uid) {
       UTIL.getGameDoc(firebase.firestore(), gameID)
         .then(async localGameDoc => {
-          if (localGameDoc.data().player1.id === userCredential.uid) {
+          if (localGameDoc.data().player1.id === uid) {
             setGameDoc(localGameDoc);
             setIsPlayer1(true);
             unsubscribeDocUpdater = localGameDoc.ref.onSnapshot(
@@ -393,14 +393,14 @@ const Game = props => {
                 const snapshotGame = snapshot.data();
                 setDiscardCards(snapshotGame.discard);
                 setGameState(snapshotGame.game_state);
-                setYourTurn(snapshotGame.turn.id === userCredential.uid);
+                setYourTurn(snapshotGame.turn.id === uid);
                 setNumCardsInOtherHand(snapshotGame.player2NumCards);
               },
             );
             const locYourHandDoc = (
               await localGameDoc.ref
                 .collection('hands')
-                .where('playerID', '==', userCredential.uid)
+                .where('playerID', '==', uid)
                 .get()
             ).docs[0];
             setYourHandDoc(locYourHandDoc);
@@ -439,7 +439,7 @@ const Game = props => {
                 snapshot.docChanges().forEach(change => {
                   if (
                     change.type !== 'removed' &&
-                    change.doc.data().playerID === userCredential.uid
+                    change.doc.data().playerID === uid
                   ) {
                     allChangeData[change.doc.id] = change.doc.data();
                   }
@@ -447,7 +447,7 @@ const Game = props => {
                 setPossibleRummies(allChangeData);
               });
           } else if (localGameDoc.data().player2) {
-            if (localGameDoc.data().player2.id === userCredential.uid) {
+            if (localGameDoc.data().player2.id === uid) {
               setGameDoc(localGameDoc);
               setIsPlayer1(false);
               unsubscribeDocUpdater = localGameDoc.ref.onSnapshot(
@@ -455,14 +455,14 @@ const Game = props => {
                   const snapshotGame = snapshot.data();
                   setDiscardCards(snapshotGame.discard);
                   setGameState(snapshotGame.game_state);
-                  setYourTurn(snapshotGame.turn.id === userCredential.uid);
+                  setYourTurn(snapshotGame.turn.id === uid);
                   setNumCardsInOtherHand(snapshotGame.player1NumCards);
                 },
               );
               const locYourHandDoc = (
                 await localGameDoc.ref
                   .collection('hands')
-                  .where('playerID', '==', userCredential.uid)
+                  .where('playerID', '==', uid)
                   .get()
               ).docs[0];
               setYourHandDoc(locYourHandDoc);
@@ -504,7 +504,7 @@ const Game = props => {
                   snapshot.docChanges().forEach(change => {
                     if (
                       change.type !== 'removed' &&
-                      change.doc.data().playerID === userCredential.uid
+                      change.doc.data().playerID === uid
                     ) {
                       allChangeData[change.doc.id] = change.doc.data();
                     }
@@ -594,7 +594,7 @@ const Game = props => {
   };
 
   useEffect(() => {
-    if (userCredential) {
+    if (uid) {
       loadGame();
       // loadIsPlayer1();
     }
@@ -617,7 +617,7 @@ const Game = props => {
       unsubscribeRummyUpdater();
     };
     // eslint-disable-next-line
-  }, [userCredential]);
+  }, [uid]);
 
   return (
     <div className="Game">

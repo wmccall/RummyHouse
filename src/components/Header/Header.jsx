@@ -15,10 +15,12 @@ const Header = props => {
   }, [location.pathname]);
 
   const firebaseContext = useContext(FirebaseContext);
-  const { waitingForLogin, isLoggedIn } = firebaseContext;
+  const { waitingForLogin, uid } = firebaseContext;
   const splitLocation = currentLocation.split('/').filter(loc => loc !== '');
   const l1CurrentLocation = `/${splitLocation[0]}`;
-  if (isLoggedIn) {
+  console.log(uid);
+  console.log(waitingForLogin);
+  if (uid) {
     if (
       currentLocation === ROUTES.LANDING ||
       ROUTE_LOCATIONS.indexOf(l1CurrentLocation) === -1 ||
@@ -46,16 +48,16 @@ const Header = props => {
 
   return (
     <div className={`Header ${HeaderColor}`}>
-      <Link className="Title" to={isLoggedIn ? ROUTES.HOME : ROUTES.LANDING}>
+      <Link className="Title" to={uid ? ROUTES.HOME : ROUTES.LANDING}>
         rummy house
       </Link>
-      {!isLoggedIn && (
+      {!uid && (
         <div className="Login">
-          <LoginSignup />
+          <LoginSignup isLogin />
           <LoginSignup isLogin={false} />
         </div>
       )}
-      {isLoggedIn && <UserButton />}
+      {uid && <UserButton />}
     </div>
   );
 };

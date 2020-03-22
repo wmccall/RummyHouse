@@ -10,14 +10,16 @@ export const FirebaseProvider = props => {
   const { children } = props;
   const auth = app.auth();
 
-  useEffect(() => {
-    trySignInSilent();
-    // eslint-disable-next-line
-  }, []);
-
   const [userCredential, setUserCredential] = useState(null);
+  const [uid, setUid] = useState(null);
+  const [displayName, setDisplayName] = useState(null);
   const [IDToken, setIDToken] = useState(null);
   const [waitingForLogin, setWaitingForLogin] = useState(true);
+
+  const signOut = async () => {
+    await auth.signOut();
+    setUserCredential(null);
+  };
 
   const getIDToken = async () => {
     try {
@@ -27,9 +29,11 @@ export const FirebaseProvider = props => {
         .then(idToken => idToken)
         .catch(async () => {
           await signOut();
+          setUid(null);
           return null;
         });
     } catch {
+      setUid(null);
       return null;
     }
   };
@@ -39,53 +43,57 @@ export const FirebaseProvider = props => {
       .auth()
       .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       .then(async () => {
-        var provider = new firebase.auth.GoogleAuthProvider();
+        const provider = new firebase.auth.GoogleAuthProvider();
         const authUser = await auth.signInWithPopup(provider);
-        var tIDToken = await getIDToken();
+        const tIDToken = await getIDToken();
         if (tIDToken) {
           setUserCredential(authUser);
+          setUid(authUser.uid);
+          setDisplayName(authUser.displayName);
           setIDToken(tIDToken);
           return [authUser, tIDToken];
-        } else {
-          return null;
         }
+        setUid(null);
+        return null;
       });
     return data;
   };
 
-  const signOut = async () => {
-    await auth.signOut();
-    setUserCredential(null);
-  };
-
-  const isLoggedIn = !!userCredential;
-
   const trySignInSilent = () => {
     auth.onAuthStateChanged(async user => {
-      var tIDToken = await getIDToken();
+      const tIDToken = await getIDToken();
       if (tIDToken) {
         if (user) {
           setUserCredential(user);
+          setUid(user.uid);
+          setDisplayName(user.displayName);
           setIDToken(tIDToken);
         } else {
           setUserCredential(null);
+          setUid(null);
         }
       } else {
         setUserCredential(null);
+        setUid(null);
       }
       setWaitingForLogin(false);
     });
   };
 
+  useEffect(() => {
+    trySignInSilent();
+    // eslint-disable-next-line
+  }, []);
+
   // Make the context object:
   const firebaseContext = {
+    displayName,
+    uid,
     userCredential,
     signInPopup,
     signOut,
     waitingForLogin,
-    isLoggedIn,
     IDToken,
-    firebase,
   };
 
   // pass the value in provider and return
