@@ -16,11 +16,13 @@ const Header = props => {
 
   const firebaseContext = useContext(FirebaseContext);
   const { waitingForLogin, isLoggedIn } = firebaseContext;
-  const l1CurrentLocation = `/${currentLocation.split('/')[0]}`;
+  const splitLocation = currentLocation.split('/').filter(loc => loc !== '');
+  const l1CurrentLocation = `/${splitLocation[0]}`;
   if (isLoggedIn) {
     if (
       currentLocation === ROUTES.LANDING ||
-      ROUTE_LOCATIONS.indexOf(l1CurrentLocation) === -1
+      ROUTE_LOCATIONS.indexOf(l1CurrentLocation) === -1 ||
+      (l1CurrentLocation === ROUTES.GAME && splitLocation.length !== 2)
     ) {
       props.history.push(ROUTES.HOME);
     }
@@ -31,15 +33,15 @@ const Header = props => {
   }
   let HeaderColor = 'BG-Gray';
 
-  switch (props.location.pathname) {
-    case ROUTES.LANDING:
-      HeaderColor = 'BG-Gray';
-      break;
-    case ROUTES.HOME:
-      HeaderColor = 'BG-Gray';
-      break;
-    default:
+  switch (l1CurrentLocation) {
+    case ROUTES.GAME:
+    case ROUTES.JOIN_GAME:
       HeaderColor = 'BG-Green';
+      break;
+    case ROUTES.LANDING:
+    case ROUTES.HOME:
+    default:
+      HeaderColor = 'BG-Gray';
   }
 
   return (
