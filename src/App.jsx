@@ -1,15 +1,15 @@
-import React from "react";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 
-import Header from "./components/Header";
-import LandingPage from "./pages/Landing";
-import HomePage from "./pages/Home";
-import AccountPage from "./pages/Account";
-import AdminPage from "./pages/Admin";
-import GamePage from "./pages/Game";
-import JoinGamePage from "./pages/JoinGame";
+import Header from './components/Header';
+import LandingPage from './pages/Landing';
+import HomePage from './pages/Home';
+import AccountPage from './pages/Account';
+import AdminPage from './pages/Admin';
+import GamePage from './pages/Game';
+import JoinGamePage from './pages/JoinGame';
 
-import * as ROUTES from "./constants/routes";
+import ROUTES from './constants/routes';
 
 const App = () => {
   return (

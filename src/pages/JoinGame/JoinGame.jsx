@@ -3,7 +3,7 @@ import { withRouter, useParams } from 'react-router-dom';
 import { compose } from 'recompose';
 import { FirebaseContext } from '../../context';
 
-import * as ROUTES from '../../constants/routes';
+import ROUTES from '../../constants/routes';
 import * as UTIL from '../../constants/util';
 import * as URLS from '../../constants/urls';
 

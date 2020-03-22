@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { FirebaseContext } from '../../context';
-import * as ROUTES from '../../constants/routes';
+import ROUTES, { ROUTE_LOCATIONS } from '../../constants/routes';
 
 import LoginSignup from '../LoginSignup';
 import UserButton from '../UserButton';
@@ -16,12 +16,18 @@ const Header = props => {
 
   const firebaseContext = useContext(FirebaseContext);
   const { waitingForLogin, isLoggedIn } = firebaseContext;
-  if (!isLoggedIn && !waitingForLogin) {
+  const l1CurrentLocation = `/${currentLocation.split('/')[0]}`;
+  if (isLoggedIn) {
+    if (
+      currentLocation === ROUTES.LANDING ||
+      ROUTE_LOCATIONS.indexOf(l1CurrentLocation) === -1
+    ) {
+      props.history.push(ROUTES.HOME);
+    }
+  } else if (!waitingForLogin) {
     if (currentLocation !== ROUTES.LANDING) {
       props.history.push(ROUTES.LANDING);
     }
-  } else if (isLoggedIn && currentLocation === ROUTES.LANDING) {
-    props.history.push(ROUTES.HOME);
   }
   let HeaderColor = 'BG-Gray';
 

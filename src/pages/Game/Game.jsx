@@ -5,7 +5,7 @@ import { FirebaseContext } from '../../context';
 
 import Card from '../../components/Card';
 
-import * as ROUTES from '../../constants/routes';
+import ROUTES from '../../constants/routes';
 import * as UTIL from '../../constants/util';
 import * as URLS from '../../constants/urls';
 
@@ -381,6 +381,7 @@ const Game = props => {
   };
 
   const loadGame = () => {
+    console.log(gameID);
     if (userCredential && userCredential.uid) {
       UTIL.getGameDoc(firebase.firestore(), gameID)
         .then(async localGameDoc => {
@@ -445,72 +446,76 @@ const Game = props => {
                 });
                 setPossibleRummies(allChangeData);
               });
-          } else if (
-            localGameDoc.data().player2 &&
-            localGameDoc.data().player2.id === userCredential.uid
-          ) {
-            setGameDoc(localGameDoc);
-            setIsPlayer1(false);
-            unsubscribeDocUpdater = localGameDoc.ref.onSnapshot(
-              async snapshot => {
-                const snapshotGame = snapshot.data();
-                setDiscardCards(snapshotGame.discard);
-                setGameState(snapshotGame.game_state);
-                setYourTurn(snapshotGame.turn.id === userCredential.uid);
-                setNumCardsInOtherHand(snapshotGame.player1NumCards);
-              },
-            );
-            const locYourHandDoc = (
-              await localGameDoc.ref
-                .collection('hands')
-                .where('playerID', '==', userCredential.uid)
-                .get()
-            ).docs[0];
-            setYourHandDoc(locYourHandDoc);
-            unsubscribeHandUpdater = locYourHandDoc.ref.onSnapshot(
-              async snapshot => {
-                const snapshotHand = snapshot.data();
-                setCardsInHand(snapshotHand.cards);
-              },
-            );
-            unsubscribeSetUpdater = localGameDoc.ref
-              .collection('sets')
-              .onSnapshot(async snapshot => {
-                const allChangeData = {};
-                await UTIL.asyncForEach(snapshot.docChanges(), async change => {
-                  if (change.type !== 'removed') {
-                    const { setType } = change.doc.data();
-                    allChangeData[change.doc.id] = { setType };
-                    const subsets = (
-                      await change.doc.ref.collection('subsets').get()
-                    ).docs.map(subsetDoc => {
-                      const { cards, player } = subsetDoc.data();
-                      return { cards, playerID: player.id };
-                    });
-                    allChangeData[change.doc.id].subsets = subsets;
-                  }
+          } else if (localGameDoc.data().player2) {
+            if (localGameDoc.data().player2.id === userCredential.uid) {
+              setGameDoc(localGameDoc);
+              setIsPlayer1(false);
+              unsubscribeDocUpdater = localGameDoc.ref.onSnapshot(
+                async snapshot => {
+                  const snapshotGame = snapshot.data();
+                  setDiscardCards(snapshotGame.discard);
+                  setGameState(snapshotGame.game_state);
+                  setYourTurn(snapshotGame.turn.id === userCredential.uid);
+                  setNumCardsInOtherHand(snapshotGame.player1NumCards);
+                },
+              );
+              const locYourHandDoc = (
+                await localGameDoc.ref
+                  .collection('hands')
+                  .where('playerID', '==', userCredential.uid)
+                  .get()
+              ).docs[0];
+              setYourHandDoc(locYourHandDoc);
+              unsubscribeHandUpdater = locYourHandDoc.ref.onSnapshot(
+                async snapshot => {
+                  const snapshotHand = snapshot.data();
+                  setCardsInHand(snapshotHand.cards);
+                },
+              );
+              unsubscribeSetUpdater = localGameDoc.ref
+                .collection('sets')
+                .onSnapshot(async snapshot => {
+                  const allChangeData = {};
+                  await UTIL.asyncForEach(
+                    snapshot.docChanges(),
+                    async change => {
+                      if (change.type !== 'removed') {
+                        const { setType } = change.doc.data();
+                        allChangeData[change.doc.id] = { setType };
+                        const subsets = (
+                          await change.doc.ref.collection('subsets').get()
+                        ).docs.map(subsetDoc => {
+                          const { cards, player } = subsetDoc.data();
+                          return { cards, playerID: player.id };
+                        });
+                        allChangeData[change.doc.id].subsets = subsets;
+                      }
+                    },
+                  );
+                  setPlayedSets(prevSets => {
+                    const updatedSets = { ...prevSets, ...allChangeData };
+                    return updatedSets;
+                  });
                 });
-                setPlayedSets(prevSets => {
-                  const updatedSets = { ...prevSets, ...allChangeData };
-                  return updatedSets;
+              unsubscribeRummyUpdater = localGameDoc.ref
+                .collection('possible_rummies')
+                .onSnapshot(async snapshot => {
+                  const allChangeData = {};
+                  snapshot.docChanges().forEach(change => {
+                    if (
+                      change.type !== 'removed' &&
+                      change.doc.data().playerID === userCredential.uid
+                    ) {
+                      allChangeData[change.doc.id] = change.doc.data();
+                    }
+                  });
+                  setPossibleRummies(allChangeData);
                 });
-              });
-            unsubscribeRummyUpdater = localGameDoc.ref
-              .collection('possible_rummies')
-              .onSnapshot(async snapshot => {
-                const allChangeData = {};
-                snapshot.docChanges().forEach(change => {
-                  if (
-                    change.type !== 'removed' &&
-                    change.doc.data().playerID === userCredential.uid
-                  ) {
-                    allChangeData[change.doc.id] = change.doc.data();
-                  }
-                });
-                setPossibleRummies(allChangeData);
-              });
+            } else {
+              history.push(ROUTES.HOME);
+            }
           } else {
-            history.push(ROUTES.HOME);
+            history.push(`${ROUTES.JOIN_GAME}/${gameID}`);
           }
         })
         .catch(err => {
