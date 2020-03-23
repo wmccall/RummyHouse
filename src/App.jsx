@@ -37,9 +37,6 @@ const App = () => {
             path={`${ROUTES.JOIN_GAME}/:gameID`}
             component={JoinGamePage}
           />
-          <Route
-            render={() => <Redirect to={{ pathname: ROUTES.LANDING }} />}
-          />
         </FirebaseProvider>
       </div>
     </Router>
