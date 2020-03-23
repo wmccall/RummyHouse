@@ -89,7 +89,7 @@ const getInviteBox = (
 
 const JoinGame = props => {
   const firebaseContext = useContext(FirebaseContext);
-  const { IDToken, uid } = firebaseContext;
+  const { authData } = firebaseContext;
   const [otherPlayer, setOtherPlayer] = useState(undefined);
   const [cantJoinMessage, setCantJoinMessage] = useState(undefined);
   const { gameID } = useParams();
@@ -99,14 +99,14 @@ const JoinGame = props => {
   });
 
   const loadGame = () => {
-    if (uid) {
+    if (authData.uid) {
       UTIL.getGameDoc(firebase.firestore(), gameID)
         .then(gameDoc => {
           setOtherPlayer(gameDoc.data().player1Name);
-          if (gameDoc.data().player1.id === uid) {
+          if (gameDoc.data().player1.id === authData.uid) {
             history.push(`${ROUTES.GAME}/${gameID}`);
           } else if (gameDoc.data().player2) {
-            if (gameDoc.data().player2.id === uid) {
+            if (gameDoc.data().player2.id === authData.uid) {
               history.push(`${ROUTES.GAME}/${gameID}`);
             } else {
               setCantJoinMessage('the game is already full.');
@@ -120,15 +120,21 @@ const JoinGame = props => {
   };
 
   useEffect(() => {
-    if (uid) {
+    if (authData.uid) {
       loadGame();
     }
     // eslint-disable-next-line
-  }, [uid]);
+  }, [authData.uid]);
 
   return (
     <div className="JoinGame">
-      {getInviteBox(otherPlayer, cantJoinMessage, gameID, IDToken, history)}
+      {getInviteBox(
+        otherPlayer,
+        cantJoinMessage,
+        gameID,
+        authData.IDToken,
+        history,
+      )}
     </div>
   );
 };

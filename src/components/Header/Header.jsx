@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { compose } from 'recompose';
 import { FirebaseContext } from '../../context';
-import ROUTES, { ROUTE_LOCATIONS } from '../../constants/routes';
+import ROUTES from '../../constants/routes';
 
 import LoginSignup from '../LoginSignup';
 import UserButton from '../UserButton';
@@ -10,29 +10,16 @@ import UserButton from '../UserButton';
 const Header = props => {
   const { location } = props;
   const [currentLocation, setCurrentLocation] = useState(location.pathname);
+
+  const firebaseContext = useContext(FirebaseContext);
+  const { authData } = firebaseContext;
+  const splitLocation = currentLocation.split('/').filter(loc => loc !== '');
+  const l1CurrentLocation = `/${splitLocation[0]}`;
+
   useEffect(() => {
     setCurrentLocation(props.location.pathname);
   }, [location.pathname]);
 
-  const firebaseContext = useContext(FirebaseContext);
-  const { waitingForLogin, uid } = firebaseContext;
-  const splitLocation = currentLocation.split('/').filter(loc => loc !== '');
-  const l1CurrentLocation = `/${splitLocation[0]}`;
-  console.log(uid);
-  console.log(waitingForLogin);
-  if (uid) {
-    if (
-      currentLocation === ROUTES.LANDING ||
-      ROUTE_LOCATIONS.indexOf(l1CurrentLocation) === -1 ||
-      (l1CurrentLocation === ROUTES.GAME && splitLocation.length !== 2)
-    ) {
-      props.history.push(ROUTES.HOME);
-    }
-  } else if (!waitingForLogin) {
-    if (currentLocation !== ROUTES.LANDING) {
-      props.history.push(ROUTES.LANDING);
-    }
-  }
   let HeaderColor = 'BG-Gray';
 
   switch (l1CurrentLocation) {
@@ -48,16 +35,16 @@ const Header = props => {
 
   return (
     <div className={`Header ${HeaderColor}`}>
-      <Link className="Title" to={uid ? ROUTES.HOME : ROUTES.LANDING}>
+      <Link className="Title" to={authData.uid ? ROUTES.HOME : ROUTES.LANDING}>
         rummy house
       </Link>
-      {!uid && (
+      {!authData.uid && (
         <div className="Login">
           <LoginSignup isLogin />
           <LoginSignup isLogin={false} />
         </div>
       )}
-      {uid && <UserButton />}
+      {authData.uid && <UserButton />}
     </div>
   );
 };

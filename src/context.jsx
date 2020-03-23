@@ -10,15 +10,19 @@ export const FirebaseProvider = props => {
   const { children } = props;
   const auth = app.auth();
 
-  const [userCredential, setUserCredential] = useState(null);
-  const [uid, setUid] = useState(null);
-  const [displayName, setDisplayName] = useState(null);
-  const [IDToken, setIDToken] = useState(null);
-  const [waitingForLogin, setWaitingForLogin] = useState(true);
+  const authDefaultState = {
+    uid: null,
+    displayName: null,
+    IDToken: null,
+    waitingForLogin: true,
+  };
+
+  const [authData, setAuthData] = useState(authDefaultState);
 
   const signOut = async () => {
     await auth.signOut();
-    setUserCredential(null);
+    console.log('setting auth data to default');
+    setAuthData(authDefaultState);
   };
 
   const getIDToken = async () => {
@@ -29,71 +33,66 @@ export const FirebaseProvider = props => {
         .then(idToken => idToken)
         .catch(async () => {
           await signOut();
-          setUid(null);
           return null;
         });
     } catch {
-      setUid(null);
       return null;
     }
   };
 
-  const signInPopup = async () => {
-    const data = await firebase
+  const signInPopup = () => {
+    firebase
       .auth()
       .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
       .then(async () => {
         const provider = new firebase.auth.GoogleAuthProvider();
-        const authUser = await auth.signInWithPopup(provider);
-        const tIDToken = await getIDToken();
-        if (tIDToken) {
-          setUserCredential(authUser);
-          setUid(authUser.uid);
-          setDisplayName(authUser.displayName);
-          setIDToken(tIDToken);
-          return [authUser, tIDToken];
-        }
-        setUid(null);
-        return null;
+        await auth.signInWithPopup(provider);
       });
-    return data;
   };
 
-  const trySignInSilent = () => {
-    auth.onAuthStateChanged(async user => {
+  const listenAuth = async () => {
+    const unsubAuthState = auth.onAuthStateChanged(async authUser => {
       const tIDToken = await getIDToken();
       if (tIDToken) {
-        if (user) {
-          setUserCredential(user);
-          setUid(user.uid);
-          setDisplayName(user.displayName);
-          setIDToken(tIDToken);
-        } else {
-          setUserCredential(null);
-          setUid(null);
+        if (authUser) {
+          console.log(
+            'setting auth data',
+            JSON.stringify({
+              uid: authUser.uid,
+              displayName: authUser.displayName,
+              IDToken: tIDToken,
+              waitingForLogin: false,
+            }),
+          );
+          setAuthData({
+            uid: authUser.uid,
+            displayName: authUser.displayName,
+            IDToken: tIDToken,
+            waitingForLogin: false,
+          });
+          return true;
         }
+        console.log('setting auth data to default, post attempted login');
+        setAuthData({ ...authDefaultState, waitingForLogin: false });
       } else {
-        setUserCredential(null);
-        setUid(null);
+        console.log('setting auth data to default, post attempted login');
+        setAuthData({ ...authDefaultState, waitingForLogin: false });
       }
-      setWaitingForLogin(false);
+      return false;
     });
+    return unsubAuthState;
   };
 
   useEffect(() => {
-    trySignInSilent();
+    listenAuth();
     // eslint-disable-next-line
   }, []);
 
   // Make the context object:
   const firebaseContext = {
-    displayName,
-    uid,
-    userCredential,
     signInPopup,
     signOut,
-    waitingForLogin,
-    IDToken,
+    authData,
   };
 
   // pass the value in provider and return

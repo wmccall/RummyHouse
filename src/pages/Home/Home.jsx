@@ -41,7 +41,7 @@ const Home = React.memo(props => {
   console.log('in home');
   const { history } = props;
   const firebaseContext = useContext(FirebaseContext);
-  const { IDToken, uid } = firebaseContext;
+  const { authData } = firebaseContext;
 
   let unsubscribeListenP1Games = () => {};
   let unsubscribeListenP2Games = () => {};
@@ -58,17 +58,17 @@ const Home = React.memo(props => {
   const loadGames = () => {
     console.log('loading');
 
-    if (uid) {
+    if (authData.uid) {
       console.log('Has usercredential');
       const queryP1ID = firebase
         .firestore()
         .collection('games')
-        .where('player1ID', '==', uid);
+        .where('player1ID', '==', authData.uid);
       const queryP1ID2 = queryP1ID.orderBy('timestamp', 'desc');
       const queryP2ID = firebase
         .firestore()
         .collection('games')
-        .where('player2ID', '==', uid);
+        .where('player2ID', '==', authData.uid);
       const queryP2ID2 = queryP2ID.orderBy('timestamp', 'desc');
 
       unsubscribeListenP1Games = queryP1ID2.onSnapshot(snapshot => {
@@ -136,7 +136,7 @@ const Home = React.memo(props => {
   };
 
   useEffect(() => {
-    if (uid) {
+    if (authData.uid) {
       loadGames();
     }
     return () => {
@@ -145,7 +145,7 @@ const Home = React.memo(props => {
       unsubscribeListenP2Games();
     };
     // eslint-disable-next-line
-  }, [uid]);
+  }, [authData.uid]);
 
   const generateGames = (p1Games_, p2Games_) => {
     const p1GameKeys = Object.keys(p1Games_);
@@ -186,7 +186,7 @@ const Home = React.memo(props => {
       <div className="Home-Body">
         <button
           className="Create-Game-Button"
-          onClick={() => createGameHandler(IDToken)}
+          onClick={() => createGameHandler(authData.IDToken)}
           type="button"
         >
           <div className="plus">+</div>

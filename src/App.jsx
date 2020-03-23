@@ -1,10 +1,11 @@
 import React from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import { FirebaseProvider } from './context';
+
+import ProtectedRoute from './components/ProtectedRoute';
 
 import Header from './components/Header';
 import LandingPage from './pages/Landing';
-import MissingPage from './pages/Missing';
 import HomePage from './pages/Home';
 import AccountPage from './pages/Account';
 import AdminPage from './pages/Admin';
@@ -25,15 +26,20 @@ const App = () => {
         <FirebaseProvider>
           <Header />
           <Route exact path={ROUTES.LANDING} component={LandingPage} />
-          <Route path={ROUTES.HOME} component={HomePage} />
-          <Route path={ROUTES.ACCOUNT} component={AccountPage} />
-          <Route path={ROUTES.ADMIN} component={AdminPage} />
-          <Route path={`${ROUTES.GAME}/:gameID`} component={GamePage} />
-          <Route
+          <ProtectedRoute path={ROUTES.HOME} component={HomePage} />
+          <ProtectedRoute path={ROUTES.ACCOUNT} component={AccountPage} />
+          <ProtectedRoute path={ROUTES.ADMIN} component={AdminPage} />
+          <ProtectedRoute
+            path={`${ROUTES.GAME}/:gameID`}
+            component={GamePage}
+          />
+          <ProtectedRoute
             path={`${ROUTES.JOIN_GAME}/:gameID`}
             component={JoinGamePage}
           />
-          <Route path="*" component={MissingPage} />
+          <Route
+            render={() => <Redirect to={{ pathname: ROUTES.LANDING }} />}
+          />
         </FirebaseProvider>
       </div>
     </Router>

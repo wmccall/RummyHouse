@@ -35,7 +35,7 @@ const deleteGameHandler = (gameKey, IDToken) => {
 
 const GameButton = props => {
   const firebaseContext = useContext(FirebaseContext);
-  const { IDToken } = firebaseContext;
+  const { authData } = firebaseContext;
   const { history } = props;
   const { gameKey, gameData, setGameLink, setIsPopUpVisible } = props;
   const [hover, setHover] = useState(false);
@@ -95,7 +95,9 @@ const GameButton = props => {
             <img src={linkIcon} alt="link" />
           </button>
           <div className={`${hover ? 'visible' : 'hide'}`}>
-            <DeleteButton onClick={() => deleteGameHandler(gameKey, IDToken)} />
+            <DeleteButton
+              onClick={() => deleteGameHandler(gameKey, authData.IDToken)}
+            />
           </div>
         </div>
       </div>
