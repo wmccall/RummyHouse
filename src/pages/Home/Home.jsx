@@ -1,4 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
+import firebase from 'firebase';
 import { withRouter } from 'react-router-dom';
 import { compose } from 'recompose';
 import { FirebaseContext } from '../../context';
@@ -36,9 +37,11 @@ const makeGameButton = (game, key, setIsPopUpVisible, setGameLink, history) => {
   );
 };
 
-const Home = props => {
+const Home = React.memo(props => {
+  console.log('in home');
+  const { history } = props;
   const firebaseContext = useContext(FirebaseContext);
-  const { IDToken, firebase, userCredential } = firebaseContext;
+  const { authData } = firebaseContext;
 
   let unsubscribeListenP1Games = () => {};
   let unsubscribeListenP2Games = () => {};
@@ -53,16 +56,19 @@ const Home = props => {
   });
 
   const loadGames = () => {
-    if (userCredential && userCredential.uid) {
+    console.log('loading');
+
+    if (authData.uid) {
+      console.log('Has usercredential');
       const queryP1ID = firebase
         .firestore()
         .collection('games')
-        .where('player1ID', '==', userCredential.uid);
+        .where('player1ID', '==', authData.uid);
       const queryP1ID2 = queryP1ID.orderBy('timestamp', 'desc');
       const queryP2ID = firebase
         .firestore()
         .collection('games')
-        .where('player2ID', '==', userCredential.uid);
+        .where('player2ID', '==', authData.uid);
       const queryP2ID2 = queryP2ID.orderBy('timestamp', 'desc');
 
       unsubscribeListenP1Games = queryP1ID2.onSnapshot(snapshot => {
@@ -130,7 +136,7 @@ const Home = props => {
   };
 
   useEffect(() => {
-    if (userCredential) {
+    if (authData.uid) {
       loadGames();
     }
     return () => {
@@ -139,7 +145,7 @@ const Home = props => {
       unsubscribeListenP2Games();
     };
     // eslint-disable-next-line
-  }, [userCredential]);
+  }, [authData.uid]);
 
   const generateGames = (p1Games_, p2Games_) => {
     const p1GameKeys = Object.keys(p1Games_);
@@ -149,7 +155,7 @@ const Home = props => {
         key,
         setIsPopUpVisible,
         setGameLink,
-        props.history,
+        history,
       );
     });
     const p2GameKeys = Object.keys(p2Games_);
@@ -159,7 +165,7 @@ const Home = props => {
         key,
         setIsPopUpVisible,
         setGameLink,
-        props.history,
+        history,
       ),
     );
     return [...localP1Games, ...localP2Games];
@@ -180,7 +186,7 @@ const Home = props => {
       <div className="Home-Body">
         <button
           className="Create-Game-Button"
-          onClick={() => createGameHandler(IDToken)}
+          onClick={() => createGameHandler(authData.IDToken)}
           type="button"
         >
           <div className="plus">+</div>
@@ -190,6 +196,6 @@ const Home = props => {
       </div>
     </div>
   );
-};
+});
 
 export default compose(withRouter)(Home);
