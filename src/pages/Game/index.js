@@ -1,3 +1,3 @@
-import Game from './GameContainer';
+import Game from './Game';
 
 export default Game;

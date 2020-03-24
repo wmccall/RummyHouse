@@ -2,6 +2,7 @@ import React, { useEffect, useContext, useState } from 'react';
 import firebase from 'firebase';
 import { withRouter, useParams } from 'react-router-dom';
 import { compose } from 'recompose';
+import { Droppable, DragDropContext } from 'react-beautiful-dnd';
 import { FirebaseContext } from '../../context';
 
 import Card from '../../components/Card';
@@ -9,6 +10,14 @@ import Card from '../../components/Card';
 import ROUTES from '../../constants/routes';
 import * as UTIL from '../../constants/util';
 import * as URLS from '../../constants/urls';
+
+const onDragStart = () => {
+  console.log('Drag starting');
+};
+
+const onDragEnd = () => {
+  console.log('Drag End');
+};
 
 const generateCards = cardNames =>
   cardNames.map(cardName => {
@@ -557,30 +566,47 @@ const Game = props => {
     if (gameState && gameState !== 'setup') {
       return (
         <>
-          <div className="Deck">
-            <Card
-              cardName={undefined}
-              onClick={e => pickupDeck(e, authData.IDToken, gameID)}
-            />
-          </div>
-          <div
-            className="Discard"
-            onClick={e => {
-              discardCardFromHand(
-                e,
-                authData.IDToken,
-                gameID,
-                clickedCards[0],
-                setClickedCards,
-              );
-            }}
-          >
-            {generateDiscardCards(
-              discardCards,
-              clickedDiscardIndex,
-              setClickedDiscardIndex,
+          <Droppable droppableId="deck">
+            {provided => (
+              <div
+                innerRef={provided.innerRef}
+                {...provided.droppableProps}
+                className="Deck"
+              >
+                <Card
+                  cardName={undefined}
+                  onClick={e => pickupDeck(e, authData.IDToken, gameID)}
+                />
+                {provided.placeholder}
+              </div>
             )}
-          </div>
+          </Droppable>
+          <Droppable droppableId="discard">
+            {provided => (
+              <div
+                innerRef={provided.innerRef}
+                {...provided.droppableProps}
+                className="Discard"
+                onClick={e => {
+                  discardCardFromHand(
+                    e,
+                    authData.IDToken,
+                    gameID,
+                    clickedCards[0],
+                    setClickedCards,
+                  );
+                }}
+                cards={discardCards}
+              >
+                {generateDiscardCards(
+                  discardCards,
+                  clickedDiscardIndex,
+                  setClickedDiscardIndex,
+                )}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
         </>
       );
     }
@@ -620,44 +646,64 @@ const Game = props => {
   }, [authData.uid]);
 
   return (
-    <div className="Game">
-      <div className="Opponents-Cards-Container">{getOpponentCards()}</div>
-      {gameState === 'rummy' && (
-        <div className="Rummy-Container">{getRummyPopup()}</div>
-      )}
-      <button
-        className="Played-Cards-Background"
-        onClick={e =>
-          playCards(
-            e,
-            authData.IDToken,
-            gameID,
-            clickedCards,
-            setClickedCards,
-            undefined,
-          )
-        }
-        type="button"
-      />
-      <div className="Played-Cards">{buildPlayedSets()}</div>
-      <div className="Pickup-And-Discard">{getDiscardCards()}</div>
-      <div className="Player-Cards">
-        <div
-          className="Player-Hand"
+    <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
+      <div className="Game">
+        <div className="Opponents-Cards-Container">{getOpponentCards()}</div>
+        {gameState === 'rummy' && (
+          <div className="Rummy-Container">{getRummyPopup()}</div>
+        )}
+        <button
+          className="Played-Cards-Background"
           onClick={e =>
-            pickupDiscard(
+            playCards(
               e,
               authData.IDToken,
               gameID,
-              clickedDiscardIndex,
-              setClickedDiscardIndex,
+              clickedCards,
+              setClickedCards,
+              undefined,
             )
           }
-        >
-          {getPlayerCards()}
+          type="button"
+        />
+        <Droppable droppableId="player-hand">
+          {provided => (
+            <div
+              innerRef={provided.innerRef}
+              {...provided.droppableProps}
+              className="Played-Cards"
+            >
+              {buildPlayedSets()}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+        <div className="Pickup-And-Discard">{getDiscardCards()}</div>
+        <div className="Player-Cards">
+          <Droppable droppableId="player-hand">
+            {provided => (
+              <div
+                innerRef={provided.innerRef}
+                {...provided.droppableProps}
+                className="Player-Hand"
+                onClick={e =>
+                  pickupDiscard(
+                    e,
+                    authData.IDToken,
+                    gameID,
+                    clickedDiscardIndex,
+                    setClickedDiscardIndex,
+                  )
+                }
+              >
+                {getPlayerCards()}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
         </div>
       </div>
-    </div>
+    </DragDropContext>
   );
 };
 
