@@ -1,4 +1,5 @@
 import React, { useEffect, useContext, useState } from 'react';
+import firebase from 'firebase';
 import { withRouter, useParams } from 'react-router-dom';
 import { compose } from 'recompose';
 import { FirebaseContext } from '../../context';
@@ -88,7 +89,7 @@ const getInviteBox = (
 
 const JoinGame = props => {
   const firebaseContext = useContext(FirebaseContext);
-  const { IDToken, firebase, userCredential } = firebaseContext;
+  const { authData } = firebaseContext;
   const [otherPlayer, setOtherPlayer] = useState(undefined);
   const [cantJoinMessage, setCantJoinMessage] = useState(undefined);
   const { gameID } = useParams();
@@ -98,14 +99,14 @@ const JoinGame = props => {
   });
 
   const loadGame = () => {
-    if (userCredential && userCredential.uid) {
+    if (authData.uid) {
       UTIL.getGameDoc(firebase.firestore(), gameID)
         .then(gameDoc => {
           setOtherPlayer(gameDoc.data().player1Name);
-          if (gameDoc.data().player1.id === userCredential.uid) {
+          if (gameDoc.data().player1.id === authData.uid) {
             history.push(`${ROUTES.GAME}/${gameID}`);
           } else if (gameDoc.data().player2) {
-            if (gameDoc.data().player2.id === userCredential.uid) {
+            if (gameDoc.data().player2.id === authData.uid) {
               history.push(`${ROUTES.GAME}/${gameID}`);
             } else {
               setCantJoinMessage('the game is already full.');
@@ -119,15 +120,21 @@ const JoinGame = props => {
   };
 
   useEffect(() => {
-    if (userCredential) {
+    if (authData.uid) {
       loadGame();
     }
     // eslint-disable-next-line
-  }, [userCredential]);
+  }, [authData.uid]);
 
   return (
     <div className="JoinGame">
-      {getInviteBox(otherPlayer, cantJoinMessage, gameID, IDToken, history)}
+      {getInviteBox(
+        otherPlayer,
+        cantJoinMessage,
+        gameID,
+        authData.IDToken,
+        history,
+      )}
     </div>
   );
 };

@@ -1,8 +1,9 @@
 import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
+import { withRouter } from 'react-router-dom';
+import { compose } from 'recompose';
 
 import { FirebaseContext } from '../../context';
-import * as URLS from '../../constants/urls';
 
 const LoginSignup = props => {
   const firebaseContext = useContext(FirebaseContext);
@@ -20,25 +21,7 @@ const LoginSignup = props => {
   };
 
   const signInHandler = () => {
-    signInPopup()
-      .then(authData => {
-        const headers = new Headers();
-        headers.append('id_token', authData[1]);
-        headers.append('name', authData[0].user.displayName);
-        const requestOptions = {
-          method: 'POST',
-          headers,
-          redirect: 'follow',
-        };
-
-        fetch(`${URLS.BACKEND_SERVER}/signUp`, requestOptions)
-          .then(response => response.text())
-          .then(result => console.log(result))
-          .catch(error => console.log('error', error));
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    signInPopup();
   };
 
   return (
@@ -50,7 +33,7 @@ const LoginSignup = props => {
   );
 };
 
-export default LoginSignup;
+export default compose(withRouter)(LoginSignup);
 
 LoginSignup.propTypes = {
   isLogin: PropTypes.bool,
