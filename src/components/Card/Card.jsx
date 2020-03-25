@@ -45,12 +45,12 @@ const Card = props => {
   if (isDraggable) {
     return (
       <Draggable
-        draggableID={fixedCardName}
+        draggableId={fixedCardName}
         index={getCardIndex(fixedCardName)}
       >
         {provided => (
           <div
-            innerRef={provided.innerRef}
+            ref={provided.innerRef}
             className={`Card ${isClicked ? 'clicked' : ''}`}
             onClick={onClick}
           >
