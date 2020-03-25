@@ -1,28 +1,149 @@
-import React, { useEffect, useContext, useState } from 'react';
-import firebase from 'firebase';
-import { withRouter, useParams } from 'react-router-dom';
-import { compose } from 'recompose';
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+import React, { useState } from 'react';
 import { Droppable, DragDropContext } from 'react-beautiful-dnd';
-import { FirebaseContext } from '../../context';
 
+import deck from '../../constants/deck';
 import Card from '../../components/Card';
 
-import ROUTES from '../../constants/routes';
-import * as UTIL from '../../constants/util';
 import * as URLS from '../../constants/urls';
 
-const onDragStart = () => {
-  console.log('Drag starting');
+// Network calls
+const playCards = (
+  e,
+  IDToken,
+  gameKey,
+  cards,
+  setClickedCards,
+  continuedSetID,
+) => {
+  e.stopPropagation();
+  if (cards.length > 0) {
+    const headers = new Headers();
+    headers.append('id_token', IDToken);
+    headers.append('game_id', gameKey);
+    headers.append('cards', JSON.stringify(cards));
+    if (continuedSetID) {
+      headers.append('continued_set_id', continuedSetID);
+    }
+    const requestOptions = {
+      method: 'POST',
+      headers,
+      redirect: 'follow',
+    };
+
+    fetch(`${URLS.BACKEND_SERVER}/playCards`, requestOptions)
+      .then(response => response.text())
+      .then(result => {
+        console.log(result);
+        setClickedCards([]);
+      })
+      .catch(error => console.log('error', error));
+  }
 };
 
-const onDragEnd = () => {
-  console.log('Drag End');
+const triggerRummy = (e, IDToken, gameKey, possibleRummyID) => {
+  e.stopPropagation();
+  const headers = new Headers();
+  headers.append('id_token', IDToken);
+  headers.append('game_id', gameKey);
+  if (possibleRummyID) {
+    headers.append('possible_rummy_id', possibleRummyID);
+  }
+  const requestOptions = {
+    method: 'POST',
+    headers,
+    redirect: 'follow',
+  };
+
+  fetch(`${URLS.BACKEND_SERVER}/rummy`, requestOptions)
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
 };
 
+const pickupDeck = (e, IDToken, gameKey) => {
+  e.stopPropagation();
+  const headers = new Headers();
+  headers.append('id_token', IDToken);
+  headers.append('game_id', gameKey);
+  const requestOptions = {
+    method: 'POST',
+    headers,
+    redirect: 'follow',
+  };
+
+  fetch(`${URLS.BACKEND_SERVER}/pickupDeck`, requestOptions)
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+};
+
+const pickupDiscard = (
+  e,
+  IDToken,
+  gameKey,
+  discardIndex,
+  setClickedDiscardIndex,
+) => {
+  console.log(discardIndex);
+  e.stopPropagation();
+  const headers = new Headers();
+  headers.append('id_token', IDToken);
+  headers.append('game_id', gameKey);
+  headers.append('discard_pickup_index', discardIndex);
+  const requestOptions = {
+    method: 'POST',
+    headers,
+    redirect: 'follow',
+  };
+
+  fetch(`${URLS.BACKEND_SERVER}/pickupDiscard`, requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log(result);
+      setClickedDiscardIndex(undefined);
+    })
+    .catch(error => console.log('error', error));
+};
+
+const discardCardFromHand = (e, IDToken, gameKey, card, setClickedCards) => {
+  e.stopPropagation();
+  const headers = new Headers();
+  headers.append('id_token', IDToken);
+  headers.append('game_id', gameKey);
+  headers.append('discard_card', card);
+  const requestOptions = {
+    method: 'POST',
+    headers,
+    redirect: 'follow',
+  };
+
+  fetch(`${URLS.BACKEND_SERVER}/discard`, requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log(result);
+      setClickedCards([]);
+    })
+    .catch(error => console.log('error', error));
+};
+
+// Generators
 const generateCards = cardNames =>
   cardNames.map(cardName => {
     return <Card cardName={cardName} />;
   });
+
+const getOpponentCards = (gameState, numCardsInOtherHand) => {
+  if (gameState && gameState !== 'setup') {
+    const blankCards = [];
+    for (let i = 0; i < numCardsInOtherHand; i += 1) {
+      blankCards.push(undefined);
+    }
+    return <div className="Opponents-Cards">{generateCards(blankCards)}</div>;
+  }
+  return '';
+};
 
 const generatePlayerCards = (cardNames, setClickedCards, clickedCards) => {
   const clickHandler = (e, cardName) => {
@@ -51,9 +172,65 @@ const generatePlayerCards = (cardNames, setClickedCards, clickedCards) => {
         cardName={cardName}
         isClicked={isClicked()}
         onClick={e => clickHandler(e, cardName)}
+        isDraggable
       />
     );
   });
+};
+
+const getPlayerCards = (
+  gameState,
+  cardsInHand,
+  setClickedCards,
+  clickedCards,
+) => {
+  if (gameState !== 'setup') {
+    return generatePlayerCards(cardsInHand, setClickedCards, clickedCards);
+  }
+  return '';
+};
+
+const buildPlayedSets = (
+  playedSets,
+  gameState,
+  uid,
+  IDToken,
+  gameID,
+  clickedCards,
+  setClickedCards,
+) => {
+  const setIDs = Object.keys(playedSets);
+  if (gameState !== 'setup' && setIDs.length > 0 && uid) {
+    // TODO: don't show anything when subsets.length = 0; annoying edge case
+    return setIDs.map(setID => {
+      const { subsets } = playedSets[setID];
+      const innerCards = subsets.map(subset => {
+        return (
+          <div className="subset">
+            <div
+              className={`subset-inner ${
+                subset.playerID === uid ? 'yours' : 'theirs'
+              }`}
+            >
+              {generateCards(subset.cards)}
+            </div>
+          </div>
+        );
+      });
+
+      return (
+        <div
+          className="container"
+          onClick={e =>
+            playCards(e, IDToken, gameID, clickedCards, setClickedCards, setID)
+          }
+        >
+          <div className="set">{innerCards}</div>
+        </div>
+      );
+    });
+  }
+  return <div className="tip">play cards here</div>;
 };
 
 const generateDiscardCards = (
@@ -80,29 +257,71 @@ const generateDiscardCards = (
         cardName={cardName}
         isClicked={isClicked(index)}
         onClick={() => clickHandler(index)}
+        isDraggable
       />
     );
   });
 };
 
-const triggerRummy = (e, IDToken, gameKey, possibleRummyID) => {
-  e.stopPropagation();
-  const headers = new Headers();
-  headers.append('id_token', IDToken);
-  headers.append('game_id', gameKey);
-  if (possibleRummyID) {
-    headers.append('possible_rummy_id', possibleRummyID);
+const getDiscardCards = (
+  gameState,
+  IDToken,
+  gameID,
+  clickedCards,
+  setClickedCards,
+  discardCards,
+  clickedDiscardIndex,
+  setClickedDiscardIndex,
+) => {
+  if (gameState !== 'setup') {
+    return (
+      <>
+        <Droppable droppableId="deck">
+          {provided => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className="Deck"
+            >
+              <Card
+                cardName={undefined}
+                onClick={e => pickupDeck(e, IDToken, gameID)}
+                isDraggable
+              />
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+        <Droppable droppableId="discard">
+          {provided => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className="Discard"
+              onClick={e => {
+                discardCardFromHand(
+                  e,
+                  IDToken,
+                  gameID,
+                  clickedCards[0],
+                  setClickedCards,
+                );
+              }}
+              cards={discardCards}
+            >
+              {generateDiscardCards(
+                discardCards,
+                clickedDiscardIndex,
+                setClickedDiscardIndex,
+              )}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </>
+    );
   }
-  const requestOptions = {
-    method: 'POST',
-    headers,
-    redirect: 'follow',
-  };
-
-  fetch(`${URLS.BACKEND_SERVER}/rummy`, requestOptions)
-    .then(response => response.text())
-    .then(result => console.log(result))
-    .catch(error => console.log('error', error));
+  return '';
 };
 
 const generatePossibleRummies = (
@@ -217,440 +436,75 @@ const generatePossibleRummies = (
   return body;
 };
 
-const pickupDeck = (e, IDToken, gameKey) => {
-  e.stopPropagation();
-  const headers = new Headers();
-  headers.append('id_token', IDToken);
-  headers.append('game_id', gameKey);
-  const requestOptions = {
-    method: 'POST',
-    headers,
-    redirect: 'follow',
-  };
-
-  fetch(`${URLS.BACKEND_SERVER}/pickupDeck`, requestOptions)
-    .then(response => response.text())
-    .then(result => console.log(result))
-    .catch(error => console.log('error', error));
-};
-
-const pickupDiscard = (
-  e,
+const getRummyPopup = (
+  gameState,
   IDToken,
-  gameKey,
-  discardIndex,
-  setClickedDiscardIndex,
+  gameID,
+  yourTurn,
+  discardPickup,
+  canPickup,
+  possibleRummies,
 ) => {
-  console.log(discardIndex);
-  e.stopPropagation();
-  const headers = new Headers();
-  headers.append('id_token', IDToken);
-  headers.append('game_id', gameKey);
-  headers.append('discard_pickup_index', discardIndex);
-  const requestOptions = {
-    method: 'POST',
-    headers,
-    redirect: 'follow',
-  };
-
-  fetch(`${URLS.BACKEND_SERVER}/pickupDiscard`, requestOptions)
-    .then(response => response.text())
-    .then(result => {
-      console.log(result);
-      setClickedDiscardIndex(undefined);
-    })
-    .catch(error => console.log('error', error));
-};
-const discardCardFromHand = (e, IDToken, gameKey, card, setClickedCards) => {
-  e.stopPropagation();
-  const headers = new Headers();
-  headers.append('id_token', IDToken);
-  headers.append('game_id', gameKey);
-  headers.append('discard_card', card);
-  const requestOptions = {
-    method: 'POST',
-    headers,
-    redirect: 'follow',
-  };
-
-  fetch(`${URLS.BACKEND_SERVER}/discard`, requestOptions)
-    .then(response => response.text())
-    .then(result => {
-      console.log(result);
-      setClickedCards([]);
-    })
-    .catch(error => console.log('error', error));
-};
-
-const playCards = (
-  e,
-  IDToken,
-  gameKey,
-  cards,
-  setClickedCards,
-  continuedSetID,
-) => {
-  e.stopPropagation();
-  if (cards.length > 0) {
-    const headers = new Headers();
-    headers.append('id_token', IDToken);
-    headers.append('game_id', gameKey);
-    headers.append('cards', JSON.stringify(cards));
-    if (continuedSetID) {
-      headers.append('continued_set_id', continuedSetID);
-    }
-    const requestOptions = {
-      method: 'POST',
-      headers,
-      redirect: 'follow',
-    };
-
-    fetch(`${URLS.BACKEND_SERVER}/playCards`, requestOptions)
-      .then(response => response.text())
-      .then(result => {
-        console.log(result);
-        setClickedCards([]);
-      })
-      .catch(error => console.log('error', error));
+  if (gameState && gameState === 'rummy') {
+    return generatePossibleRummies(
+      IDToken,
+      gameID,
+      possibleRummies,
+      discardPickup,
+      yourTurn,
+      canPickup,
+    );
   }
+  return '';
+};
+
+// Drag handlers
+const onDragStart = () => {
+  console.log('Drag starting');
+};
+
+const onDragEnd = () => {
+  console.log('Drag End');
 };
 
 const Game = props => {
-  const firebaseContext = useContext(FirebaseContext);
-  const { authData } = firebaseContext;
+  console.log(props);
 
-  let unsubscribeDocUpdater = () => {};
-  let unsubscribeHandUpdater = () => {};
-  let unsubscribeSetUpdater = () => {};
-  let unsubscribeRummyUpdater = () => {};
+  const {
+    authData,
+    gameState,
+    numCardsInOtherHand,
+    gameID,
+    yourTurn,
+    discardPickup,
+    canPickup,
+    possibleRummies,
+    playedSets,
+    cardsInHand,
+    discardCards,
+  } = props;
 
-  const [gameDoc, setGameDoc] = useState(undefined);
-  const [yourHandDoc, setYourHandDoc] = useState(undefined);
-  const [isPlayer1, setIsPlayer1] = useState(undefined);
-  const [gameState, setGameState] = useState(undefined);
-  const [yourTurn, setYourTurn] = useState(undefined);
-  const [discardCards, setDiscardCards] = useState([]);
-  const [playedSets, setPlayedSets] = useState({});
-  const [cardsInHand, setCardsInHand] = useState([]);
-  const [numCardsInOtherHand, setNumCardsInOtherHand] = useState(0);
   const [clickedCards, setClickedCards] = useState([]);
   const [clickedDiscardIndex, setClickedDiscardIndex] = useState(undefined);
-  const [possibleRummies, setPossibleRummies] = useState({});
-  const { gameID } = useParams();
-  const { history } = props;
-  useEffect(() => {
-    document.title = 'Game';
-  });
-
-  const buildPlayedSets = () => {
-    const setIDs = Object.keys(playedSets);
-    if (
-      gameDoc &&
-      gameDoc.data().game_state !== 'setup' &&
-      setIDs.length > 0 &&
-      authData.uid
-    ) {
-      // TODO: don't show anything when subsets.length = 0; annoying edge case
-      return setIDs.map(setID => {
-        const { subsets } = playedSets[setID];
-        const innerCards = subsets.map(subset => {
-          return (
-            <div className="subset">
-              <div
-                className={`subset-inner ${
-                  subset.playerID === authData.uid ? 'yours' : 'theirs'
-                }`}
-              >
-                {generateCards(subset.cards)}
-              </div>
-            </div>
-          );
-        });
-
-        return (
-          <div
-            className="container"
-            onClick={e =>
-              playCards(
-                e,
-                authData.IDToken,
-                gameID,
-                clickedCards,
-                setClickedCards,
-                setID,
-              )
-            }
-          >
-            <div className="set">{innerCards}</div>
-          </div>
-        );
-      });
-    }
-    return <div className="tip">play cards here</div>;
-  };
-
-  const loadGame = () => {
-    console.log(gameID);
-    if (authData.uid) {
-      UTIL.getGameDoc(firebase.firestore(), gameID)
-        .then(async localGameDoc => {
-          if (localGameDoc.data().player1.id === authData.uid) {
-            setGameDoc(localGameDoc);
-            setIsPlayer1(true);
-            unsubscribeDocUpdater = localGameDoc.ref.onSnapshot(
-              async snapshot => {
-                const snapshotGame = snapshot.data();
-                setDiscardCards(snapshotGame.discard);
-                setGameState(snapshotGame.game_state);
-                setYourTurn(snapshotGame.turn.id === authData.uid);
-                setNumCardsInOtherHand(snapshotGame.player2NumCards);
-              },
-            );
-            const locYourHandDoc = (
-              await localGameDoc.ref
-                .collection('hands')
-                .where('playerID', '==', authData.uid)
-                .get()
-            ).docs[0];
-            setYourHandDoc(locYourHandDoc);
-            unsubscribeHandUpdater = locYourHandDoc.ref.onSnapshot(
-              async snapshot => {
-                const snapshotHand = snapshot.data();
-                setCardsInHand(snapshotHand.cards);
-              },
-            );
-            unsubscribeSetUpdater = localGameDoc.ref
-              .collection('sets')
-              .onSnapshot(async snapshot => {
-                const allChangeData = {};
-                await UTIL.asyncForEach(snapshot.docChanges(), async change => {
-                  if (change.type !== 'removed') {
-                    const { setType } = change.doc.data();
-                    allChangeData[change.doc.id] = { setType };
-                    const subsets = (
-                      await change.doc.ref.collection('subsets').get()
-                    ).docs.map(subsetDoc => {
-                      const { cards, player } = subsetDoc.data();
-                      return { cards, playerID: player.id };
-                    });
-                    allChangeData[change.doc.id].subsets = subsets;
-                  }
-                });
-                setPlayedSets(prevSets => {
-                  const updatedSets = { ...prevSets, ...allChangeData };
-                  return updatedSets;
-                });
-              });
-            unsubscribeRummyUpdater = localGameDoc.ref
-              .collection('possible_rummies')
-              .onSnapshot(async snapshot => {
-                const allChangeData = {};
-                snapshot.docChanges().forEach(change => {
-                  if (
-                    change.type !== 'removed' &&
-                    change.doc.data().playerID === authData.uid
-                  ) {
-                    allChangeData[change.doc.id] = change.doc.data();
-                  }
-                });
-                setPossibleRummies(allChangeData);
-              });
-          } else if (localGameDoc.data().player2) {
-            if (localGameDoc.data().player2.id === authData.uid) {
-              setGameDoc(localGameDoc);
-              setIsPlayer1(false);
-              unsubscribeDocUpdater = localGameDoc.ref.onSnapshot(
-                async snapshot => {
-                  const snapshotGame = snapshot.data();
-                  setDiscardCards(snapshotGame.discard);
-                  setGameState(snapshotGame.game_state);
-                  setYourTurn(snapshotGame.turn.id === authData.uid);
-                  setNumCardsInOtherHand(snapshotGame.player1NumCards);
-                },
-              );
-              const locYourHandDoc = (
-                await localGameDoc.ref
-                  .collection('hands')
-                  .where('playerID', '==', authData.uid)
-                  .get()
-              ).docs[0];
-              setYourHandDoc(locYourHandDoc);
-              unsubscribeHandUpdater = locYourHandDoc.ref.onSnapshot(
-                async snapshot => {
-                  const snapshotHand = snapshot.data();
-                  setCardsInHand(snapshotHand.cards);
-                },
-              );
-              unsubscribeSetUpdater = localGameDoc.ref
-                .collection('sets')
-                .onSnapshot(async snapshot => {
-                  const allChangeData = {};
-                  await UTIL.asyncForEach(
-                    snapshot.docChanges(),
-                    async change => {
-                      if (change.type !== 'removed') {
-                        const { setType } = change.doc.data();
-                        allChangeData[change.doc.id] = { setType };
-                        const subsets = (
-                          await change.doc.ref.collection('subsets').get()
-                        ).docs.map(subsetDoc => {
-                          const { cards, player } = subsetDoc.data();
-                          return { cards, playerID: player.id };
-                        });
-                        allChangeData[change.doc.id].subsets = subsets;
-                      }
-                    },
-                  );
-                  setPlayedSets(prevSets => {
-                    const updatedSets = { ...prevSets, ...allChangeData };
-                    return updatedSets;
-                  });
-                });
-              unsubscribeRummyUpdater = localGameDoc.ref
-                .collection('possible_rummies')
-                .onSnapshot(async snapshot => {
-                  const allChangeData = {};
-                  snapshot.docChanges().forEach(change => {
-                    if (
-                      change.type !== 'removed' &&
-                      change.doc.data().playerID === authData.uid
-                    ) {
-                      allChangeData[change.doc.id] = change.doc.data();
-                    }
-                  });
-                  setPossibleRummies(allChangeData);
-                });
-            } else {
-              history.push(ROUTES.HOME);
-            }
-          } else {
-            history.push(`${ROUTES.JOIN_GAME}/${gameID}`);
-          }
-        })
-        .catch(err => {
-          console.log(err);
-          history.push(ROUTES.HOME);
-        });
-    }
-  };
-
-  const getOpponentCards = () => {
-    if (gameState && gameState !== 'setup') {
-      const blankCards = [];
-      for (let i = 0; i < numCardsInOtherHand; i += 1) {
-        blankCards.push(undefined);
-      }
-      return <div className="Opponents-Cards">{generateCards(blankCards)}</div>;
-    }
-    return '';
-  };
-  const getRummyPopup = () => {
-    if (gameState && gameState === 'rummy') {
-      const discardPickup = gameDoc
-        .data()
-        .discard.slice(gameDoc.data().rummy_index);
-      console.log(possibleRummies);
-      const canPickup = gameDoc.data().discard_pickup_card !== null;
-      return generatePossibleRummies(
-        authData.IDToken,
-        gameID,
-        possibleRummies,
-        discardPickup,
-        yourTurn,
-        canPickup,
-      );
-    }
-    return '';
-  };
-  const getDiscardCards = () => {
-    if (gameState && gameState !== 'setup') {
-      return (
-        <>
-          <Droppable droppableId="deck">
-            {provided => (
-              <div
-                innerRef={provided.innerRef}
-                {...provided.droppableProps}
-                className="Deck"
-              >
-                <Card
-                  cardName={undefined}
-                  onClick={e => pickupDeck(e, authData.IDToken, gameID)}
-                />
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-          <Droppable droppableId="discard">
-            {provided => (
-              <div
-                innerRef={provided.innerRef}
-                {...provided.droppableProps}
-                className="Discard"
-                onClick={e => {
-                  discardCardFromHand(
-                    e,
-                    authData.IDToken,
-                    gameID,
-                    clickedCards[0],
-                    setClickedCards,
-                  );
-                }}
-                cards={discardCards}
-              >
-                {generateDiscardCards(
-                  discardCards,
-                  clickedDiscardIndex,
-                  setClickedDiscardIndex,
-                )}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </>
-      );
-    }
-    return '';
-  };
-  const getPlayerCards = () => {
-    if (gameState && gameState !== 'setup') {
-      return generatePlayerCards(cardsInHand, setClickedCards, clickedCards);
-    }
-    return '';
-  };
-
-  useEffect(() => {
-    if (authData.uid) {
-      loadGame();
-      // loadIsPlayer1();
-    }
-    return () => {
-      console.log('leaving game screen');
-      setGameDoc(undefined);
-      setYourHandDoc(undefined);
-      setIsPlayer1(undefined);
-      setYourTurn(undefined);
-      setDiscardCards([]);
-      setPlayedSets({});
-      setCardsInHand([]);
-      setNumCardsInOtherHand(0);
-      setClickedCards([]);
-      setClickedDiscardIndex(undefined);
-      setPossibleRummies({});
-      unsubscribeDocUpdater();
-      unsubscribeHandUpdater();
-      unsubscribeSetUpdater();
-      unsubscribeRummyUpdater();
-    };
-    // eslint-disable-next-line
-  }, [authData.uid]);
 
   return (
     <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
       <div className="Game">
-        <div className="Opponents-Cards-Container">{getOpponentCards()}</div>
+        <div className="Opponents-Cards-Container">
+          {getOpponentCards(gameState, numCardsInOtherHand)}
+        </div>
         {gameState === 'rummy' && (
-          <div className="Rummy-Container">{getRummyPopup()}</div>
+          <div className="Rummy-Container">
+            {getRummyPopup(
+              gameState,
+              authData.IDToken,
+              gameID,
+              yourTurn,
+              discardPickup,
+              canPickup,
+              possibleRummies,
+            )}
+          </div>
         )}
         <button
           className="Played-Cards-Background"
@@ -669,21 +523,40 @@ const Game = props => {
         <Droppable droppableId="player-hand">
           {provided => (
             <div
-              innerRef={provided.innerRef}
+              ref={provided.innerRef}
               {...provided.droppableProps}
               className="Played-Cards"
             >
-              {buildPlayedSets()}
+              {buildPlayedSets(
+                playedSets,
+                gameState,
+                authData.uid,
+                authData.IDToken,
+                gameID,
+                clickedCards,
+                setClickedCards,
+              )}
               {provided.placeholder}
             </div>
           )}
         </Droppable>
-        <div className="Pickup-And-Discard">{getDiscardCards()}</div>
+        <div className="Pickup-And-Discard">
+          {getDiscardCards(
+            gameState,
+            authData.IDToken,
+            gameID,
+            clickedCards,
+            setClickedCards,
+            discardCards,
+            clickedDiscardIndex,
+            setClickedDiscardIndex,
+          )}
+        </div>
         <div className="Player-Cards">
           <Droppable droppableId="player-hand">
             {provided => (
               <div
-                innerRef={provided.innerRef}
+                ref={provided.innerRef}
                 {...provided.droppableProps}
                 className="Player-Hand"
                 onClick={e =>
@@ -696,7 +569,12 @@ const Game = props => {
                   )
                 }
               >
-                {getPlayerCards()}
+                {getPlayerCards(
+                  gameState,
+                  cardsInHand,
+                  setClickedCards,
+                  clickedCards,
+                )}
                 {provided.placeholder}
               </div>
             )}
@@ -707,4 +585,4 @@ const Game = props => {
   );
 };
 
-export default compose(withRouter)(Game);
+export default Game;
