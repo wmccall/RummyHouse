@@ -2,7 +2,7 @@
   background-color: #236b36;
   overflow: auto;
   height: calc(100vh - 100px);
-  .Card > img {
+  .Card {
     box-shadow: -5px 0px 10px rgba(68, 68, 68, 0.39);
   }
 
@@ -69,11 +69,8 @@
       }
       .Card {
         margin-left: -10px;
+        width: 60px;
         border-radius: 5px;
-        img {
-          width: 60px;
-          border-radius: 5px;
-        }
       }
       .cards {
         display: flex;
@@ -128,26 +125,7 @@
       z-index: 10;
       margin-left: -20px;
       height: 140px;
-      img {
-        box-shadow: -5px 0px 10px rgba(68, 68, 68, 0.39);
-      }
-    }
-    .place {
-      position: relative;
-      height: 140px;
-      width: 100px;
-      padding: 10px;
-      margin-top: -10px;
-      border-radius: 10px;
-      &.up {
-        margin-left: -40px;
-      }
-      &.down {
-        margin-right: -60px;
-      }
-      &:hover {
-        cursor: pointer;
-      }
+      box-shadow: -5px 0px 10px rgba(68, 68, 68, 0.39);
     }
     .set,
     .subset-inner {
@@ -212,7 +190,7 @@
       display: flex;
       align-content: center;
       align-items: center;
-      padding: 12px 80px 8px 26px;
+      padding: 12px 80px 12px 26px;
       border-radius: 10px;
       height: 140px;
       &:hover {
@@ -231,19 +209,6 @@
         }
         &.clicked {
           margin-bottom: 30px;
-        }
-      }
-      .place {
-        position: relative;
-        height: 140px;
-        width: 100px;
-        padding: 10px;
-        border-radius: 10px;
-        margin-left: -10px;
-        margin-bottom: 5px;
-        &:hover {
-          background-color: rgba(255, 255, 255, 0.329);
-          cursor: pointer;
         }
       }
     }
@@ -266,7 +231,7 @@
       display: flex;
       align-content: center;
       align-items: center;
-      padding: 12px 85px 8px 95px;
+      padding: 12px 85px 12px 95px;
       border-radius: 10px;
       height: 140px;
       &:hover {
@@ -275,7 +240,7 @@
       }
     }
     .Card {
-      transition: margin-bottom 0.2s ease-in-out;
+      transition: margin-bottom 0.2s ease-in-out, transform 0.2s ease-in-out;
       margin-bottom: 0;
       margin-left: -15px;
       z-index: 50;

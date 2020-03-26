@@ -39,36 +39,33 @@ const getCardIndex = cardName => {
 };
 
 const Card = props => {
-  const { cardName, isClicked, onClick, isDraggable } = props;
+  const { cardName, isClicked, onClick, isDraggable, index = 0 } = props;
   const fixedCardName = cardName || 'back';
 
   if (isDraggable) {
     return (
-      <Draggable
-        draggableId={fixedCardName}
-        index={getCardIndex(fixedCardName)}
-      >
+      <Draggable draggableId={fixedCardName} index={index}>
         {provided => (
-          <div
-            ref={provided.innerRef}
+          <img
             className={`Card ${isClicked ? 'clicked' : ''}`}
             onClick={onClick}
-          >
-            <img
-              {...provided.draggableProps}
-              {...provided.dragHandleProps}
-              src={convertNameToImage(fixedCardName)}
-              alt={fixedCardName}
-            />
-          </div>
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            src={convertNameToImage(fixedCardName)}
+            alt={fixedCardName}
+          />
         )}
       </Draggable>
     );
   }
   return (
-    <div className={`Card ${isClicked ? 'clicked' : ''}`} onClick={onClick}>
-      <img src={convertNameToImage(fixedCardName)} alt={fixedCardName} />
-    </div>
+    <img
+      src={convertNameToImage(fixedCardName)}
+      alt={fixedCardName}
+      className={`Card ${isClicked ? 'clicked' : ''}`}
+      onClick={onClick}
+    />
   );
 };
 

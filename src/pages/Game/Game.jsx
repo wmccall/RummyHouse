@@ -145,7 +145,12 @@ const getOpponentCards = (gameState, numCardsInOtherHand) => {
   return '';
 };
 
-const generatePlayerCards = (cardNames, setClickedCards, clickedCards) => {
+const generatePlayerCards = (
+  cardNames,
+  setClickedCards,
+  clickedCards,
+  gameState,
+) => {
   const clickHandler = (e, cardName) => {
     e.stopPropagation();
     setClickedCards(prevClicked => {
@@ -163,7 +168,7 @@ const generatePlayerCards = (cardNames, setClickedCards, clickedCards) => {
       return newClicked;
     });
   };
-  return cardNames.map(cardName => {
+  return cardNames.map((cardName, index) => {
     const isClicked = () => {
       return clickedCards.indexOf(cardName) !== -1;
     };
@@ -172,6 +177,7 @@ const generatePlayerCards = (cardNames, setClickedCards, clickedCards) => {
         cardName={cardName}
         isClicked={isClicked()}
         onClick={e => clickHandler(e, cardName)}
+        index={index}
         isDraggable
       />
     );
@@ -185,7 +191,12 @@ const getPlayerCards = (
   clickedCards,
 ) => {
   if (gameState !== 'setup') {
-    return generatePlayerCards(cardsInHand, setClickedCards, clickedCards);
+    return generatePlayerCards(
+      cardsInHand,
+      setClickedCards,
+      clickedCards,
+      gameState,
+    );
   }
   return '';
 };
@@ -237,6 +248,7 @@ const generateDiscardCards = (
   cardNames,
   clickedDiscardIndex,
   setClickedDiscardIndex,
+  gameState,
 ) => {
   const clickHandler = cardIndex => {
     console.log(cardIndex);
@@ -257,7 +269,8 @@ const generateDiscardCards = (
         cardName={cardName}
         isClicked={isClicked(index)}
         onClick={() => clickHandler(index)}
-        isDraggable
+        index={index}
+        isDraggable={gameState === 'draw'}
       />
     );
   });
@@ -276,7 +289,7 @@ const getDiscardCards = (
   if (gameState !== 'setup') {
     return (
       <>
-        <Droppable droppableId="deck">
+        <Droppable droppableId="deck" direction="horizontal">
           {provided => (
             <div
               ref={provided.innerRef}
@@ -286,13 +299,12 @@ const getDiscardCards = (
               <Card
                 cardName={undefined}
                 onClick={e => pickupDeck(e, IDToken, gameID)}
-                isDraggable
+                isDraggable={gameState === 'draw'}
               />
-              {provided.placeholder}
             </div>
           )}
         </Droppable>
-        <Droppable droppableId="discard">
+        <Droppable droppableId="discard" direction="horizontal">
           {provided => (
             <div
               ref={provided.innerRef}
@@ -313,8 +325,9 @@ const getDiscardCards = (
                 discardCards,
                 clickedDiscardIndex,
                 setClickedDiscardIndex,
+                gameState,
               )}
-              {provided.placeholder}
+              <div style={{ visibility: 'hidden' }}>{provided.placeholder}</div>
             </div>
           )}
         </Droppable>
@@ -520,7 +533,7 @@ const Game = props => {
           }
           type="button"
         />
-        <Droppable droppableId="player-hand">
+        <Droppable droppableId="played-cards" direction="horizontal">
           {provided => (
             <div
               ref={provided.innerRef}
@@ -536,7 +549,7 @@ const Game = props => {
                 clickedCards,
                 setClickedCards,
               )}
-              {provided.placeholder}
+              <div style={{ visibility: 'hidden' }}>{provided.placeholder}</div>
             </div>
           )}
         </Droppable>
@@ -553,7 +566,7 @@ const Game = props => {
           )}
         </div>
         <div className="Player-Cards">
-          <Droppable droppableId="player-hand">
+          <Droppable droppableId="player-hand" direction="horizontal">
             {provided => (
               <div
                 ref={provided.innerRef}
@@ -575,7 +588,9 @@ const Game = props => {
                   setClickedCards,
                   clickedCards,
                 )}
-                {provided.placeholder}
+                <div style={{ visibility: 'hidden' }}>
+                  {provided.placeholder}
+                </div>
               </div>
             )}
           </Droppable>
