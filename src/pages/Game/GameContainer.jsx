@@ -9,14 +9,6 @@ import Game from './Game';
 import ROUTES from '../../constants/routes';
 import * as UTIL from '../../constants/util';
 
-const onDragStart = () => {
-  console.log('Drag starting');
-};
-
-const onDragEnd = () => {
-  console.log('Drag End');
-};
-
 const GameContainer = props => {
   const firebaseContext = useContext(FirebaseContext);
   const { authData } = firebaseContext;
@@ -64,8 +56,28 @@ const GameContainer = props => {
             ).docs[0];
             unsubscribeHandUpdater = locYourHandDoc.ref.onSnapshot(
               async snapshot => {
-                const snapshotHand = snapshot.data();
-                setCardsInHand(snapshotHand.cards);
+                const updatedCards = snapshot.data().cards;
+                setCardsInHand(prevCards => {
+                  if (
+                    prevCards.length !== updatedCards.length ||
+                    prevCards.length === 0
+                  ) {
+                    return updatedCards;
+                  }
+                  let newCards = false;
+                  for (let i = 0; i < prevCards.length; i += 1) {
+                    if (prevCards.indexOf(updatedCards[i]) === -1) {
+                      newCards = true;
+                    }
+                  }
+                  console.log(newCards);
+                  console.log(prevCards);
+                  console.log(updatedCards);
+                  if (newCards) {
+                    return updatedCards;
+                  }
+                  return prevCards;
+                });
               },
             );
             unsubscribeSetUpdater = localGameDoc.ref
@@ -124,8 +136,28 @@ const GameContainer = props => {
               ).docs[0];
               unsubscribeHandUpdater = locYourHandDoc.ref.onSnapshot(
                 async snapshot => {
-                  const snapshotHand = snapshot.data();
-                  setCardsInHand(snapshotHand.cards);
+                  const updatedCards = snapshot.data().cards;
+                  setCardsInHand(prevCards => {
+                    if (
+                      prevCards.length !== updatedCards.length ||
+                      prevCards.length === 0
+                    ) {
+                      return updatedCards;
+                    }
+                    let newCards = false;
+                    for (let i = 0; i < prevCards.length; i += 1) {
+                      if (prevCards.indexOf(updatedCards[i]) === -1) {
+                        newCards = true;
+                      }
+                    }
+                    console.log(newCards);
+                    console.log(prevCards);
+                    console.log(updatedCards);
+                    if (newCards) {
+                      return updatedCards;
+                    }
+                    return prevCards;
+                  });
                 },
               );
               unsubscribeSetUpdater = localGameDoc.ref
@@ -216,6 +248,7 @@ const GameContainer = props => {
         possibleRummies={possibleRummies}
         playedSets={playedSets}
         cardsInHand={cardsInHand}
+        setCardsInHand={setCardsInHand}
         discardCards={discardCards}
       />
     );

@@ -31,20 +31,13 @@ const convertNameToImage = cardName => {
   return CardImages[suitName][convertedCardName];
 };
 
-const getCardIndex = cardName => {
-  if (cardName === 'back') {
-    return 53;
-  }
-  return deck.indexOf(cardName);
-};
-
 const Card = props => {
   const { cardName, isClicked, onClick, isDraggable, index = 0 } = props;
   const fixedCardName = cardName || 'back';
 
   if (isDraggable) {
     return (
-      <Draggable draggableId={fixedCardName} index={index}>
+      <Draggable draggableId={fixedCardName} key={fixedCardName} index={index}>
         {provided => (
           <img
             className={`Card ${isClicked ? 'clicked' : ''}`}

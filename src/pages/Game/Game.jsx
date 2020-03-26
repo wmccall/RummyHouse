@@ -42,6 +42,29 @@ const playCards = (
   }
 };
 
+const reorderHand = (IDToken, gameKey, cards) => {
+  console.log('reordering');
+  console.log(IDToken);
+  console.log(gameKey);
+  console.log(cards);
+  const headers = new Headers();
+  headers.append('id_token', IDToken);
+  headers.append('game_id', gameKey);
+  headers.append('cards', JSON.stringify(cards));
+  const requestOptions = {
+    method: 'POST',
+    headers,
+    redirect: 'follow',
+  };
+
+  fetch(`${URLS.BACKEND_SERVER}/reorderHand`, requestOptions)
+    .then(response => response.text())
+    .then(result => {
+      console.log(result);
+    })
+    .catch(error => console.log('error', error));
+};
+
 const triggerRummy = (e, IDToken, gameKey, possibleRummyID) => {
   e.stopPropagation();
   const headers = new Headers();
@@ -471,15 +494,6 @@ const getRummyPopup = (
   return '';
 };
 
-// Drag handlers
-const onDragStart = () => {
-  console.log('Drag starting');
-};
-
-const onDragEnd = () => {
-  console.log('Drag End');
-};
-
 const Game = props => {
   console.log(props);
 
@@ -494,14 +508,56 @@ const Game = props => {
     possibleRummies,
     playedSets,
     cardsInHand,
+    setCardsInHand,
     discardCards,
   } = props;
 
   const [clickedCards, setClickedCards] = useState([]);
   const [clickedDiscardIndex, setClickedDiscardIndex] = useState(undefined);
 
+  // Drag handlers
+  const onDragStart = result => {
+    console.log('Drag starting');
+    console.log(result);
+  };
+
+  const onDragEnd = result => {
+    console.log('Drag End');
+    console.log(result);
+    const { source, destination, draggableId } = result;
+    if (!destination) {
+      return;
+    }
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    if (source.droppableId === 'player-hand') {
+      if (destination.droppableId === 'player-hand') {
+        const updatedCards = [...cardsInHand];
+        updatedCards.splice(source.index, 1);
+        updatedCards.splice(destination.index, 0, draggableId);
+        console.log(updatedCards);
+        reorderHand(authData.IDToken, gameID, updatedCards);
+        setCardsInHand(updatedCards);
+      }
+    }
+  };
+
+  const onDragUpdate = result => {
+    // console.log('Drag update');
+    // console.log(result);
+  };
+
   return (
-    <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
+    <DragDropContext
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+      onDragUpdate={onDragUpdate}
+    >
       <div className="Game">
         <div className="Opponents-Cards-Container">
           {getOpponentCards(gameState, numCardsInOtherHand)}
