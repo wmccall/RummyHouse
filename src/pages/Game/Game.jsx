@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { Droppable, DragDropContext } from 'react-beautiful-dnd';
 
-import deck from '../../constants/deck';
 import Card from '../../components/Card';
 
 import * as URLS from '../../constants/urls';
@@ -17,7 +16,7 @@ const playCards = (
   setClickedCards,
   continuedSetID,
 ) => {
-  e.stopPropagation();
+  if (e) e.stopPropagation();
   if (cards.length > 0) {
     const headers = new Headers();
     headers.append('id_token', IDToken);
@@ -43,10 +42,6 @@ const playCards = (
 };
 
 const reorderHand = (IDToken, gameKey, cards) => {
-  console.log('reordering');
-  console.log(IDToken);
-  console.log(gameKey);
-  console.log(cards);
   const headers = new Headers();
   headers.append('id_token', IDToken);
   headers.append('game_id', gameKey);
@@ -66,7 +61,7 @@ const reorderHand = (IDToken, gameKey, cards) => {
 };
 
 const triggerRummy = (e, IDToken, gameKey, possibleRummyID) => {
-  e.stopPropagation();
+  if (e) e.stopPropagation();
   const headers = new Headers();
   headers.append('id_token', IDToken);
   headers.append('game_id', gameKey);
@@ -86,7 +81,7 @@ const triggerRummy = (e, IDToken, gameKey, possibleRummyID) => {
 };
 
 const pickupDeck = (e, IDToken, gameKey) => {
-  e.stopPropagation();
+  if (e) e.stopPropagation();
   const headers = new Headers();
   headers.append('id_token', IDToken);
   headers.append('game_id', gameKey);
@@ -109,8 +104,7 @@ const pickupDiscard = (
   discardIndex,
   setClickedDiscardIndex,
 ) => {
-  console.log(discardIndex);
-  e.stopPropagation();
+  if (e) e.stopPropagation();
   const headers = new Headers();
   headers.append('id_token', IDToken);
   headers.append('game_id', gameKey);
@@ -131,7 +125,7 @@ const pickupDiscard = (
 };
 
 const discardCardFromHand = (e, IDToken, gameKey, card, setClickedCards) => {
-  e.stopPropagation();
+  if (e) e.stopPropagation();
   const headers = new Headers();
   headers.append('id_token', IDToken);
   headers.append('game_id', gameKey);
@@ -172,22 +166,19 @@ const generatePlayerCards = (
   cardNames,
   setClickedCards,
   clickedCards,
-  gameState,
+  dragCard,
 ) => {
   const clickHandler = (e, cardName) => {
     e.stopPropagation();
     setClickedCards(prevClicked => {
       let newClicked = [];
-      console.log(cardName);
       const cardIndex = prevClicked.indexOf(cardName);
-      console.log(cardIndex);
       if (cardIndex === -1) {
         newClicked = [...prevClicked, cardName];
       } else {
         prevClicked.splice(cardIndex, 1);
         newClicked = [...prevClicked];
       }
-      console.log(newClicked);
       return newClicked;
     });
   };
@@ -202,6 +193,7 @@ const generatePlayerCards = (
         onClick={e => clickHandler(e, cardName)}
         index={index}
         isDraggable
+        dragCard={dragCard}
       />
     );
   });
@@ -212,13 +204,14 @@ const getPlayerCards = (
   cardsInHand,
   setClickedCards,
   clickedCards,
+  dragCard,
 ) => {
   if (gameState !== 'setup') {
     return generatePlayerCards(
       cardsInHand,
       setClickedCards,
       clickedCards,
-      gameState,
+      dragCard,
     );
   }
   return '';
@@ -232,6 +225,7 @@ const buildPlayedSets = (
   gameID,
   clickedCards,
   setClickedCards,
+  setSetHover,
 ) => {
   const setIDs = Object.keys(playedSets);
   if (gameState !== 'setup' && setIDs.length > 0 && uid) {
@@ -253,14 +247,29 @@ const buildPlayedSets = (
       });
 
       return (
-        <div
-          className="container"
-          onClick={e =>
-            playCards(e, IDToken, gameID, clickedCards, setClickedCards, setID)
-          }
-        >
-          <div className="set">{innerCards}</div>
-        </div>
+        <Droppable droppableId={`SET$#$${setID}`} direction="horizontal">
+          {provided => (
+            <div
+              onMouseEnter={() => setSetHover(true)}
+              onMouseLeave={() => setSetHover(false)}
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className="container"
+              onClick={e =>
+                playCards(
+                  e,
+                  IDToken,
+                  gameID,
+                  clickedCards,
+                  setClickedCards,
+                  setID,
+                )
+              }
+            >
+              <div className="set">{innerCards}</div>
+            </div>
+          )}
+        </Droppable>
       );
     });
   }
@@ -272,10 +281,10 @@ const generateDiscardCards = (
   clickedDiscardIndex,
   setClickedDiscardIndex,
   gameState,
+  dragCard,
+  dragDiscardIndex,
 ) => {
   const clickHandler = cardIndex => {
-    console.log(cardIndex);
-    console.log(clickedDiscardIndex);
     setClickedDiscardIndex(prevIndex => {
       if (cardIndex === prevIndex) {
         return undefined;
@@ -287,13 +296,22 @@ const generateDiscardCards = (
     const isClicked = locIndex => {
       return locIndex >= clickedDiscardIndex;
     };
+    // COME
     return (
       <Card
         cardName={cardName}
         isClicked={isClicked(index)}
+        isSelected={
+          isClicked(index) ||
+          (clickedDiscardIndex === undefined && index >= dragDiscardIndex)
+        }
         onClick={() => clickHandler(index)}
         index={index}
-        isDraggable={gameState === 'draw'}
+        isDraggable={isClicked(index) || clickedDiscardIndex === undefined}
+        dragCard={dragCard}
+        disableDrag={
+          clickedDiscardIndex !== index && clickedDiscardIndex !== undefined
+        }
       />
     );
   });
@@ -308,11 +326,19 @@ const getDiscardCards = (
   discardCards,
   clickedDiscardIndex,
   setClickedDiscardIndex,
+  dragCard,
+  dragDiscardIndex,
 ) => {
   if (gameState !== 'setup') {
     return (
       <>
-        <Droppable droppableId="deck" direction="horizontal">
+        <div className="under-deck">
+          <Card
+            cardName={undefined}
+            onClick={e => pickupDeck(e, IDToken, gameID)}
+          />
+        </div>
+        <Droppable droppableId="deck" direction="horizontal" isDropDisabled>
           {provided => (
             <div
               ref={provided.innerRef}
@@ -324,6 +350,7 @@ const getDiscardCards = (
                 onClick={e => pickupDeck(e, IDToken, gameID)}
                 isDraggable={gameState === 'draw'}
               />
+              <div style={{ visibility: 'hidden' }}>{provided.placeholder}</div>
             </div>
           )}
         </Droppable>
@@ -349,8 +376,9 @@ const getDiscardCards = (
                 clickedDiscardIndex,
                 setClickedDiscardIndex,
                 gameState,
+                dragCard,
+                dragDiscardIndex,
               )}
-              <div style={{ visibility: 'hidden' }}>{provided.placeholder}</div>
             </div>
           )}
         </Droppable>
@@ -369,13 +397,10 @@ const generatePossibleRummies = (
   canPickupDiscard,
 ) => {
   const clickHandler = (e, possibleRummyID) => {
-    console.log(possibleRummyID);
     triggerRummy(e, IDToken, gameKey, possibleRummyID);
   };
-  console.log(possibleRummies);
   const possibleRummyIDS = Object.keys(possibleRummies);
   let body;
-  console.log(possibleRummyIDS);
   if (possibleRummyIDS.length > 0) {
     const rummyButtons = possibleRummyIDS.map(possibleRummyID => {
       const possibleRummy = possibleRummies[possibleRummyID];
@@ -495,8 +520,6 @@ const getRummyPopup = (
 };
 
 const Game = props => {
-  console.log(props);
-
   const {
     authData,
     gameState,
@@ -514,24 +537,36 @@ const Game = props => {
 
   const [clickedCards, setClickedCards] = useState([]);
   const [clickedDiscardIndex, setClickedDiscardIndex] = useState(undefined);
+  const [dragHandCard, setDragHandCard] = useState(undefined);
+  const [dragDiscardCard, setDragDiscardCard] = useState(undefined);
+  const [dragDiscardIndex, setDragDiscardIndex] = useState(undefined);
+  const [setHover, setSetHover] = useState(false);
 
   // Drag handlers
   const onDragStart = result => {
+    const { source, draggableId } = result;
+    if (source.droppableId === 'player-hand') {
+      setDragHandCard(draggableId);
+    } else if (source.droppableId === 'discard') {
+      setDragDiscardCard(draggableId);
+      setDragDiscardIndex(source.index);
+    }
     console.log('Drag starting');
     console.log(result);
   };
 
   const onDragEnd = result => {
+    setDragHandCard(undefined);
+    setDragDiscardCard(undefined);
     console.log('Drag End');
     console.log(result);
     const { source, destination, draggableId } = result;
-    if (!destination) {
-      return;
-    }
     if (
-      destination.droppableId === source.droppableId &&
-      destination.index === source.index
+      !destination ||
+      (destination.droppableId === source.droppableId &&
+        destination.index === source.index)
     ) {
+      setDragDiscardIndex(undefined);
       return;
     }
 
@@ -540,24 +575,74 @@ const Game = props => {
         const updatedCards = [...cardsInHand];
         updatedCards.splice(source.index, 1);
         updatedCards.splice(destination.index, 0, draggableId);
-        console.log(updatedCards);
         reorderHand(authData.IDToken, gameID, updatedCards);
         setCardsInHand(updatedCards);
+      } else if (destination.droppableId === 'discard') {
+        discardCardFromHand(
+          null,
+          authData.IDToken,
+          gameID,
+          draggableId,
+          setClickedCards,
+        );
+      } else if (destination.droppableId === 'play-cards') {
+        if (clickedCards.length > 0) {
+          playCards(
+            null,
+            authData.IDToken,
+            gameID,
+            clickedCards,
+            setClickedCards,
+            undefined,
+          );
+        }
+      } else {
+        const destParts = destination.droppableId.split('$#$');
+        if (destParts[0] === 'SET') {
+          console.log('Dropping on a set');
+          if (clickedCards.length > 0) {
+            playCards(
+              null,
+              authData.IDToken,
+              gameID,
+              clickedCards,
+              setClickedCards,
+              destParts[1],
+            );
+          } else {
+            playCards(
+              null,
+              authData.IDToken,
+              gameID,
+              [draggableId],
+              setClickedCards,
+              destParts[1],
+            );
+          }
+        }
       }
+    } else if (
+      source.droppableId === 'deck' &&
+      destination.droppableId === 'player-hand'
+    ) {
+      pickupDeck(null, authData.IDToken, gameID);
+    } else if (
+      source.droppableId === 'discard' &&
+      destination.droppableId === 'player-hand'
+    ) {
+      pickupDiscard(
+        null,
+        authData.IDToken,
+        gameID,
+        dragDiscardIndex,
+        setClickedDiscardIndex,
+      );
     }
-  };
-
-  const onDragUpdate = result => {
-    // console.log('Drag update');
-    // console.log(result);
+    setDragDiscardIndex(undefined);
   };
 
   return (
-    <DragDropContext
-      onDragStart={onDragStart}
-      onDragEnd={onDragEnd}
-      onDragUpdate={onDragUpdate}
-    >
+    <DragDropContext onDragStart={onDragStart} onDragEnd={onDragEnd}>
       <div className="Game">
         <div className="Opponents-Cards-Container">
           {getOpponentCards(gameState, numCardsInOtherHand)}
@@ -575,40 +660,42 @@ const Game = props => {
             )}
           </div>
         )}
-        <button
-          className="Played-Cards-Background"
-          onClick={e =>
-            playCards(
-              e,
-              authData.IDToken,
-              gameID,
-              clickedCards,
-              setClickedCards,
-              undefined,
-            )
-          }
-          type="button"
-        />
-        <Droppable droppableId="played-cards" direction="horizontal">
-          {provided => (
-            <div
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-              className="Played-Cards"
-            >
-              {buildPlayedSets(
-                playedSets,
-                gameState,
-                authData.uid,
-                authData.IDToken,
-                gameID,
-                clickedCards,
-                setClickedCards,
-              )}
-              <div style={{ visibility: 'hidden' }}>{provided.placeholder}</div>
-            </div>
+        {!setHover && (
+          <Droppable droppableId="play-cards" direction="horizontal">
+            {provided => (
+              <button
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className="Played-Cards-Background"
+                onClick={e =>
+                  playCards(
+                    e,
+                    authData.IDToken,
+                    gameID,
+                    clickedCards,
+                    setClickedCards,
+                    undefined,
+                  )
+                }
+                type="button"
+              />
+            )}
+          </Droppable>
+        )}
+
+        <div className="Played-Cards">
+          {buildPlayedSets(
+            playedSets,
+            gameState,
+            authData.uid,
+            authData.IDToken,
+            gameID,
+            clickedCards,
+            setClickedCards,
+            setSetHover,
           )}
-        </Droppable>
+        </div>
+
         <div className="Pickup-And-Discard">
           {getDiscardCards(
             gameState,
@@ -619,6 +706,8 @@ const Game = props => {
             discardCards,
             clickedDiscardIndex,
             setClickedDiscardIndex,
+            dragDiscardCard,
+            dragDiscardIndex,
           )}
         </div>
         <div className="Player-Cards">
@@ -643,6 +732,7 @@ const Game = props => {
                   cardsInHand,
                   setClickedCards,
                   clickedCards,
+                  dragHandCard,
                 )}
                 <div style={{ visibility: 'hidden' }}>
                   {provided.placeholder}

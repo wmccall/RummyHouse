@@ -32,15 +32,35 @@ const convertNameToImage = cardName => {
 };
 
 const Card = props => {
-  const { cardName, isClicked, onClick, isDraggable, index = 0 } = props;
+  const {
+    cardName,
+    isClicked,
+    onClick,
+    isDraggable,
+    index = 0,
+    dragCard,
+    disableDrag,
+    isSelected,
+  } = props;
   const fixedCardName = cardName || 'back';
 
   if (isDraggable) {
     return (
-      <Draggable draggableId={fixedCardName} key={fixedCardName} index={index}>
+      <Draggable
+        draggableId={fixedCardName}
+        key={fixedCardName}
+        index={index}
+        isDragDisabled={disableDrag}
+      >
         {provided => (
           <img
-            className={`Card ${isClicked ? 'clicked' : ''}`}
+            className={`Card ${isClicked ? 'clicked' : ''} ${
+              dragCard &&
+              (isClicked || isSelected) &&
+              dragCard !== fixedCardName
+                ? 'also-dragging'
+                : ''
+            }`}
             onClick={onClick}
             ref={provided.innerRef}
             {...provided.draggableProps}

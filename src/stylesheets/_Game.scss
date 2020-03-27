@@ -121,6 +121,9 @@
     justify-content: center;
     align-content: center;
     height: calc(100vh - 470px);
+    div {
+      z-index: 300;
+    }
     .Card {
       z-index: 10;
       margin-left: -20px;
@@ -177,6 +180,11 @@
     width: 100%;
     align-content: center;
     align-items: center;
+    .under-deck {
+      position: absolute;
+      margin: 1px 0 0 10px;
+      z-index: -1;
+    }
     .Deck {
       padding: 10px 10px 5px 10px;
       margin-right: 40px;
@@ -210,6 +218,13 @@
         &.clicked {
           margin-bottom: 30px;
         }
+        &.also-dragging {
+          transition: opacity 0.3s ease-in-out, margin-left 0.3s ease-in-out,
+            margin-right 0.3s ease-in-out !important;
+          opacity: 0 !important;
+          margin-bottom: 30px !important;
+          margin-right: -100px !important;
+        }
       }
     }
   }
@@ -217,8 +232,7 @@
   .Player-Cards {
     display: flex;
     height: 190px;
-    position: absolute;
-    bottom: 0%;
+    margin: 180px 0 0 0;
     width: 100%;
     justify-content: center;
     align-content: center;
@@ -249,6 +263,13 @@
       }
       &.clicked {
         margin-bottom: 30px;
+      }
+      &.also-dragging {
+        transition: opacity 0.3s ease-in-out, margin-left 0.3s ease-in-out,
+          margin-right 0.3s ease-in-out !important;
+        opacity: 0 !important;
+        margin-bottom: 30px !important;
+        margin-right: -100px !important;
       }
     }
   }
