@@ -283,6 +283,7 @@ const generateDiscardCards = (
   gameState,
   dragCard,
   dragDiscardIndex,
+  dragHandCard,
 ) => {
   const clickHandler = cardIndex => {
     setClickedDiscardIndex(prevIndex => {
@@ -307,7 +308,10 @@ const generateDiscardCards = (
         }
         onClick={() => clickHandler(index)}
         index={index}
-        isDraggable={isClicked(index) || clickedDiscardIndex === undefined}
+        isDraggable={
+          !dragHandCard &&
+          (isClicked(index) || clickedDiscardIndex === undefined)
+        }
         dragCard={dragCard}
         disableDrag={
           clickedDiscardIndex !== index && clickedDiscardIndex !== undefined
@@ -328,6 +332,7 @@ const getDiscardCards = (
   setClickedDiscardIndex,
   dragCard,
   dragDiscardIndex,
+  dragHandCard,
 ) => {
   if (gameState !== 'setup') {
     return (
@@ -378,6 +383,7 @@ const getDiscardCards = (
                 gameState,
                 dragCard,
                 dragDiscardIndex,
+                dragHandCard,
               )}
             </div>
           )}
@@ -708,6 +714,7 @@ const Game = props => {
             setClickedDiscardIndex,
             dragDiscardCard,
             dragDiscardIndex,
+            dragHandCard,
           )}
         </div>
         <div className="Player-Cards">
