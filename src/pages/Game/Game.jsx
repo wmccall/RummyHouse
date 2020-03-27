@@ -280,10 +280,10 @@ const generateDiscardCards = (
   cardNames,
   clickedDiscardIndex,
   setClickedDiscardIndex,
-  gameState,
   dragCard,
   dragDiscardIndex,
   dragHandCard,
+  isDeckDrag,
 ) => {
   const clickHandler = cardIndex => {
     setClickedDiscardIndex(prevIndex => {
@@ -309,7 +309,7 @@ const generateDiscardCards = (
         onClick={() => clickHandler(index)}
         index={index}
         isDraggable={
-          !dragHandCard &&
+          !(dragHandCard || isDeckDrag) &&
           (isClicked(index) || clickedDiscardIndex === undefined)
         }
         dragCard={dragCard}
@@ -333,6 +333,7 @@ const getDiscardCards = (
   dragCard,
   dragDiscardIndex,
   dragHandCard,
+  isDeckDrag,
 ) => {
   if (gameState !== 'setup') {
     return (
@@ -380,10 +381,10 @@ const getDiscardCards = (
                 discardCards,
                 clickedDiscardIndex,
                 setClickedDiscardIndex,
-                gameState,
                 dragCard,
                 dragDiscardIndex,
                 dragHandCard,
+                isDeckDrag,
               )}
             </div>
           )}
@@ -546,16 +547,21 @@ const Game = props => {
   const [dragHandCard, setDragHandCard] = useState(undefined);
   const [dragDiscardCard, setDragDiscardCard] = useState(undefined);
   const [dragDiscardIndex, setDragDiscardIndex] = useState(undefined);
-  const [setHover, setSetHover] = useState(false);
+  const [isDeckDrag, setIsDeckDrag] = useState(false);
+  const [setHover, setSetHover] = useState(true);
 
   // Drag handlers
   const onDragStart = result => {
+    setSetHover(false);
     const { source, draggableId } = result;
     if (source.droppableId === 'player-hand') {
       setDragHandCard(draggableId);
     } else if (source.droppableId === 'discard') {
       setDragDiscardCard(draggableId);
       setDragDiscardIndex(source.index);
+    } else if (source.droppableId === 'deck') {
+      console.log('dragging deck');
+      setIsDeckDrag(true);
     }
     console.log('Drag starting');
     console.log(result);
@@ -564,6 +570,7 @@ const Game = props => {
   const onDragEnd = result => {
     setDragHandCard(undefined);
     setDragDiscardCard(undefined);
+    setIsDeckDrag(false);
     console.log('Drag End');
     console.log(result);
     const { source, destination, draggableId } = result;
@@ -715,6 +722,7 @@ const Game = props => {
             dragDiscardCard,
             dragDiscardIndex,
             dragHandCard,
+            isDeckDrag,
           )}
         </div>
         <div className="Player-Cards">
