@@ -309,7 +309,7 @@ const generateDiscardCards = (
         onClick={() => clickHandler(index)}
         index={index}
         isDraggable={
-          !(dragHandCard || isDeckDrag) &&
+          !(dragHandCard || isDeckDrag || index < dragDiscardIndex) &&
           (isClicked(index) || clickedDiscardIndex === undefined)
         }
         dragCard={dragCard}
