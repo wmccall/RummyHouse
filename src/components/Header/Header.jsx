@@ -78,18 +78,24 @@ const Header = props => {
   }
 
   return (
-    <div className={`Header ${HeaderColor}`}>
-      <Link className="Title" to={authData.uid ? ROUTES.HOME : ROUTES.LANDING}>
-        rummy house
-      </Link>
-      {!authData.uid && (
-        <div className="Login">
-          <LoginSignup isLogin />
-          <LoginSignup isLogin={false} />
-        </div>
-      )}
-      {authData.uid && <UserButton />}
-    </div>
+    <>
+      <div className={`Header ${HeaderColor}`}>
+        <Link
+          className="Title"
+          to={authData.uid ? ROUTES.HOME : ROUTES.LANDING}
+        >
+          rummy house
+        </Link>
+        {!authData.uid && (
+          <div className="Login">
+            <LoginSignup isLogin />
+            <LoginSignup isLogin={false} />
+          </div>
+        )}
+        {authData.uid && <UserButton />}
+      </div>
+      <div className={`UnderHeader ${HeaderColor}`} />
+    </>
   );
 };
 

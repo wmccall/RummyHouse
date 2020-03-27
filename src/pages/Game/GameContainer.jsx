@@ -235,7 +235,13 @@ const GameContainer = props => {
     // eslint-disable-next-line
   }, [authData.uid]);
 
-  if (gameDoc) {
+  if (gameDoc && gameState) {
+    let discardPickup;
+    if (gameDoc.data().discard) {
+      discardPickup = gameDoc.data().discard.slice(gameDoc.data().rummy_index);
+    } else {
+      discardPickup = [];
+    }
     return (
       <Game
         authData={authData}
@@ -243,7 +249,7 @@ const GameContainer = props => {
         numCardsInOtherHand={numCardsInOtherHand}
         gameID={gameID}
         yourTurn={yourTurn}
-        discardPickup={gameDoc.data().discard.slice(gameDoc.data().rummy_index)}
+        discardPickup={discardPickup}
         canPickup={gameDoc.data().discard_pickup_card !== null}
         possibleRummies={possibleRummies}
         playedSets={playedSets}

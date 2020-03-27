@@ -552,7 +552,6 @@ const Game = props => {
 
   // Drag handlers
   const onDragStart = result => {
-    setSetHover(false);
     const { source, draggableId } = result;
     if (source.droppableId === 'player-hand') {
       setDragHandCard(draggableId);
@@ -673,28 +672,30 @@ const Game = props => {
             )}
           </div>
         )}
-        {!setHover && (
-          <Droppable droppableId="play-cards" direction="horizontal">
-            {provided => (
-              <button
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                className="Played-Cards-Background"
-                onClick={e =>
-                  playCards(
-                    e,
-                    authData.IDToken,
-                    gameID,
-                    clickedCards,
-                    setClickedCards,
-                    undefined,
-                  )
-                }
-                type="button"
-              />
-            )}
-          </Droppable>
-        )}
+        <Droppable
+          droppableId="play-cards"
+          direction="horizontal"
+          isDropDisabled={setHover}
+        >
+          {provided => (
+            <button
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className="Played-Cards-Background"
+              onClick={e =>
+                playCards(
+                  e,
+                  authData.IDToken,
+                  gameID,
+                  clickedCards,
+                  setClickedCards,
+                  undefined,
+                )
+              }
+              type="button"
+            />
+          )}
+        </Droppable>
 
         <div className="Played-Cards">
           {buildPlayedSets(
