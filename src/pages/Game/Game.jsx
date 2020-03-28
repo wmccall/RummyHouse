@@ -297,7 +297,7 @@ const generateDiscardCards = (
     const isClicked = locIndex => {
       return locIndex >= clickedDiscardIndex;
     };
-    // COME
+
     return (
       <Card
         cardName={cardName}
@@ -526,6 +526,28 @@ const getRummyPopup = (
   return '';
 };
 
+const getMove = (yourTurn, gameState) => {
+  if (yourTurn) {
+    switch (gameState) {
+      case 'draw':
+        return 'draw card';
+      case 'play':
+        return 'play or discard';
+      case 'rummy':
+        return 'rummy';
+      default:
+        return 'wait';
+    }
+  } else {
+    switch (gameState) {
+      case 'rummy':
+        return 'rummy';
+      default:
+        return 'their turn';
+    }
+  }
+};
+
 const Game = props => {
   const {
     authData,
@@ -570,6 +592,7 @@ const Game = props => {
     setDragHandCard(undefined);
     setDragDiscardCard(undefined);
     setIsDeckDrag(false);
+    setSetHover(false);
     console.log('Drag End');
     console.log(result);
     const { source, destination, draggableId } = result;
@@ -710,7 +733,10 @@ const Game = props => {
           )}
         </div>
 
-        <div className="Pickup-And-Discard">
+        <div
+          className="Pickup-And-Discard"
+          onMouseEnter={() => setSetHover(false)}
+        >
           {getDiscardCards(
             gameState,
             authData.IDToken,
@@ -726,7 +752,10 @@ const Game = props => {
             isDeckDrag,
           )}
         </div>
-        <div className="Player-Cards">
+        <div className="Player-Cards" onMouseEnter={() => setSetHover(false)}>
+          <div className="turn">
+            <div className="inner">{getMove(yourTurn, gameState)}</div>
+          </div>
           <Droppable droppableId="player-hand" direction="horizontal">
             {provided => (
               <div

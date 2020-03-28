@@ -1,4 +1,5 @@
 .Game {
+  user-select: none;
   background-color: #236b36;
   overflow: auto;
   height: calc(100vh - 100px);
@@ -15,15 +16,15 @@
 
   .Opponents-Cards-Container {
     position: absolute;
-    margin: -160px auto;
+    margin: -150px auto;
     width: 100%;
     display: flex;
     justify-content: center;
     .Opponents-Cards {
       display: flex;
-      margin-left: 60px;
+      margin-left: 50px;
       .Card {
-        margin-left: -60px;
+        margin-left: -50px;
       }
     }
   }
@@ -127,7 +128,6 @@
     .Card {
       z-index: 10;
       margin-left: -20px;
-      height: 140px;
       box-shadow: -5px 0px 10px rgba(68, 68, 68, 0.39);
     }
     .set,
@@ -141,12 +141,9 @@
         margin-left: 0;
       }
     }
-    .subset-inner {
-      margin-left: 20px;
-    }
     .container {
       display: flex;
-      height: 140px;
+      height: 130px;
       z-index: 30;
       align-content: center;
       align-items: center;
@@ -161,8 +158,7 @@
       z-index: 30;
       background-color: #236b36;
       border-radius: 10px;
-      margin-left: 20px;
-      height: 140px;
+      margin-left: 10px;
       .subset-inner {
         &.theirs {
           opacity: 0.7;
@@ -175,11 +171,12 @@
     display: flex;
     height: 160px;
     position: fixed;
-    padding-left: 120px;
-    bottom: 200px;
+    padding-left: 145px;
+    bottom: 175px;
     width: 100%;
     align-content: center;
     align-items: center;
+    z-index: 30;
     .under-deck {
       position: absolute;
       margin: 1px 0 0 10px;
@@ -200,7 +197,7 @@
       align-items: center;
       padding: 12px 80px 12px 26px;
       border-radius: 10px;
-      height: 140px;
+      height: 125px;
       &:hover {
         background-color: rgba(255, 255, 255, 0.329);
         cursor: pointer;
@@ -231,23 +228,40 @@
 
   .Player-Cards {
     display: flex;
-    height: 190px;
-    margin: 180px 0 0 0;
+    height: 170px;
+    margin: 200px 0 0 0;
     width: 100%;
     justify-content: center;
     align-content: center;
     align-items: center;
     background-color: #183b21;
-    :first-child {
-      margin-left: 0;
+    .turn {
+      left: 15px;
+      margin-top: -85px;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      align-items: center;
+      background-color: white;
+      width: 120px;
+      height: 120px;
+      border-radius: 100px;
+      .inner {
+        text-align: center;
+        font-size: 20px;
+        font-weight: 700;
+        height: fit-content;
+      }
+      box-shadow: -5px 0px 10px rgba(68, 68, 68, 0.39);
     }
     .Player-Hand {
       display: flex;
       align-content: center;
       align-items: center;
-      padding: 12px 85px 12px 95px;
+      padding: 10px 75px;
       border-radius: 10px;
-      height: 140px;
+      height: 125px;
       &:hover {
         background-color: rgba(255, 255, 255, 0.329);
         cursor: pointer;

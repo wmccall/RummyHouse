@@ -98,7 +98,7 @@ const Home = React.memo(props => {
               delete updatedPrevGames[key];
             }
           });
-          return { ...addUpdateGames, ...updatedPrevGames };
+          return { ...updatedPrevGames, ...addUpdateGames };
         });
       });
 
@@ -129,7 +129,7 @@ const Home = React.memo(props => {
               delete updatedPrevGames[key];
             }
           });
-          return { ...addUpdateGames, ...updatedPrevGames };
+          return { ...updatedPrevGames, ...addUpdateGames };
         });
       });
     }
