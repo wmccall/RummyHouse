@@ -250,8 +250,19 @@
       .inner {
         text-align: center;
         font-size: 20px;
-        font-weight: 700;
         height: fit-content;
+        div > div {
+          display: inline-block;
+        }
+        .Value {
+          font-weight: 400;
+        }
+        .Suit {
+          font-size: 25px;
+          &.red {
+            color: #d7462f;
+          }
+        }
       }
       box-shadow: -5px 0px 10px rgba(68, 68, 68, 0.39);
     }

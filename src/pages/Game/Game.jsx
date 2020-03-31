@@ -526,13 +526,47 @@ const getRummyPopup = (
   return '';
 };
 
-const getMove = (yourTurn, gameState) => {
+const getMove = (yourTurn, gameState, discardPickupCard) => {
+  let shortName = '';
+  if (discardPickupCard) {
+    const nameParts = discardPickupCard.split(' ');
+    const suit = { Diamonds: '♦', Hearts: '♥', Spades: '♠', Clubs: '♣' }[
+      nameParts[2]
+    ];
+    let color = 'black';
+    if (nameParts[2] === 'Diamonds' || nameParts[2] === 'Hearts') {
+      color = 'red';
+    }
+    const value = {
+      Ace: 'A',
+      '2': '2',
+      '3': '3',
+      '4': '4',
+      '5': '5',
+      '6': '6',
+      '7': '7',
+      '8': '8',
+      '9': '9',
+      '10': '10',
+      Jack: 'J',
+      Queen: 'Q',
+      King: 'K',
+    }[nameParts[0]];
+    shortName = (
+      <>
+        <div className="Value">{value}</div>
+        <div className={`Suit ${color}`}>{suit}</div>
+      </>
+    );
+  }
   if (yourTurn) {
     switch (gameState) {
       case 'draw':
         return 'draw card';
       case 'play':
         return 'play or discard';
+      case 'discardPlay':
+        return <div>play {shortName} in a set</div>;
       case 'rummy':
         return 'rummy';
       default:
@@ -556,6 +590,7 @@ const Game = props => {
     gameID,
     yourTurn,
     discardPickup,
+    discardPickupCard,
     canPickup,
     possibleRummies,
     playedSets,
@@ -754,7 +789,9 @@ const Game = props => {
         </div>
         <div className="Player-Cards" onMouseEnter={() => setSetHover(false)}>
           <div className="turn">
-            <div className="inner">{getMove(yourTurn, gameState)}</div>
+            <div className="inner">
+              {getMove(yourTurn, gameState, discardPickupCard)}
+            </div>
           </div>
           <Droppable droppableId="player-hand" direction="horizontal">
             {provided => (

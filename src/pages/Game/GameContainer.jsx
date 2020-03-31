@@ -250,6 +250,7 @@ const GameContainer = props => {
         gameID={gameID}
         yourTurn={yourTurn}
         discardPickup={discardPickup}
+        discardPickupCard={gameDoc.data().discard_pickup_card}
         canPickup={gameDoc.data().discard_pickup_card !== null}
         possibleRummies={possibleRummies}
         playedSets={playedSets}
