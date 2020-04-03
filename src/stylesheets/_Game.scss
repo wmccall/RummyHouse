@@ -28,7 +28,8 @@
       }
     }
   }
-  .Rummy-Container {
+  .Rummy-Container,
+  .Winner-Container {
     position: absolute;
     margin: -100px auto;
     width: 100%;
@@ -37,15 +38,58 @@
     display: flex;
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.288);
+  }
+  .Rummy-Popup,
+  .Winner-Popup {
+    background-color: #f3f3f3;
+    margin-top: 130px;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-bottom: 35px;
+    border-radius: 10px;
+    height: fit-content;
+    width: fit-content;
+  }
+  .Winner-Popup {
+    padding-bottom: 20px;
+  }
+  .Winner-Container {
+    .Winner-Popup {
+      .Winner-Text {
+        font-size: 25px;
+        text-align: center;
+        padding: 20px 0;
+      }
+      .Points-Breakdown {
+        text-align: center;
+        tr:nth-child(odd) {
+          background: rgb(199, 199, 199);
+        }
+        td,
+        th {
+          padding: 2px 10px;
+        }
+      }
+      .Home-Link {
+        button {
+          float: right;
+          margin-top: 25px;
+          font-size: 20px;
+          letter-spacing: 0.5px;
+          font-weight: 700;
+          padding: 15px 25px 18px 25px;
+          border-radius: 100px;
+          text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.5);
+          background-color: #f5b81b;
+          &:hover {
+            background-color: #c99613;
+          }
+        }
+      }
+    }
+  }
+  .Rummy-Container {
     .Rummy-Popup {
-      background-color: #f3f3f3;
-      margin-top: 130px;
-      padding-left: 40px;
-      padding-right: 40px;
-      padding-bottom: 35px;
-      border-radius: 10px;
-      height: fit-content;
-      width: fit-content;
       .Header {
         font-size: 30px;
         color: #444444;
@@ -223,6 +267,11 @@
           margin-right: -100px !important;
         }
       }
+    }
+    .Last-Card {
+      transform: rotate(-35deg);
+      margin-left: -100px;
+      z-index: 30;
     }
   }
 

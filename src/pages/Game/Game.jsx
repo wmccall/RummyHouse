@@ -6,6 +6,7 @@ import { Droppable, DragDropContext } from 'react-beautiful-dnd';
 import Card from '../../components/Card';
 
 import * as URLS from '../../constants/urls';
+import ROUTES from '../../constants/routes';
 
 // Network calls
 const playCards = (
@@ -389,6 +390,14 @@ const getDiscardCards = (
             </div>
           )}
         </Droppable>
+        {gameState === 'done' && (
+          <Card
+            cardName={undefined}
+            extraName="Last-Card"
+            onClick={e => pickupDeck(e, IDToken, gameID)}
+            isDraggable={gameState === 'draw'}
+          />
+        )}
       </>
     );
   }
@@ -526,6 +535,67 @@ const getRummyPopup = (
   return '';
 };
 
+const getWinnerPopup = (
+  winner,
+  isP1,
+  p1Points,
+  p2Points,
+  p1HandPoints,
+  p2HandPoints,
+  p1Name,
+  p2Name,
+  uid,
+) => {
+  let winnerText;
+  if (winner === 'tie') {
+    winnerText = 'Tie!';
+  } else if (winner === uid) {
+    winnerText = 'You won!';
+  } else if (isP1) {
+    winnerText = `${p2Name} won!`;
+  } else {
+    winnerText = `${p1Name} won!`;
+  }
+  const yourTotal = isP1 ? p1Points : p2Points;
+  const theirTotal = isP1 ? p2Points : p1Points;
+  const yourPlayed = isP1 ? p1Points - p1HandPoints : p2Points - p2HandPoints;
+  const theirPlayed = isP1 ? p2Points - p2HandPoints : p1Points - p1HandPoints;
+  const yourHand = isP1 ? p1HandPoints : p2HandPoints;
+  const theirHand = isP1 ? p2HandPoints : p1HandPoints;
+  const theirName = isP1 ? p2Name : p1Name;
+
+  return (
+    <div className="Winner-Popup">
+      <div className="Winner-Text">{winnerText}</div>
+      <table className="Points-Breakdown">
+        <tbody>
+          <tr>
+            <th>Player</th>
+            <th>Played</th>
+            <th>Hand (-)</th>
+            <th>Total Points</th>
+          </tr>
+          <tr>
+            <td>You</td>
+            <td>{yourPlayed}</td>
+            <td>{yourHand}</td>
+            <td>{yourTotal}</td>
+          </tr>
+          <tr>
+            <td>{theirName}</td>
+            <td>{theirPlayed}</td>
+            <td>{theirHand}</td>
+            <td>{theirTotal}</td>
+          </tr>
+        </tbody>
+      </table>
+      <a className="Home-Link" href={ROUTES.HOME}>
+        <button type="button">Go Home</button>
+      </a>
+    </div>
+  );
+};
+
 const getMove = (yourTurn, gameState, discardPickupCard) => {
   let shortName = '';
   if (discardPickupCard) {
@@ -569,6 +639,8 @@ const getMove = (yourTurn, gameState, discardPickupCard) => {
         return <div>play {shortName} in a set</div>;
       case 'rummy':
         return 'rummy';
+      case 'done':
+        return 'game over';
       default:
         return 'wait';
     }
@@ -576,6 +648,8 @@ const getMove = (yourTurn, gameState, discardPickupCard) => {
     switch (gameState) {
       case 'rummy':
         return 'rummy';
+      case 'done':
+        return 'game over';
       default:
         return 'their turn';
     }
@@ -597,6 +671,14 @@ const Game = props => {
     cardsInHand,
     setCardsInHand,
     discardCards,
+    winner,
+    isP1,
+    p1Points,
+    p2Points,
+    p1HandPoints,
+    p2HandPoints,
+    p1Name,
+    p2Name,
   } = props;
 
   const [clickedCards, setClickedCards] = useState([]);
@@ -727,6 +809,21 @@ const Game = props => {
               discardPickup,
               canPickup,
               possibleRummies,
+            )}
+          </div>
+        )}
+        {gameState === 'done' && (
+          <div className="Winner-Container">
+            {getWinnerPopup(
+              winner,
+              isP1,
+              p1Points,
+              p2Points,
+              p1HandPoints,
+              p2HandPoints,
+              p1Name,
+              p2Name,
+              authData.uid,
             )}
           </div>
         )}

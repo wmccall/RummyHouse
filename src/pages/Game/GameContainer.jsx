@@ -26,6 +26,13 @@ const GameContainer = props => {
   const [cardsInHand, setCardsInHand] = useState([]);
   const [numCardsInOtherHand, setNumCardsInOtherHand] = useState(0);
   const [possibleRummies, setPossibleRummies] = useState({});
+  const [winner, setWinner] = useState(undefined);
+  const [p1Points, setP1Points] = useState(undefined);
+  const [p2Points, setP2Points] = useState(undefined);
+  const [p1HandPoints, setP1HandPoints] = useState(undefined);
+  const [p2HandPoints, setP2HandPoints] = useState(undefined);
+  const [p1Name, setP1Name] = useState(undefined);
+  const [p2Name, setP2Name] = useState(undefined);
   const { gameID } = useParams();
   const { history } = props;
   useEffect(() => {
@@ -46,6 +53,13 @@ const GameContainer = props => {
                 setGameState(snapshotGame.game_state);
                 setYourTurn(snapshotGame.turn.id === authData.uid);
                 setNumCardsInOtherHand(snapshotGame.player2NumCards);
+                setWinner(snapshotGame.winner);
+                setP1Points(snapshotGame.player1Points);
+                setP2Points(snapshotGame.player2Points);
+                setP1HandPoints(snapshotGame.player1HandPoints);
+                setP2HandPoints(snapshotGame.player2HandPoints);
+                setP1Name(snapshotGame.player1Name);
+                setP2Name(snapshotGame.player2Name);
               },
             );
             const locYourHandDoc = (
@@ -126,6 +140,13 @@ const GameContainer = props => {
                   setGameState(snapshotGame.game_state);
                   setYourTurn(snapshotGame.turn.id === authData.uid);
                   setNumCardsInOtherHand(snapshotGame.player1NumCards);
+                  setWinner(snapshotGame.winner);
+                  setP1Points(snapshotGame.player1Points);
+                  setP2Points(snapshotGame.player2Points);
+                  setP1HandPoints(snapshotGame.player1HandPoints);
+                  setP2HandPoints(snapshotGame.player2HandPoints);
+                  setP1Name(snapshotGame.player1Name);
+                  setP2Name(snapshotGame.player2Name);
                 },
               );
               const locYourHandDoc = (
@@ -220,6 +241,10 @@ const GameContainer = props => {
     }
     return () => {
       console.log('leaving game screen');
+      unsubscribeDocUpdater();
+      unsubscribeHandUpdater();
+      unsubscribeSetUpdater();
+      unsubscribeRummyUpdater();
       setGameDoc(undefined);
       setYourTurn(undefined);
       setDiscardCards([]);
@@ -227,10 +252,13 @@ const GameContainer = props => {
       setCardsInHand([]);
       setNumCardsInOtherHand(0);
       setPossibleRummies({});
-      unsubscribeDocUpdater();
-      unsubscribeHandUpdater();
-      unsubscribeSetUpdater();
-      unsubscribeRummyUpdater();
+      setWinner(undefined);
+      setP1Points(undefined);
+      setP2Points(undefined);
+      setP1HandPoints(undefined);
+      setP2HandPoints(undefined);
+      setP1Name(undefined);
+      setP2Name(undefined);
     };
     // eslint-disable-next-line
   }, [authData.uid]);
@@ -257,6 +285,14 @@ const GameContainer = props => {
         cardsInHand={cardsInHand}
         setCardsInHand={setCardsInHand}
         discardCards={discardCards}
+        winner={winner}
+        isP1={gameDoc.data().player1.id === authData.uid}
+        p1Points={p1Points}
+        p2Points={p2Points}
+        p1HandPoints={p1HandPoints}
+        p2HandPoints={p2HandPoints}
+        p1Name={p1Name}
+        p2Name={p2Name}
       />
     );
   }
