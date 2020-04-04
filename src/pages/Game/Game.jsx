@@ -228,6 +228,7 @@ const buildPlayedSets = (
   setClickedCards,
   setSetHover,
 ) => {
+  console.log(playedSets);
   const setIDs = Object.keys(playedSets);
   if (gameState !== 'setup' && setIDs.length > 0 && uid) {
     // TODO: don't show anything when subsets.length = 0; annoying edge case
@@ -668,8 +669,10 @@ const Game = props => {
     canPickup,
     possibleRummies,
     playedSets,
+    setPlayedSets,
     cardsInHand,
     setCardsInHand,
+    setDiscardCards,
     discardCards,
     winner,
     isP1,
@@ -730,6 +733,10 @@ const Game = props => {
         reorderHand(authData.IDToken, gameID, updatedCards);
         setCardsInHand(updatedCards);
       } else if (destination.droppableId === 'discard') {
+        const updatedCards = [...cardsInHand];
+        const discardCard = updatedCards.splice(source.index, 1);
+        setCardsInHand(updatedCards);
+        setDiscardCards([...discardCards, discardCard[0]]);
         discardCardFromHand(
           null,
           authData.IDToken,
@@ -739,6 +746,17 @@ const Game = props => {
         );
       } else if (destination.droppableId === 'play-cards') {
         if (clickedCards.length > 0) {
+          const updatedCards = [...cardsInHand];
+          // const updatedPlayedSets = { ...playedSets };
+          clickedCards.forEach(card => {
+            updatedCards.splice(updatedCards.indexOf(card), 1);
+          });
+          setCardsInHand(updatedCards);
+          // updatedPlayedSets.temp = {
+          //   setType: undefined,
+          //   subsets: [{ cards: clickedCards, playerID: authData.uid }],
+          // };
+          // setPlayedSets(updatedPlayedSets);
           playCards(
             null,
             authData.IDToken,
@@ -751,24 +769,46 @@ const Game = props => {
       } else {
         const destParts = destination.droppableId.split('$#$');
         if (destParts[0] === 'SET') {
+          // const setID = destParts[1];
+          // const updatedSets = { ...playedSets };
+          // const set = { ...playedSets[setID] };
           console.log('Dropping on a set');
           if (clickedCards.length > 0) {
+            // set.subsets.push({
+            //   cards: clickedCards,
+            //   playerID: authData.uid,
+            //   temp: true,
+            // });
+            // updatedSets[setID] = set;
+            // setPlayedSets(updatedSets);
+            const updatedCards = [...cardsInHand];
+            clickedCards.forEach(card => {
+              updatedCards.splice(updatedCards.indexOf(card), 1);
+            });
+            setCardsInHand(updatedCards);
             playCards(
               null,
               authData.IDToken,
               gameID,
               clickedCards,
               setClickedCards,
-              destParts[1],
             );
           } else {
+            // set.subsets.push({
+            //   cards: [draggableId],
+            //   playerID: authData.uid,
+            // });
+            // updatedSets[setID] = set;
+            // setPlayedSets(updatedSets);
+            const updatedCards = [...cardsInHand];
+            updatedCards.splice(source.index, 1);
+            setCardsInHand(updatedCards);
             playCards(
               null,
               authData.IDToken,
               gameID,
               [draggableId],
               setClickedCards,
-              destParts[1],
             );
           }
         }
@@ -777,11 +817,14 @@ const Game = props => {
       source.droppableId === 'deck' &&
       destination.droppableId === 'player-hand'
     ) {
+      setCardsInHand([...cardsInHand, undefined]);
       pickupDeck(null, authData.IDToken, gameID);
     } else if (
       source.droppableId === 'discard' &&
       destination.droppableId === 'player-hand'
     ) {
+      setCardsInHand([...cardsInHand, ...discardCards.slice(dragDiscardIndex)]);
+      setDiscardCards(discardCards.slice(0, dragDiscardIndex));
       pickupDiscard(
         null,
         authData.IDToken,

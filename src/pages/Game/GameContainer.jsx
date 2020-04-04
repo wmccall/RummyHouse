@@ -290,9 +290,11 @@ const GameContainer = props => {
         canPickup={canPickup}
         possibleRummies={possibleRummies}
         playedSets={playedSets}
+        setPlayedSets={setPlayedSets}
         cardsInHand={cardsInHand}
         setCardsInHand={setCardsInHand}
         discardCards={discardCards}
+        setDiscardCards={setDiscardCards}
         winner={winner}
         isP1={gameDoc.data().player1.id === authData.uid}
         p1Points={p1Points}
