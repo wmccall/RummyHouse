@@ -669,7 +669,6 @@ const Game = props => {
     canPickup,
     possibleRummies,
     playedSets,
-    setPlayedSets,
     cardsInHand,
     setCardsInHand,
     setDiscardCards,
@@ -747,16 +746,10 @@ const Game = props => {
       } else if (destination.droppableId === 'play-cards') {
         if (clickedCards.length > 0) {
           const updatedCards = [...cardsInHand];
-          // const updatedPlayedSets = { ...playedSets };
           clickedCards.forEach(card => {
             updatedCards.splice(updatedCards.indexOf(card), 1);
           });
           setCardsInHand(updatedCards);
-          // updatedPlayedSets.temp = {
-          //   setType: undefined,
-          //   subsets: [{ cards: clickedCards, playerID: authData.uid }],
-          // };
-          // setPlayedSets(updatedPlayedSets);
           playCards(
             null,
             authData.IDToken,
@@ -769,18 +762,8 @@ const Game = props => {
       } else {
         const destParts = destination.droppableId.split('$#$');
         if (destParts[0] === 'SET') {
-          // const setID = destParts[1];
-          // const updatedSets = { ...playedSets };
-          // const set = { ...playedSets[setID] };
           console.log('Dropping on a set');
           if (clickedCards.length > 0) {
-            // set.subsets.push({
-            //   cards: clickedCards,
-            //   playerID: authData.uid,
-            //   temp: true,
-            // });
-            // updatedSets[setID] = set;
-            // setPlayedSets(updatedSets);
             const updatedCards = [...cardsInHand];
             clickedCards.forEach(card => {
               updatedCards.splice(updatedCards.indexOf(card), 1);
@@ -794,12 +777,6 @@ const Game = props => {
               setClickedCards,
             );
           } else {
-            // set.subsets.push({
-            //   cards: [draggableId],
-            //   playerID: authData.uid,
-            // });
-            // updatedSets[setID] = set;
-            // setPlayedSets(updatedSets);
             const updatedCards = [...cardsInHand];
             updatedCards.splice(source.index, 1);
             setCardsInHand(updatedCards);

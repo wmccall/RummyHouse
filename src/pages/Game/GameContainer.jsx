@@ -290,7 +290,6 @@ const GameContainer = props => {
         canPickup={canPickup}
         possibleRummies={possibleRummies}
         playedSets={playedSets}
-        setPlayedSets={setPlayedSets}
         cardsInHand={cardsInHand}
         setCardsInHand={setCardsInHand}
         discardCards={discardCards}
