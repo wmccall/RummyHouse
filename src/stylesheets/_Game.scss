@@ -339,11 +339,10 @@
         margin-bottom: 30px;
       }
       &.also-dragging {
-        transition: opacity 0.3s ease-in-out, margin-left 0.3s ease-in-out,
-          margin-right 0.3s ease-in-out !important;
+        transition: opacity 0.3s ease-in-out, margin-right 0.3s ease-in-out !important;
         opacity: 0 !important;
         margin-bottom: 30px !important;
-        margin-right: -100px !important;
+        margin-right: -75px !important;
       }
     }
   }
