@@ -538,8 +538,8 @@ const getRummyPopup = (
 const getWinnerPopup = (
   winner,
   isP1,
-  p1Points,
-  p2Points,
+  p1NetPoints,
+  p2NetPoints,
   p1HandPoints,
   p2HandPoints,
   p1Name,
@@ -556,10 +556,14 @@ const getWinnerPopup = (
   } else {
     winnerText = `${p1Name} won!`;
   }
-  const yourTotal = isP1 ? p1Points : p2Points;
-  const theirTotal = isP1 ? p2Points : p1Points;
-  const yourPlayed = isP1 ? p1Points - p1HandPoints : p2Points - p2HandPoints;
-  const theirPlayed = isP1 ? p2Points - p2HandPoints : p1Points - p1HandPoints;
+  const yourNet = isP1 ? p1NetPoints : p2NetPoints;
+  const theirNet = isP1 ? p2NetPoints : p1NetPoints;
+  const yourPlayed = isP1
+    ? p1NetPoints + p1HandPoints
+    : p2NetPoints + p2HandPoints;
+  const theirPlayed = isP1
+    ? p2NetPoints + p2HandPoints
+    : p1NetPoints + p1HandPoints;
   const yourHand = isP1 ? p1HandPoints : p2HandPoints;
   const theirHand = isP1 ? p2HandPoints : p1HandPoints;
   const theirName = isP1 ? p2Name : p1Name;
@@ -573,19 +577,19 @@ const getWinnerPopup = (
             <th>Player</th>
             <th>Played</th>
             <th>Hand (-)</th>
-            <th>Total Points</th>
+            <th>Final Points</th>
           </tr>
           <tr>
             <td>You</td>
             <td>{yourPlayed}</td>
             <td>{yourHand}</td>
-            <td>{yourTotal}</td>
+            <td>{yourNet}</td>
           </tr>
           <tr>
             <td>{theirName}</td>
             <td>{theirPlayed}</td>
             <td>{theirHand}</td>
-            <td>{theirTotal}</td>
+            <td>{theirNet}</td>
           </tr>
         </tbody>
       </table>
