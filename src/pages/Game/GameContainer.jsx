@@ -27,6 +27,7 @@ const GameContainer = props => {
   const [numCardsInOtherHand, setNumCardsInOtherHand] = useState(0);
   const [possibleRummies, setPossibleRummies] = useState({});
   const [discardPickupCard, setDiscardPickupCard] = useState(undefined);
+  const [discardPickup, setDiscardPickup] = useState(undefined);
   const [canPickup, setCanPickup] = useState(false);
   const [winner, setWinner] = useState(undefined);
   const [p1Points, setP1Points] = useState(undefined);
@@ -56,6 +57,11 @@ const GameContainer = props => {
                 setYourTurn(snapshotGame.turn.id === authData.uid);
                 setNumCardsInOtherHand(snapshotGame.player2NumCards);
                 setDiscardPickupCard(snapshotGame.discard_pickup_card);
+                if (snapshotGame.rummy_index) {
+                  setDiscardPickup(
+                    snapshotGame.discard.slice(snapshotGame.rummy_index),
+                  );
+                }
                 setCanPickup(snapshotGame.discard_pickup_card !== null);
                 setWinner(snapshotGame.winner);
                 setP1Points(snapshotGame.player1Points);
@@ -132,6 +138,8 @@ const GameContainer = props => {
                     allChangeData[change.doc.id] = change.doc.data();
                   }
                 });
+                console.log('Rummies');
+                console.log(allChangeData);
                 setPossibleRummies(allChangeData);
               });
           } else if (localGameDoc.data().player2) {
@@ -145,6 +153,11 @@ const GameContainer = props => {
                   setYourTurn(snapshotGame.turn.id === authData.uid);
                   setNumCardsInOtherHand(snapshotGame.player1NumCards);
                   setDiscardPickupCard(snapshotGame.discard_pickup_card);
+                  if (snapshotGame.rummy_index) {
+                    setDiscardPickup(
+                      snapshotGame.discard.slice(snapshotGame.rummy_index),
+                    );
+                  }
                   setCanPickup(snapshotGame.discard_pickup_card !== null);
                   setWinner(snapshotGame.winner);
                   setP1Points(snapshotGame.player1Points);
@@ -224,6 +237,8 @@ const GameContainer = props => {
                       allChangeData[change.doc.id] = change.doc.data();
                     }
                   });
+                  console.log('Rummies');
+                  console.log(allChangeData);
                   setPossibleRummies(allChangeData);
                 });
             } else {
@@ -272,12 +287,6 @@ const GameContainer = props => {
   }, [authData.uid]);
 
   if (gameDoc && gameState) {
-    let discardPickup;
-    if (gameDoc.data().discard) {
-      discardPickup = gameDoc.data().discard.slice(gameDoc.data().rummy_index);
-    } else {
-      discardPickup = [];
-    }
     return (
       <Game
         authData={authData}

@@ -228,7 +228,6 @@ const buildPlayedSets = (
   setClickedCards,
   setSetHover,
 ) => {
-  console.log(playedSets);
   const setIDs = Object.keys(playedSets);
   if (gameState !== 'setup' && setIDs.length > 0 && uid) {
     // TODO: don't show anything when subsets.length = 0; annoying edge case
@@ -775,6 +774,7 @@ const Game = props => {
               gameID,
               clickedCards,
               setClickedCards,
+              destParts[1],
             );
           } else {
             const updatedCards = [...cardsInHand];
@@ -786,6 +786,7 @@ const Game = props => {
               gameID,
               [draggableId],
               setClickedCards,
+              destParts[1],
             );
           }
         }
