@@ -910,11 +910,6 @@ const Game = props => {
           )}
         </div>
         <div className="Player-Cards" onMouseEnter={() => setSetHover(false)}>
-          <div className="turn">
-            <div className="inner">
-              {getMove(yourTurn, gameState, discardPickupCard)}
-            </div>
-          </div>
           <Droppable droppableId="player-hand" direction="horizontal">
             {provided => (
               <div
@@ -944,6 +939,11 @@ const Game = props => {
               </div>
             )}
           </Droppable>
+          <div className="turn">
+            <div className="inner">
+              {getMove(yourTurn, gameState, discardPickupCard)}
+            </div>
+          </div>
         </div>
       </div>
     </DragDropContext>

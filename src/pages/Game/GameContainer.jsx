@@ -57,7 +57,8 @@ const GameContainer = props => {
                 setYourTurn(snapshotGame.turn.id === authData.uid);
                 setNumCardsInOtherHand(snapshotGame.player2NumCards);
                 setDiscardPickupCard(snapshotGame.discard_pickup_card);
-                if (snapshotGame.rummy_index) {
+                console.log(snapshotGame.discard);
+                if (snapshotGame.rummy_index !== null && snapshotGame.discard) {
                   setDiscardPickup(
                     snapshotGame.discard.slice(snapshotGame.rummy_index),
                   );
@@ -153,7 +154,10 @@ const GameContainer = props => {
                   setYourTurn(snapshotGame.turn.id === authData.uid);
                   setNumCardsInOtherHand(snapshotGame.player1NumCards);
                   setDiscardPickupCard(snapshotGame.discard_pickup_card);
-                  if (snapshotGame.rummy_index) {
+                  if (
+                    snapshotGame.rummy_index !== null &&
+                    snapshotGame.discard
+                  ) {
                     setDiscardPickup(
                       snapshotGame.discard.slice(snapshotGame.rummy_index),
                     );

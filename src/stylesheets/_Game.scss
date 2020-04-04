@@ -7,13 +7,6 @@
     box-shadow: -5px 0px 10px rgba(68, 68, 68, 0.39);
   }
 
-  .tip {
-    font-size: 30px;
-    letter-spacing: 1px;
-    color: white;
-    font-weight: bold;
-  }
-
   .Opponents-Cards-Container {
     position: absolute;
     margin: -150px auto;
@@ -41,6 +34,7 @@
   }
   .Rummy-Popup,
   .Winner-Popup {
+    z-index: 90;
     background-color: #f3f3f3;
     margin-top: 130px;
     padding-left: 40px;
@@ -166,8 +160,12 @@
     justify-content: center;
     align-content: center;
     height: calc(100vh - 470px);
-    div {
-      z-index: 300;
+    .tip {
+      font-size: 30px;
+      letter-spacing: 1px;
+      color: white;
+      font-weight: bold;
+      z-index: 10;
     }
     .Card {
       z-index: 10;
@@ -215,7 +213,7 @@
     display: flex;
     height: 160px;
     position: fixed;
-    padding-left: 145px;
+    padding-left: 120px;
     bottom: 175px;
     width: 100%;
     align-content: center;
@@ -285,7 +283,7 @@
     align-items: center;
     background-color: #183b21;
     .turn {
-      left: 15px;
+      right: 110px;
       margin-top: -85px;
       position: absolute;
       display: flex;
