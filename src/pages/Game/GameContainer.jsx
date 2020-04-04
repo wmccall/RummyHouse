@@ -26,6 +26,8 @@ const GameContainer = props => {
   const [cardsInHand, setCardsInHand] = useState([]);
   const [numCardsInOtherHand, setNumCardsInOtherHand] = useState(0);
   const [possibleRummies, setPossibleRummies] = useState({});
+  const [discardPickupCard, setDiscardPickupCard] = useState(undefined);
+  const [canPickup, setCanPickup] = useState(false);
   const [winner, setWinner] = useState(undefined);
   const [p1Points, setP1Points] = useState(undefined);
   const [p2Points, setP2Points] = useState(undefined);
@@ -53,6 +55,8 @@ const GameContainer = props => {
                 setGameState(snapshotGame.game_state);
                 setYourTurn(snapshotGame.turn.id === authData.uid);
                 setNumCardsInOtherHand(snapshotGame.player2NumCards);
+                setDiscardPickupCard(snapshotGame.discard_pickup_card);
+                setCanPickup(snapshotGame.discard_pickup_card !== null);
                 setWinner(snapshotGame.winner);
                 setP1Points(snapshotGame.player1Points);
                 setP2Points(snapshotGame.player2Points);
@@ -140,6 +144,8 @@ const GameContainer = props => {
                   setGameState(snapshotGame.game_state);
                   setYourTurn(snapshotGame.turn.id === authData.uid);
                   setNumCardsInOtherHand(snapshotGame.player1NumCards);
+                  setDiscardPickupCard(snapshotGame.discard_pickup_card);
+                  setCanPickup(snapshotGame.discard_pickup_card !== null);
                   setWinner(snapshotGame.winner);
                   setP1Points(snapshotGame.player1Points);
                   setP2Points(snapshotGame.player2Points);
@@ -252,6 +258,8 @@ const GameContainer = props => {
       setCardsInHand([]);
       setNumCardsInOtherHand(0);
       setPossibleRummies({});
+      setDiscardPickupCard(undefined);
+      setCanPickup(false);
       setWinner(undefined);
       setP1Points(undefined);
       setP2Points(undefined);
@@ -278,8 +286,8 @@ const GameContainer = props => {
         gameID={gameID}
         yourTurn={yourTurn}
         discardPickup={discardPickup}
-        discardPickupCard={gameDoc.data().discard_pickup_card}
-        canPickup={gameDoc.data().discard_pickup_card !== null}
+        discardPickupCard={discardPickupCard}
+        canPickup={canPickup}
         possibleRummies={possibleRummies}
         playedSets={playedSets}
         cardsInHand={cardsInHand}
