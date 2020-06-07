@@ -45,3 +45,18 @@
     }
   }
 }
+
+.UnderHeader {
+  &.BG-Gray {
+    background-color: #272727;
+  }
+  &.BG-Green {
+    background-color: #236b36;
+  }
+  height: calc(100vh - 100px);
+  width: 100vw;
+  overflow: auto;
+  display: block;
+  position: absolute;
+  z-index: -10;
+}

@@ -1,4 +1,7 @@
 import React from 'react';
+import { Draggable } from 'react-beautiful-dnd';
+
+import deck from '../../constants/deck';
 import * as CardImages from '../../resources/png/Cards';
 import cardBack from '../../resources/png/CardBack.png';
 
@@ -29,12 +32,54 @@ const convertNameToImage = cardName => {
 };
 
 const Card = props => {
-  const { cardName, isClicked, onClick } = props;
+  const {
+    cardName,
+    extraName,
+    isClicked,
+    onClick,
+    isDraggable,
+    index = 0,
+    dragCard,
+    disableDrag,
+    isSelected,
+  } = props;
   const fixedCardName = cardName || 'back';
+
+  if (isDraggable) {
+    return (
+      <Draggable
+        draggableId={fixedCardName}
+        key={fixedCardName}
+        index={index}
+        isDragDisabled={disableDrag}
+      >
+        {provided => (
+          <img
+            className={`Card ${isClicked ? 'clicked' : ''} ${
+              dragCard &&
+              (isClicked || isSelected) &&
+              dragCard !== fixedCardName
+                ? 'also-dragging'
+                : ''
+            } ${extraName}`}
+            onClick={onClick}
+            ref={provided.innerRef}
+            {...provided.draggableProps}
+            {...provided.dragHandleProps}
+            src={convertNameToImage(fixedCardName)}
+            alt={fixedCardName}
+          />
+        )}
+      </Draggable>
+    );
+  }
   return (
-    <div className={`Card ${isClicked ? 'clicked' : ''}`} onClick={onClick}>
-      <img src={convertNameToImage(fixedCardName)} alt={fixedCardName} />
-    </div>
+    <img
+      src={convertNameToImage(fixedCardName)}
+      alt={fixedCardName}
+      className={`Card ${isClicked ? 'clicked' : ''} ${extraName}`}
+      onClick={onClick}
+    />
   );
 };
 

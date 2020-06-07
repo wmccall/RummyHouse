@@ -64,7 +64,7 @@ const UserButton = props => {
         {userChar}
       </button>
       <div className={`UserButton-Pane ${open ? 'visble' : 'hidden'}`}>
-        <button
+        {/* <button
           onClick={() => clickChangeColorHandler()}
           type="button"
           className={`Change-Color-Button ${inGameView ? 'visible' : 'hidden'}`}
@@ -79,7 +79,7 @@ const UserButton = props => {
         >
           <div>Forefeit Game</div>
         </button>
-        {inGameView && <br />}
+        {inGameView && <br />} */}
         <button
           onClick={() => handleSignOut()}
           type="button"

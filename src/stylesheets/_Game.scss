@@ -1,33 +1,28 @@
 .Game {
+  user-select: none;
   background-color: #236b36;
   overflow: auto;
   height: calc(100vh - 100px);
-  .Card > img {
+  .Card {
     box-shadow: -5px 0px 10px rgba(68, 68, 68, 0.39);
-  }
-
-  .tip {
-    font-size: 30px;
-    letter-spacing: 1px;
-    color: white;
-    font-weight: bold;
   }
 
   .Opponents-Cards-Container {
     position: absolute;
-    margin: -160px auto;
+    margin: -150px auto;
     width: 100%;
     display: flex;
     justify-content: center;
     .Opponents-Cards {
       display: flex;
-      margin-left: 60px;
+      margin-left: 50px;
       .Card {
-        margin-left: -60px;
+        margin-left: -50px;
       }
     }
   }
-  .Rummy-Container {
+  .Rummy-Container,
+  .Winner-Container {
     position: absolute;
     margin: -100px auto;
     width: 100%;
@@ -36,15 +31,59 @@
     display: flex;
     justify-content: center;
     background-color: rgba(0, 0, 0, 0.288);
+  }
+  .Rummy-Popup,
+  .Winner-Popup {
+    z-index: 90;
+    background-color: #f3f3f3;
+    margin-top: 130px;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-bottom: 35px;
+    border-radius: 10px;
+    height: fit-content;
+    width: fit-content;
+  }
+  .Winner-Popup {
+    padding-bottom: 20px;
+  }
+  .Winner-Container {
+    .Winner-Popup {
+      .Winner-Text {
+        font-size: 25px;
+        text-align: center;
+        padding: 20px 0;
+      }
+      .Points-Breakdown {
+        text-align: center;
+        tr:nth-child(odd) {
+          background: rgb(199, 199, 199);
+        }
+        td,
+        th {
+          padding: 2px 10px;
+        }
+      }
+      .Home-Link {
+        button {
+          float: right;
+          margin-top: 25px;
+          font-size: 20px;
+          letter-spacing: 0.5px;
+          font-weight: 700;
+          padding: 15px 25px 18px 25px;
+          border-radius: 100px;
+          text-shadow: 0px 2px 6px rgba(0, 0, 0, 0.5);
+          background-color: #f5b81b;
+          &:hover {
+            background-color: #c99613;
+          }
+        }
+      }
+    }
+  }
+  .Rummy-Container {
     .Rummy-Popup {
-      background-color: #f3f3f3;
-      margin-top: 130px;
-      padding-left: 40px;
-      padding-right: 40px;
-      padding-bottom: 35px;
-      border-radius: 10px;
-      height: fit-content;
-      width: fit-content;
       .Header {
         font-size: 30px;
         color: #444444;
@@ -69,11 +108,8 @@
       }
       .Card {
         margin-left: -10px;
+        width: 60px;
         border-radius: 5px;
-        img {
-          width: 60px;
-          border-radius: 5px;
-        }
       }
       .cards {
         display: flex;
@@ -124,30 +160,17 @@
     justify-content: center;
     align-content: center;
     height: calc(100vh - 470px);
+    .tip {
+      font-size: 30px;
+      letter-spacing: 1px;
+      color: white;
+      font-weight: bold;
+      z-index: 10;
+    }
     .Card {
       z-index: 10;
       margin-left: -20px;
-      height: 140px;
-      img {
-        box-shadow: -5px 0px 10px rgba(68, 68, 68, 0.39);
-      }
-    }
-    .place {
-      position: relative;
-      height: 140px;
-      width: 100px;
-      padding: 10px;
-      margin-top: -10px;
-      border-radius: 10px;
-      &.up {
-        margin-left: -40px;
-      }
-      &.down {
-        margin-right: -60px;
-      }
-      &:hover {
-        cursor: pointer;
-      }
+      box-shadow: -5px 0px 10px rgba(68, 68, 68, 0.39);
     }
     .set,
     .subset-inner {
@@ -160,12 +183,9 @@
         margin-left: 0;
       }
     }
-    .subset-inner {
-      margin-left: 20px;
-    }
     .container {
       display: flex;
-      height: 140px;
+      height: 130px;
       z-index: 30;
       align-content: center;
       align-items: center;
@@ -180,8 +200,7 @@
       z-index: 30;
       background-color: #236b36;
       border-radius: 10px;
-      margin-left: 20px;
-      height: 140px;
+      margin-left: 10px;
       .subset-inner {
         &.theirs {
           opacity: 0.7;
@@ -195,10 +214,16 @@
     height: 160px;
     position: fixed;
     padding-left: 120px;
-    bottom: 200px;
+    bottom: 175px;
     width: 100%;
     align-content: center;
     align-items: center;
+    z-index: 30;
+    .under-deck {
+      position: absolute;
+      margin: 1px 0 0 10px;
+      z-index: -1;
+    }
     .Deck {
       padding: 10px 10px 5px 10px;
       margin-right: 40px;
@@ -212,9 +237,9 @@
       display: flex;
       align-content: center;
       align-items: center;
-      padding: 12px 80px 8px 26px;
+      padding: 12px 80px 12px 26px;
       border-radius: 10px;
-      height: 140px;
+      height: 125px;
       &:hover {
         background-color: rgba(255, 255, 255, 0.329);
         cursor: pointer;
@@ -232,43 +257,69 @@
         &.clicked {
           margin-bottom: 30px;
         }
-      }
-      .place {
-        position: relative;
-        height: 140px;
-        width: 100px;
-        padding: 10px;
-        border-radius: 10px;
-        margin-left: -10px;
-        margin-bottom: 5px;
-        &:hover {
-          background-color: rgba(255, 255, 255, 0.329);
-          cursor: pointer;
+        &.also-dragging {
+          transition: opacity 0.3s ease-in-out, margin-left 0.3s ease-in-out,
+            margin-right 0.3s ease-in-out !important;
+          opacity: 0 !important;
+          margin-bottom: 30px !important;
+          margin-right: -100px !important;
         }
       }
+    }
+    .Last-Card {
+      transform: rotate(-35deg);
+      margin-left: -100px;
+      z-index: 30;
     }
   }
 
   .Player-Cards {
     display: flex;
-    height: 190px;
-    position: absolute;
-    bottom: 0%;
+    height: 170px;
+    margin: 200px 0 0 0;
     width: 100%;
     justify-content: center;
     align-content: center;
     align-items: center;
     background-color: #183b21;
-    :first-child {
-      margin-left: 0;
+    .turn {
+      right: 110px;
+      margin-top: -85px;
+      position: absolute;
+      display: flex;
+      justify-content: center;
+      align-content: center;
+      align-items: center;
+      background-color: white;
+      width: 120px;
+      height: 120px;
+      border-radius: 100px;
+      .inner {
+        text-align: center;
+        font-size: 20px;
+        height: fit-content;
+        div > div {
+          display: inline-block;
+        }
+        .Value {
+          font-weight: 400;
+        }
+        .Suit {
+          font-size: 25px;
+          &.red {
+            color: #d7462f;
+          }
+        }
+      }
+      box-shadow: -5px 0px 10px rgba(68, 68, 68, 0.39);
     }
     .Player-Hand {
       display: flex;
       align-content: center;
       align-items: center;
-      padding: 12px 85px 8px 95px;
+      padding: 10px 75px 10px 85px;
       border-radius: 10px;
-      height: 140px;
+      height: 125px;
       &:hover {
         background-color: rgba(255, 255, 255, 0.329);
         cursor: pointer;
@@ -284,6 +335,12 @@
       }
       &.clicked {
         margin-bottom: 30px;
+      }
+      &.also-dragging {
+        transition: opacity 0.3s ease-in-out, margin-right 0.3s ease-in-out !important;
+        opacity: 0 !important;
+        margin-bottom: 30px !important;
+        margin-right: -75px !important;
       }
     }
   }

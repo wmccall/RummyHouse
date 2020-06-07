@@ -1,6 +1,9 @@
 .Card {
-  img {
-    width: 100px;
-    border-radius: 10px;
-  }
+  width: 90px;
+  border-radius: 10px;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
 }
