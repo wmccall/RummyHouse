@@ -1,3 +1,15 @@
+# RummyHouse
+
+Rummy House is based on a friendly game of cards called Rummy.<br />
+It was a collaborative project between Will McCall and Sumin Oh. <br />
+
+Lead developer: Will McCall <br />
+Lead designer: Sumin Oh <br />
+
+You can read Sumin's design process here: https://suminoh.com/rummyhouse
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
